@@ -1,5 +1,7 @@
 package cn.qihangerp.module.open.tao.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -16,6 +18,7 @@ public class TaoRefund implements Serializable {
     /**
      * 
      */
+    @TableId(type = IdType.AUTO)
     private String id;
 
     /**

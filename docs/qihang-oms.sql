@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 01/10/2025 11:33:46
+ Date: 01/10/2025 16:06:42
 */
 
 SET NAMES utf8mb4;
@@ -1211,11 +1211,11 @@ CREATE TABLE `o_shop_platform`  (
 -- Records of o_shop_platform
 -- ----------------------------
 INSERT INTO `o_shop_platform` VALUES (100, '淘宝天猫', 'TMALL', '', '', 'https://www.qihangerp.cn', 'http://gw.api.taobao.com/router/rest', 0, 0, 1);
-INSERT INTO `o_shop_platform` VALUES (200, '京东POP', 'JD-POP', '', NULL, 'http://www.qihangerp.cn', 'https://api.jd.com/routerjson', 0, 0, 1);
+INSERT INTO `o_shop_platform` VALUES (200, '京东POP', 'JD-POP', '', NULL, 'http://www.qihangerp.cn', 'https://api.jd.com/routerjson', 1, 0, 1);
 INSERT INTO `o_shop_platform` VALUES (300, '拼多多', 'PDD', 'dc953bcf16d24b27abf3e64a59e1ecd1', '89c639b1ceaf8e5260acc73b2bdbb5c529cf23a4', 'https://qihangerp.cn', 'https://gw-api.pinduoduo.com/api/router', 0, 0, 1);
 INSERT INTO `o_shop_platform` VALUES (400, '抖店', 'DOUDIAN', '7496863701597783592', '999b47a2-4991-48ba-b23f-9bc30172a6b3', 'http://www.qihangerp.cn', 'https://openapi-fxg.jinritemai.com/', 0, 0, 1);
 INSERT INTO `o_shop_platform` VALUES (500, '微信小店', 'WEISHOP', '', NULL, 'http://www.qihangerp.cn', 'https://api.weixin.qq.com', 0, 0, 1);
-INSERT INTO `o_shop_platform` VALUES (999, '其他渠道', 'OFFLINE', NULL, NULL, NULL, NULL, 0, 0, NULL);
+INSERT INTO `o_shop_platform` VALUES (999, '其他渠道', 'OFFLINE', NULL, NULL, NULL, NULL, 1, 0, NULL);
 
 -- ----------------------------
 -- Table structure for o_shop_pull_lasttime
@@ -1234,10 +1234,10 @@ CREATE TABLE `o_shop_pull_lasttime`  (
 -- ----------------------------
 -- Records of o_shop_pull_lasttime
 -- ----------------------------
-INSERT INTO `o_shop_pull_lasttime` VALUES (1, 1007, 'ORDER', '2025-10-01 10:56:21', '2025-10-01 10:56:27', NULL);
+INSERT INTO `o_shop_pull_lasttime` VALUES (1, 1007, 'ORDER', '2025-10-01 15:54:03', '2025-10-01 10:56:27', '2025-10-01 15:54:03');
 INSERT INTO `o_shop_pull_lasttime` VALUES (2, 1007, 'GOODS', '2025-10-01 10:50:36', '2025-10-01 10:50:11', '2025-10-01 10:51:00');
 INSERT INTO `o_shop_pull_lasttime` VALUES (3, 1009, 'ORDER', '2025-09-30 08:07:23', '2025-10-01 11:07:23', '2025-10-01 11:23:46');
-INSERT INTO `o_shop_pull_lasttime` VALUES (4, 1009, 'GOODS', '2025-10-01 11:20:42', '2025-10-01 11:07:08', '2025-10-01 11:20:44');
+INSERT INTO `o_shop_pull_lasttime` VALUES (4, 1009, 'GOODS', '2025-10-01 12:56:14', '2025-10-01 11:07:08', '2025-10-01 12:56:16');
 INSERT INTO `o_shop_pull_lasttime` VALUES (5, 1007, 'REFUND', '2025-10-01 11:24:50', '2025-10-01 11:24:04', '2025-10-01 11:24:50');
 
 -- ----------------------------
@@ -1255,7 +1255,7 @@ CREATE TABLE `o_shop_pull_logs`  (
   `pull_time` datetime NULL DEFAULT NULL COMMENT '拉取时间',
   `duration` bigint NULL DEFAULT NULL COMMENT '耗时（毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1973228990511247362 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺更新日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1973295330425147394 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺更新日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_shop_pull_logs
@@ -1277,6 +1277,10 @@ INSERT INTO `o_shop_pull_logs` VALUES (1973227384306724865, 1007, 100, 'REFUND',
 INSERT INTO `o_shop_pull_logs` VALUES (1973227551042891778, 1007, 100, 'REFUND', '主动拉取', '{startTime:2025-10-01T10:24:03,endTime:2025-10-01T11:24:43.246316700}', '{insert:0,update:1,fail:0}', '2025-10-01 11:24:43', 402);
 INSERT INTO `o_shop_pull_logs` VALUES (1973227577492172802, 1007, 100, 'REFUND', '主动拉取', '{startTime:2025-10-01T10:24:43,endTime:2025-10-01T11:24:49.599735900}', '{insert:0,update:1,fail:0}', '2025-10-01 11:24:50', 345);
 INSERT INTO `o_shop_pull_logs` VALUES (1973228990511247361, 1009, 400, 'REFUND', '主动拉取退款', '{startTime:2025-10-01T11:00:26.567753200,endTime:2025-10-01T11:30:26.567753200}', '结束时间和开始时间范围太大，请缩小范围', '2025-10-01 11:30:27', 254);
+INSERT INTO `o_shop_pull_logs` VALUES (1973250539771449345, 1009, 300, 'GOODS', '主动拉取商品sku', '{startTime:2025-09-24T11:20:42,endTime:2025-10-01T12:56:02.568389800}', '{successTotal:10}', '2025-10-01 12:56:03', 2003);
+INSERT INTO `o_shop_pull_logs` VALUES (1973250585430642689, 1009, 300, 'GOODS', '主动拉取商品sku', '{startTime:2025-09-24T12:56:03,endTime:2025-10-01T12:56:14.013894300}', '{successTotal:10}', '2025-10-01 12:56:14', 1448);
+INSERT INTO `o_shop_pull_logs` VALUES (1973295260355104769, 1007, 100, 'ORDER', '主动拉取', '{startTime:2025-10-01T09:56:21,endTime:2025-10-01T15:53:44}', '{insert:12,update:0,fail:0}', '2025-10-01 15:53:44', 2336);
+INSERT INTO `o_shop_pull_logs` VALUES (1973295330425147393, 1007, 100, 'ORDER', '主动拉取', '{startTime:2025-10-01T14:53:45,endTime:2025-10-01T15:54:02}', '{insert:0,update:4,fail:0}', '2025-10-01 15:54:03', 660);
 
 -- ----------------------------
 -- Table structure for o_shop_region
@@ -2049,16 +2053,16 @@ CREATE TABLE `oms_pdd_goods`  (
 -- ----------------------------
 -- Records of oms_pdd_goods
 -- ----------------------------
-INSERT INTO `oms_pdd_goods` VALUES (3, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:42', '2025-10-01 11:20:42');
-INSERT INTO `oms_pdd_goods` VALUES (4, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (5, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', NULL, NULL, 1, 0, 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (6, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (7, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (8, 756684220589, '雷士照明led吸顶灯灯条客厅卧室灯板磁吸灯条长条形灯芯家用节能', NULL, NULL, 0, 0, 'https://img.pddpic.com/gaudit-image/2025-06-03/8079acdcba55f2fb96b57b775b87c002.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (9, 762810718533, '雷士照明应急灯户外露营充电灯泡地摊照明灯超亮节能家用应急灯', NULL, NULL, 1, 0, 'https://img.pddpic.com/gaudit-image/2025-06-15/d74171a6b86b15ddf9d2adc6632a6185.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (10, 770936903345, '雷士照明LED集成吊顶灯无边框防水厨房卫生间厕所全面发光平板灯', NULL, NULL, 0, 0, 'https://img.pddpic.com/gaudit-image/2025-06-30/3a3e4097cfebbbc95462edc234c8e488.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (11, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', NULL, NULL, 1, 0, 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
-INSERT INTO `oms_pdd_goods` VALUES (12, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', 0, NULL, 1009, NULL, '2025-10-01 11:20:43', '2025-10-01 11:20:43');
+INSERT INTO `oms_pdd_goods` VALUES (3, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:14', '2025-10-01 12:56:14');
+INSERT INTO `oms_pdd_goods` VALUES (4, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:14', '2025-10-01 12:56:14');
+INSERT INTO `oms_pdd_goods` VALUES (5, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', NULL, NULL, 1, 0, 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:14', '2025-10-01 12:56:14');
+INSERT INTO `oms_pdd_goods` VALUES (6, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:14', '2025-10-01 12:56:14');
+INSERT INTO `oms_pdd_goods` VALUES (7, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:15', '2025-10-01 12:56:15');
+INSERT INTO `oms_pdd_goods` VALUES (8, 756684220589, '雷士照明led吸顶灯灯条客厅卧室灯板磁吸灯条长条形灯芯家用节能', NULL, NULL, 0, 0, 'https://img.pddpic.com/gaudit-image/2025-06-03/8079acdcba55f2fb96b57b775b87c002.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:15', '2025-10-01 12:56:15');
+INSERT INTO `oms_pdd_goods` VALUES (9, 762810718533, '雷士照明应急灯户外露营充电灯泡地摊照明灯超亮节能家用应急灯', NULL, NULL, 1, 0, 'https://img.pddpic.com/gaudit-image/2025-06-15/d74171a6b86b15ddf9d2adc6632a6185.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:15', '2025-10-01 12:56:15');
+INSERT INTO `oms_pdd_goods` VALUES (10, 770936903345, '雷士照明LED集成吊顶灯无边框防水厨房卫生间厕所全面发光平板灯', NULL, NULL, 0, 0, 'https://img.pddpic.com/gaudit-image/2025-06-30/3a3e4097cfebbbc95462edc234c8e488.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:15', '2025-10-01 12:56:15');
+INSERT INTO `oms_pdd_goods` VALUES (11, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', NULL, NULL, 1, 0, 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:15', '2025-10-01 12:56:15');
+INSERT INTO `oms_pdd_goods` VALUES (12, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', NULL, NULL, 1, 1, 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', 0, NULL, 1009, NULL, '2025-10-01 12:56:15', '2025-10-01 12:56:15');
 
 -- ----------------------------
 -- Table structure for oms_pdd_goods_sku
@@ -2082,46 +2086,46 @@ CREATE TABLE `oms_pdd_goods_sku`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'pdd商品SKU表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 147 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'pdd商品SKU表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oms_pdd_goods_sku
 -- ----------------------------
-INSERT INTO `oms_pdd_goods_sku` VALUES (42, 1740677623153, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00103', NULL, 'E27螺口 7瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:42', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (43, 1742374330748, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00107', NULL, 'E27螺口 30瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:42', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (44, 1742373848730, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00102', NULL, 'E27螺口 5瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (45, 1740677623154, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00104', NULL, 'E27螺口 12瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (46, 1740677623155, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00105', NULL, 'E27螺口 18瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (47, 1742373848729, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00101', NULL, 'E27螺口 3瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (48, 1742374330747, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00106', NULL, 'E27螺口 24瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (49, 1742164849119, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00105', NULL, '48W三色变光-330mm', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (50, 1742164849115, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00101', NULL, '12W白光-135mm', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (51, 1742164849118, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00104', NULL, '36W三色变光-300mm', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (52, 1742164849116, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00102', NULL, '18W白光-175mm', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (53, 1742164849120, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00106', NULL, '60W三色变光-360mm', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (54, 1742164849117, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00103', NULL, '24W白光-215mm', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (55, 1741926779987, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529453', NULL, '22寸黑金刚加强筋骨抗砸耐摔旗舰款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (56, 1741926779984, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529450', NULL, '17寸三层折叠工具箱精工款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (57, 1741926779986, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529452', NULL, '19寸黑金刚加强筋骨抗砸耐摔旗舰款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (58, 1741926779985, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529451', NULL, '21寸三层折叠工具箱精工款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (59, 1742148962888, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', '', '', NULL, '白色款30W白光 其它', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (60, 1742148962887, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', '', '', NULL, '白色款24W白光 其它', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (61, 1742372682345, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', '', '', NULL, '白色款18W白光 其它', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (62, 1743027340565, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', '', '', NULL, '【五只装】E27 18W 正白光', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (63, 1743027340569, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', '', '', NULL, '【五只装】E27 30W 正白光', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (64, 1743027340567, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', '', '', NULL, '【五只装】E27 24W 正白光', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (65, 1749116485132, 756684220589, '雷士照明led吸顶灯灯条客厅卧室灯板磁吸灯条长条形灯芯家用节能', 'https://img.pddpic.com/gaudit-image/2025-06-03/8079acdcba55f2fb96b57b775b87c002.jpeg', '', '', NULL, '48W白光【一拖四】 【磁铁吸附 快捷替换】', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (66, 1748010394260, 762810718533, '雷士照明应急灯户外露营充电灯泡地摊照明灯超亮节能家用应急灯', 'https://img.pddpic.com/gaudit-image/2025-06-15/d74171a6b86b15ddf9d2adc6632a6185.jpeg', '', '', NULL, '4W USB充电式灯泡', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (67, 1748010394261, 762810718533, '雷士照明应急灯户外露营充电灯泡地摊照明灯超亮节能家用应急灯', 'https://img.pddpic.com/gaudit-image/2025-06-15/d74171a6b86b15ddf9d2adc6632a6185.jpeg', '', '', NULL, '7W USB充电式灯泡', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (68, 1754155826431, 770936903345, '雷士照明LED集成吊顶灯无边框防水厨房卫生间厕所全面发光平板灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/3a3e4097cfebbbc95462edc234c8e488.jpeg', '', '', NULL, '30X30【24W悬浮曲面照明】', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (69, 1754157954615, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*300 18W珍珠白集成款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (70, 1754157954617, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*600 24W珍珠白集成款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (71, 1754157954616, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*600 24W雾银集成款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (72, 1754157954614, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*300 18W雾银集成款', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:43', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (73, 1756355886272, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00105', NULL, '三色模组48W 直径30CM', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:44', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (74, 1756355886273, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00106', NULL, '三色模组60W 直径30CM', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:44', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (75, 1756354078309, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00103', NULL, '白光24W 直径22CM', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:44', NULL);
-INSERT INTO `oms_pdd_goods_sku` VALUES (76, 1756355886271, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00104', NULL, '三色模组36W 直径23CM', NULL, 1, 0, 0, 1009, '2025-10-01 11:20:44', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (112, 1742373848730, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00102', NULL, 'E27螺口 5瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (113, 1740677623154, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00104', NULL, 'E27螺口 12瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (114, 1742374330748, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00107', NULL, 'E27螺口 30瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (115, 1742374330747, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00106', NULL, 'E27螺口 24瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (116, 1740677623153, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00103', NULL, 'E27螺口 7瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (117, 1740677623155, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00105', NULL, 'E27螺口 18瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (118, 1742373848729, 753794079556, '雷士照明超亮LED节能灯E27大功率强光均匀三色可选一级能效护眼', 'https://img.pddpic.com/gaudit-image/2025-05-28/048a06e3b11fe5e8ce5ab00e1828d77f.jpeg', 'LEDDP001', 'LEDDP00101', NULL, 'E27螺口 3瓦白光 1级能效', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (119, 1742164849118, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00104', NULL, '36W三色变光-300mm', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (120, 1742164849120, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00106', NULL, '60W三色变光-360mm', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (121, 1742164849117, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00103', NULL, '24W白光-215mm', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (122, 1742164849115, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00101', NULL, '12W白光-135mm', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (123, 1742164849119, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00105', NULL, '48W三色变光-330mm', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (124, 1742164849116, 754380133868, '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/gaudit-image/2025-05-29/1a92b78dc9240b794790f686d5186398.jpeg', 'LEDDX001', 'LEDDX00102', NULL, '18W白光-175mm', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (125, 1741926779987, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529453', NULL, '22寸黑金刚加强筋骨抗砸耐摔旗舰款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (126, 1741926779985, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529451', NULL, '21寸三层折叠工具箱精工款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (127, 1741926779986, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529452', NULL, '19寸黑金刚加强筋骨抗砸耐摔旗舰款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (128, 1741926779984, 755310184807, '艾瑞泽工具箱三层折叠多层多功能收纳箱汽车用家用电工五金收纳箱', 'https://img.pddpic.com/gaudit-image/2025-05-31/8378221ca34955ad167b22c921234f14.jpeg', '448700666150_1748700757', '648700666529450', NULL, '17寸三层折叠工具箱精工款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (129, 1742148962888, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', '', '', NULL, '白色款30W白光 其它', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (130, 1742372682345, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', '', '', NULL, '白色款18W白光 其它', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (131, 1742148962887, 755635245980, '雷士照明led灯泡节能E27螺口球泡飞碟灯夜市地摊工矿大功率厂房灯', 'https://img.pddpic.com/gaudit-image/2025-06-01/c59032e87cd4a8aa1d6615eb3770bddb.jpeg', '', '', NULL, '白色款24W白光 其它', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:14', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (132, 1743027340567, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', '', '', NULL, '【五只装】E27 24W 正白光', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (133, 1743027340565, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', '', '', NULL, '【五只装】E27 18W 正白光', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (134, 1743027340569, 756679247197, '雷士照明LED灯泡高亮E27螺口节能灯泡吊灯光源大功率护眼LED球泡', 'https://img.pddpic.com/gaudit-image/2025-06-03/1f92d0247e00defa30fe23ccc15be4fe.jpeg', '', '', NULL, '【五只装】E27 30W 正白光', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (135, 1749116485132, 756684220589, '雷士照明led吸顶灯灯条客厅卧室灯板磁吸灯条长条形灯芯家用节能', 'https://img.pddpic.com/gaudit-image/2025-06-03/8079acdcba55f2fb96b57b775b87c002.jpeg', '', '', NULL, '48W白光【一拖四】 【磁铁吸附 快捷替换】', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (136, 1748010394260, 762810718533, '雷士照明应急灯户外露营充电灯泡地摊照明灯超亮节能家用应急灯', 'https://img.pddpic.com/gaudit-image/2025-06-15/d74171a6b86b15ddf9d2adc6632a6185.jpeg', '', '', NULL, '4W USB充电式灯泡', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (137, 1748010394261, 762810718533, '雷士照明应急灯户外露营充电灯泡地摊照明灯超亮节能家用应急灯', 'https://img.pddpic.com/gaudit-image/2025-06-15/d74171a6b86b15ddf9d2adc6632a6185.jpeg', '', '', NULL, '7W USB充电式灯泡', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (138, 1754155826431, 770936903345, '雷士照明LED集成吊顶灯无边框防水厨房卫生间厕所全面发光平板灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/3a3e4097cfebbbc95462edc234c8e488.jpeg', '', '', NULL, '30X30【24W悬浮曲面照明】', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (139, 1754157954617, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*600 24W珍珠白集成款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (140, 1754157954614, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*300 18W雾银集成款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (141, 1754157954615, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*300 18W珍珠白集成款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (142, 1754157954616, 770940543534, '雷士照明led集成吊顶灯平板灯厨房浴室300*300厕所灯卫生间厨房灯', 'https://img.pddpic.com/gaudit-image/2025-06-30/b6e35e30732ce30a849d2ad0d6c061e7.jpeg', '', '', NULL, '300*600 24W雾银集成款', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (143, 1756355886271, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00104', NULL, '三色模组36W 直径23CM', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (144, 1756354078309, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00103', NULL, '白光24W 直径22CM', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (145, 1756355886273, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00106', NULL, '三色模组60W 直径30CM', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
+INSERT INTO `oms_pdd_goods_sku` VALUES (146, 1756355886272, 774317814352, '雷士led灯芯吸顶磁吸节能灯板改装光源模组圆形三色模组家用环形', 'https://img.pddpic.com/gaudit-image/2025-07-06/64eeaa77c1d01bb91bea649e7615bd3c.jpeg', '', 'LEDDX00105', NULL, '三色模组48W 直径30CM', NULL, 1, 0, 0, 1009, '2025-10-01 12:56:15', NULL);
 
 -- ----------------------------
 -- Table structure for oms_pdd_order
@@ -2320,7 +2324,7 @@ CREATE TABLE `oms_tao_goods`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝商品表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝商品表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oms_tao_goods
@@ -2354,7 +2358,7 @@ CREATE TABLE `oms_tao_goods_sku`  (
   `shop_id` bigint NOT NULL COMMENT '店铺id',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sku_id_index`(`sku_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1484 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝商品SKU表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝商品SKU表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oms_tao_goods_sku
@@ -2448,7 +2452,7 @@ CREATE TABLE `oms_tao_order`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `index_tid`(`tid` ASC) USING BTREE,
   INDEX `shop_id_index`(`shop_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oms_tao_order
@@ -2503,11 +2507,8 @@ CREATE TABLE `oms_tao_order_item`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `tid_index`(`tid` ASC) USING BTREE,
   INDEX `oid_index`(`oid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝订单明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '淘宝订单明细表' ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of oms_tao_order_item
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for oms_tao_order_promotion
@@ -3422,7 +3423,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-10-01 10:27:52', 'admin', '2023-08-07 19:31:37', '', '2025-10-01 02:27:51', '管理员');
+INSERT INTO `sys_user` VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-10-01 15:47:27', 'admin', '2023-08-07 19:31:37', '', '2025-10-01 07:47:26', '管理员');
 INSERT INTO `sys_user` VALUES (2, NULL, 'openapi', 'openApi接口专用', '00', '2806456181@qq.com', '15818590000', '0', '', '$2a$10$fHkhoqbMiyracAsTzl38H.55bu.M.of1FXk2EK7RQBjfic3tLU0Ue', '0', '0', '127.0.0.1', '2024-06-24 10:23:35', 'admin', '2024-03-17 14:55:22', 'admin', '2024-06-24 10:23:35', NULL);
 INSERT INTO `sys_user` VALUES (101, 101, '15818590119', 'aaa123', '00', '', '', '0', '', '$2a$10$pXcT6cHaObMeKuYd9vZb5uEb8PyUdF2AcqqRN1cBqiA9rV4qYQW7G', '0', '2', '', NULL, 'admin', '2024-08-15 13:45:25', '', NULL, NULL);
 INSERT INTO `sys_user` VALUES (102, 101, '15818590119', '老齐', '00', '', '', '0', '', '$2a$10$ysk.zgJ8wh25c7vOjKyZ8uarM2hkG0S51j8GYdJSo2kZmc3f8HdKe', '0', '0', '', NULL, 'admin', '2024-08-15 13:49:59', 'admin', '2025-02-10 16:26:20', NULL);

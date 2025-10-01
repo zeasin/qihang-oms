@@ -63,36 +63,36 @@
           @click="handlePull"
         >API拉取订单</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          :loading="pullLoading"
-          type="primary"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handlePullDetailByTid"
-        >API拉取单个订单</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-top-right"
-          size="mini"
-          :disabled="multiple"
-          @click="handlePushOms"
-        >重新推送选中订单到订单库</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-refresh"
-          size="mini"
-          :disabled="single"
-          @click="handlePullUpdate"
-        >手动更新订单</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          :loading="pullLoading"-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handlePullDetailByTid"-->
+<!--        >API拉取单个订单</el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          icon="el-icon-top-right"-->
+<!--          size="mini"-->
+<!--          :disabled="multiple"-->
+<!--          @click="handlePushOms"-->
+<!--        >重新推送选中订单到订单库</el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="danger"-->
+<!--          plain-->
+<!--          icon="el-icon-refresh"-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handlePullUpdate"-->
+<!--        >手动更新订单</el-button>-->
+<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -186,16 +186,16 @@
           <el-tag v-if="scope.row.status === 'PAID_FORBID_CONSIGN'">禁止发货</el-tag>
         </template>
       </el-table-column>
-<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button-->
-<!--            :loading="pullLoading"-->
-<!--            size="mini"-->
-<!--            icon="el-icon-refresh"-->
-<!--            @click="handlePullUpdate(scope.row)"-->
-<!--          >更新订单</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button style="padding-left: 6px;padding-right: 6px;"
+            :loading="pullLoading"
+            size="mini"
+            icon="el-icon-refresh"
+            @click="handlePullUpdate(scope.row)"
+          >更新订单</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination

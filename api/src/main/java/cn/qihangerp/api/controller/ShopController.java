@@ -23,7 +23,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/oms-api/shop")
+@RequestMapping("/shop")
 public class ShopController extends BaseController {
     private final OLogisticsCompanyService logisticsCompanyService;
     private final OShopService shopService;

@@ -1,6 +1,8 @@
 package cn.qihangerp.module.open.tao.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -19,6 +21,7 @@ public class TaoOrder implements Serializable {
     /**
      * 主键id
      */
+    @TableId(type = IdType.AUTO)
     private String id;
 
     /**
