@@ -39,7 +39,7 @@ import java.util.Date;
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/open-api/tao/order")
+@RequestMapping("/tao/order")
 public class TaoOrderApiController {
     private static Logger log = LoggerFactory.getLogger(TaoOrderApiController.class);
 
