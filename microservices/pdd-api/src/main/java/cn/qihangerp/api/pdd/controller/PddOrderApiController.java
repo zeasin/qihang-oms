@@ -182,7 +182,7 @@ public class PddOrderApiController {
                 pullLasttimeService.updateById(updateLasttime);
             }
         }
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         OShopPullLogs logs = new OShopPullLogs();
         logs.setShopType(EnumShopType.PDD.getIndex());
         logs.setShopId(req.getShopId());

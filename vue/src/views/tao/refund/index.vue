@@ -350,7 +350,8 @@ export default {
             // return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
           }else{
             this.$modal.msgSuccess(JSON.stringify(response));
-
+            this.getList()
+            this.pullLoading =false
           }
           this.pullLoading = false
         })

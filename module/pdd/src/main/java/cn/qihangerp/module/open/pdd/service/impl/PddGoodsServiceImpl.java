@@ -71,14 +71,19 @@ public class PddGoodsServiceImpl extends ServiceImpl<PddGoodsMapper, PddGoods>
                 item.setThumbUrl(goods.getThumbUrl());
                 item.setShopId(shopId);
                 item.setCreateTime(new Date());
+                Long erpGoodsId = 0L;
+                Long erpGoodsSkuId = 0L;
+
                 // 根据OuterId查找ERP系统中的skuid
                 if(StringUtils.isNotEmpty(item.getOuterId())) {
                     List<OGoodsSku> oGoodsSkus = goodsSkuMapper.selectList(new LambdaQueryWrapper<OGoodsSku>().eq(OGoodsSku::getSkuCode, item.getOuterId()));
                     if(oGoodsSkus!=null && !oGoodsSkus.isEmpty()){
-                        item.setErpGoodsId(Long.parseLong(oGoodsSkus.get(0).getGoodsId()));
-                        item.setErpGoodsSkuId(Long.parseLong(oGoodsSkus.get(0).getId()));
+                        erpGoodsId = Long.parseLong(oGoodsSkus.get(0).getGoodsId());
+                        erpGoodsSkuId = Long.parseLong(oGoodsSkus.get(0).getId());
                     }
                 }
+                item.setErpGoodsId(erpGoodsId);
+                item.setErpGoodsSkuId(erpGoodsSkuId);
                 skuMapper.insert(item);
             }
         }

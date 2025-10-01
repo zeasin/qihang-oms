@@ -99,7 +99,7 @@
           </template>
       </el-table-column>
       <el-table-column label="SKU属性" align="left" prop="propertiesName" />
-      <el-table-column label="商品库SkuId" align="center" prop="ogoodsSkuId" />
+      <el-table-column label="商品库SkuId" align="center" prop="erpGoodsSkuId" />
 <!--      <el-table-column label="外部ERP商品SKU ID" align="center" prop="outerErpSkuId" />-->
 <!--      <el-table-column label="快递单号" align="center" prop="logisticsCode" />-->
 
@@ -276,6 +276,7 @@ export default {
           }else{
             this.$modal.msgSuccess(JSON.stringify(response));
             this.getList()
+            this.pullLoading =false
           }
 
 

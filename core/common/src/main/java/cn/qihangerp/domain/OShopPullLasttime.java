@@ -3,6 +3,9 @@ package cn.qihangerp.domain;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -14,7 +17,8 @@ public class OShopPullLasttime implements Serializable {
     /**
      * 
      */
-    private Integer id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     /**
      * 店铺id
