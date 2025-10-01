@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 01/10/2025 11:28:30
+ Date: 01/10/2025 11:33:46
 */
 
 SET NAMES utf8mb4;
@@ -1255,7 +1255,7 @@ CREATE TABLE `o_shop_pull_logs`  (
   `pull_time` datetime NULL DEFAULT NULL COMMENT '拉取时间',
   `duration` bigint NULL DEFAULT NULL COMMENT '耗时（毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1973227577492172803 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺更新日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1973228990511247362 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺更新日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_shop_pull_logs
@@ -1276,6 +1276,7 @@ INSERT INTO `o_shop_pull_logs` VALUES (1973227309039939586, 1009, 300, 'ORDER', 
 INSERT INTO `o_shop_pull_logs` VALUES (1973227384306724865, 1007, 100, 'REFUND', '主动拉取', '{startTime:2025-09-30T11:24:03.025533400,endTime:2025-10-01T11:24:03.025533400}', '{insert:4,update:0,fail:0}', '2025-10-01 11:24:03', 849);
 INSERT INTO `o_shop_pull_logs` VALUES (1973227551042891778, 1007, 100, 'REFUND', '主动拉取', '{startTime:2025-10-01T10:24:03,endTime:2025-10-01T11:24:43.246316700}', '{insert:0,update:1,fail:0}', '2025-10-01 11:24:43', 402);
 INSERT INTO `o_shop_pull_logs` VALUES (1973227577492172802, 1007, 100, 'REFUND', '主动拉取', '{startTime:2025-10-01T10:24:43,endTime:2025-10-01T11:24:49.599735900}', '{insert:0,update:1,fail:0}', '2025-10-01 11:24:50', 345);
+INSERT INTO `o_shop_pull_logs` VALUES (1973228990511247361, 1009, 400, 'REFUND', '主动拉取退款', '{startTime:2025-10-01T11:00:26.567753200,endTime:2025-10-01T11:30:26.567753200}', '结束时间和开始时间范围太大，请缩小范围', '2025-10-01 11:30:27', 254);
 
 -- ----------------------------
 -- Table structure for o_shop_region
@@ -3238,7 +3239,7 @@ INSERT INTO `sys_menu` VALUES (2090, '角色管理', 5, 2, 'role', 'system/role/
 INSERT INTO `sys_menu` VALUES (2091, '部门管理', 5, 3, 'dept', 'system/dept/index', NULL, 1, 0, 'C', '0', '0', NULL, 'tree', 'admin', '2024-03-31 12:42:57', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2092, '售后处理记录', 2, 5, 'processing', 'afterSale/index', NULL, 1, 0, 'C', '0', '0', '', 'documentation', 'admin', '2024-04-06 17:27:03', 'admin', '2024-07-28 18:59:41', '');
 INSERT INTO `sys_menu` VALUES (2093, '订单明细', 1, 2, 'order_item_list', 'order/item_list', NULL, 1, 0, 'C', '0', '0', NULL, 'chart', 'admin', '2024-04-06 18:58:06', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2094, '电子面单发货', 2087, 1, 'print', 'shipping/ewaybillPrint/index', NULL, 1, 0, 'C', '0', '0', '', 'edit', 'admin', '2024-07-20 11:04:54', 'admin', '2025-06-01 14:26:27', '');
+INSERT INTO `sys_menu` VALUES (2094, '打单发货', 2087, 1, 'print', 'shipping/ewaybillPrint/index', NULL, 1, 0, 'C', '0', '0', '', 'edit', 'admin', '2024-07-20 11:04:54', 'admin', '2025-10-01 03:32:45', '');
 INSERT INTO `sys_menu` VALUES (2096, '备货单', 2087, 2, 'stockup', 'shipping/stockup', NULL, 1, 0, 'C', '0', '0', '', 'email', 'admin', '2024-07-20 11:53:24', 'admin', '2025-06-02 09:10:24', '');
 INSERT INTO `sys_menu` VALUES (2097, '物流跟踪', 2087, 5, 'logistics', 'shipping/stocking/index', NULL, 1, 0, 'C', '0', '1', '', 'list', 'admin', '2024-07-20 11:54:18', 'admin', '2025-05-25 14:32:27', '');
 INSERT INTO `sys_menu` VALUES (2099, '私域订单管理', 1, 10, 'offline_order_list', 'order/private/index', NULL, 1, 0, 'C', '0', '1', '', 'checkbox', 'admin', '2024-07-27 17:33:03', 'admin', '2025-05-24 13:10:53', '');
@@ -3257,7 +3258,7 @@ INSERT INTO `sys_menu` VALUES (2115, '库存管理', 4, 0, 'goods_inventory', 's
 INSERT INTO `sys_menu` VALUES (2116, '商品出库管理', 2105, 20, 'stock_out', 'stock/stockOut/index', NULL, 1, 0, 'C', '0', '0', '', 'guide', 'admin', '2024-09-21 20:44:46', 'admin', '2025-03-24 13:46:42', '');
 INSERT INTO `sys_menu` VALUES (2117, '仓位管理', 2105, 91, 'position', 'stock/warehouse/position', NULL, 1, 0, 'C', '1', '0', '', '404', 'admin', '2024-09-22 11:52:18', 'admin', '2025-03-24 13:47:04', '');
 INSERT INTO `sys_menu` VALUES (2118, '新建商品入库单', 2105, 11, 'stock_in/create', 'stock/stockIn/create.vue', NULL, 1, 0, 'C', '1', '0', '', '404', 'admin', '2024-09-22 14:49:40', 'admin', '2025-03-24 13:35:30', '');
-INSERT INTO `sys_menu` VALUES (2129, '发货&分配发货', 2087, 0, 'manual_shipment', 'shipping/shipment/index', NULL, 1, 0, 'C', '0', '0', '', 'checkbox', 'admin', '2025-06-01 13:36:57', 'admin', '2025-06-01 13:39:59', '');
+INSERT INTO `sys_menu` VALUES (2129, '订单发货', 2087, 0, 'manual_shipment', 'shipping/shipment/index', NULL, 1, 0, 'C', '0', '0', '', 'checkbox', 'admin', '2025-06-01 13:36:57', 'admin', '2025-10-01 03:32:34', '');
 
 -- ----------------------------
 -- Table structure for sys_oss
