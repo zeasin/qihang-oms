@@ -44,12 +44,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否关联" prop="hasLink">
-        <el-select v-model="queryParams.hasLink" placeholder="是否关联" clearable @change="handleQuery">
-          <el-option label="未关联" value="0"></el-option>
-          <el-option label="已关联" value="1"></el-option>
-        </el-select>
-      </el-form-item>
+<!--      <el-form-item label="是否关联" prop="hasLink">-->
+<!--        <el-select v-model="queryParams.hasLink" placeholder="是否关联" clearable @change="handleQuery">-->
+<!--          <el-option label="未关联" value="0"></el-option>-->
+<!--          <el-option label="已关联" value="1"></el-option>-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -246,6 +246,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      this.pullLoading = false
       this.queryParams.pageNum = 1;
       this.getList();
     },

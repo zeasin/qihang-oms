@@ -236,7 +236,8 @@ export default {
       },
       // 表单参数
       form: {
-        type:null
+        type:null,
+        status:'1'
       },
       // 获取token表单
       tokenForm:{
@@ -250,6 +251,7 @@ export default {
         type: [{ required: true, message: "请选择平台", trigger: "change" }],
         sellerId: [{ required: true, message: "不能为空", trigger: "change" }],
         code: [{ required: true, message: "不能为空", trigger: "change" }],
+        status: [{ required: true, message: "不能为空", trigger: "change" }],
       }
     };
   },
@@ -279,6 +281,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
+        status:'1'
       };
       this.resetForm("form");
     },

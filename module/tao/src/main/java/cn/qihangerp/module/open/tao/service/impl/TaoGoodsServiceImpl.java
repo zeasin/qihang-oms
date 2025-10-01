@@ -63,6 +63,7 @@ public class TaoGoodsServiceImpl extends ServiceImpl<TaoGoodsMapper, TaoGoods>
             if(goods.getSkus()!=null) {
                 for (TaoGoodsSku sku : goods.getSkus()) {
                     sku.setTaoGoodsId(goods.getId());
+                    sku.setShopId(goods.getShopId());
                     // 根据OuterId查找ERP系统中的skuid
                     if(StringUtils.isNotEmpty(sku.getOuterId())) {
                         List<OGoodsSku> oGoodsSkus = goodsSkuMapper.selectList(new LambdaQueryWrapper<OGoodsSku>().eq(OGoodsSku::getSkuCode, sku.getOuterId()));
@@ -84,6 +85,7 @@ public class TaoGoodsServiceImpl extends ServiceImpl<TaoGoodsMapper, TaoGoods>
             if(goods.getSkus()!=null) {
                 for (TaoGoodsSku sku : goods.getSkus()) {
                     sku.setTaoGoodsId(goods.getId());
+                    sku.setShopId(goods.getShopId());
                     // 根据OuterId查找ERP系统中的skuid
                     if(StringUtils.isNotEmpty(sku.getOuterId())) {
                         List<OGoodsSku> oGoodsSkus = goodsSkuMapper.selectList(new LambdaQueryWrapper<OGoodsSku>().eq(OGoodsSku::getSkuCode, sku.getOuterId()));
