@@ -44,12 +44,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-<!--      <el-form-item label="是否关联" prop="hasLink">-->
-<!--        <el-select v-model="queryParams.hasLink" placeholder="是否关联" clearable @change="handleQuery">-->
-<!--          <el-option label="未关联" value="0"></el-option>-->
-<!--          <el-option label="已关联" value="1"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
+      <el-form-item label="是否关联" prop="hasLink">
+        <el-select v-model="queryParams.hasLink" placeholder="是否关联" clearable @change="handleQuery">
+          <el-option label="未关联" value="0"></el-option>
+          <el-option label="已关联" value="1"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -99,7 +99,7 @@
           </template>
       </el-table-column>
       <el-table-column label="SKU属性" align="left" prop="propertiesName" />
-      <el-table-column label="商品库SkuId" align="center" prop="erpGoodsSkuId" />
+      <el-table-column label="商品库SkuId" align="center" prop="ogoodsSkuId" />
 <!--      <el-table-column label="外部ERP商品SKU ID" align="center" prop="outerErpSkuId" />-->
 <!--      <el-table-column label="快递单号" align="center" prop="logisticsCode" />-->
 
@@ -246,7 +246,6 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.pullLoading = false
       this.queryParams.pageNum = 1;
       this.getList();
     },
@@ -276,7 +275,6 @@ export default {
           }else{
             this.$modal.msgSuccess(JSON.stringify(response));
             this.getList()
-            this.pullLoading =false
           }
 
 

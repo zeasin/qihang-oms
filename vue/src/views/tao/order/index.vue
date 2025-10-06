@@ -188,7 +188,15 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button style="padding-left: 6px;padding-right: 6px;"
+          <el-button style="padding-right: 6px;padding-left: 6px"
+                     v-if="scope.row.auditStatus === 0"
+                     size="mini"
+                     type="success" plain
+                     icon="el-icon-success"
+                     @click="handleConfirm(scope.row)"
+                     v-hasPermi="['dou:order:edit']"
+          >确认订单</el-button>
+          <el-button style="padding-right: 6px;padding-left: 6px"
             :loading="pullLoading"
             size="mini"
             icon="el-icon-refresh"
@@ -205,23 +213,136 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+    <!-- 订单审核、订单详情对话框 -->
+    <el-dialog :title="detailTitle" :visible.sync="detailOpen" width="1000px" append-to-body >
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px" inline>
+        <el-descriptions title="订单信息">
+          <el-descriptions-item label="ID">{{form.id}}</el-descriptions-item>
+          <el-descriptions-item label="订单号">{{form.tid}}</el-descriptions-item>
+          <el-descriptions-item label="店铺">
+            {{ shopList.find(x=>x.id === form.shopId)?shopList.find(x=>x.id === form.shopId).name:'' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="订单类型">
+            <el-tag size="small" v-if="form.type==='fixed'">一口价订单</el-tag>
+          </el-descriptions-item>
 
+          <el-descriptions-item label="订单状态">
+            <el-tag v-if="form.status === 'WAIT_BUYER_PAY'">等待买家付款</el-tag>
+            <el-tag v-if="form.status === 'SELLER_CONSIGNED_PART'">卖家部分发货</el-tag>
+            <el-tag v-if="form.status === 'WAIT_SELLER_SEND_GOODS'">待发货</el-tag>
+            <el-tag v-if="form.status === 'WAIT_BUYER_CONFIRM_GOODS'">待买家收货</el-tag>
+            <el-tag v-if="form.status === 'TRADE_FINISHED'">交易成功</el-tag>
+            <el-tag v-if="form.status === 'TRADE_CLOSED'">交易自动关闭</el-tag>
+            <el-tag v-if="form.status === 'TRADE_CLOSED_BY_TAOBAO'">关闭交易</el-tag>
+            <el-tag v-if="form.status === 'PAID_FORBID_CONSIGN'">禁止发货</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="是否有买家留言">
+            <el-tag size="small" v-if="form.hasBuyerMessage ==='false' ">否</el-tag>
+            <el-tag size="small" v-if="form.hasBuyerMessage ==='true' ">是</el-tag>
+          </el-descriptions-item>
+
+
+          <el-descriptions-item label="买家备注">
+            {{form.buyerMessage}}
+          </el-descriptions-item>
+          <el-descriptions-item label="卖家备注">
+            {{form.sellerMemo}}
+          </el-descriptions-item>
+
+          <el-descriptions-item label="创建时间">{{ form.created }}</el-descriptions-item>
+          <el-descriptions-item label="支付时间"> {{form.payTime}}</el-descriptions-item>
+          <el-descriptions-item label="更新时间"> {{ form.modified }}</el-descriptions-item>
+        </el-descriptions>
+        <el-descriptions title="付款信息">
+
+          <el-descriptions-item label="优惠金额">{{amountFormatter(null,null,form.discountFee) }}</el-descriptions-item>
+          <el-descriptions-item label="手工调整金额">{{amountFormatter(null,null,form.adjustFee) }}</el-descriptions-item>
+          <el-descriptions-item label="运费">{{amountFormatter(null,null,form.postFee) }}</el-descriptions-item>
+          <el-descriptions-item label="订单金额">{{amountFormatter(null,null,form.totalFee) }}</el-descriptions-item>
+          <el-descriptions-item label="支付金额"> {{ amountFormatter(null,null,form.payment) }}</el-descriptions-item>
+        </el-descriptions>
+
+
+        <el-descriptions title="收货信息">
+          <el-descriptions-item label="收件人姓名">{{form.receiverName}}</el-descriptions-item>
+          <el-descriptions-item label="收件人手机号">{{form.receiverMobile}}</el-descriptions-item>
+          <el-descriptions-item label="省市区">{{form.receiverState}}{{form.receiverCity}}{{form.receiverDistrict}}{{form.receiverTown}}</el-descriptions-item>
+          <el-descriptions-item label="详细地址">{{form.receiverAddress}}</el-descriptions-item>
+        </el-descriptions>
+        <!--        <el-descriptions title="发货信息">-->
+        <!--          &lt;!&ndash; <el-descriptions-item label="发货方式">-->
+        <!--            <el-tag v-if="form.shipType === 1"  type="danger">供应商代发</el-tag>-->
+        <!--              <el-tag v-if="form.shipType === 0" type="danger">仓库发货</el-tag>-->
+        <!--          </el-descriptions-item> &ndash;&gt;-->
+        <!--          <el-descriptions-item label="物流公司">{{form.logisticsCompany}}</el-descriptions-item>-->
+        <!--          <el-descriptions-item label="物流单号">{{form.logisticsCode}}</el-descriptions-item>-->
+        <!--          <el-descriptions-item label="发货时间">{{form.logisticsTime}}</el-descriptions-item>-->
+        <!--        </el-descriptions>-->
+        <el-divider content-position="center">订单商品</el-divider>
+        <el-table :data="form.items"  style="margin-bottom: 10px;">
+          <el-table-column label="序号" align="center" type="index" width="50"/>
+
+          <el-table-column label="图片" width="50">
+            <template slot-scope="scope">
+              <el-image style="width: 45px; height: 45px" :src="scope.row.picPath"></el-image>
+            </template>
+          </el-table-column>
+          <el-table-column label="标题" prop="title" ></el-table-column>
+          <el-table-column label="规格" prop="skuPropertiesName" width="150"></el-table-column>
+          <el-table-column label="sku编码" prop="outerSkuId"></el-table-column>
+          <el-table-column label="单价" prop="price" :formatter="amountFormatter"></el-table-column>
+          <el-table-column label="数量" prop="num"></el-table-column>
+          <el-table-column label="实付金额" prop="payment" :formatter="amountFormatter"></el-table-column>
+        </el-table>
+
+        <el-divider content-position="center"  v-if="isAudit" >收件人</el-divider>
+
+        <el-form-item label="收件人姓名" prop="receiverName" v-if="isAudit">
+          <el-input v-model="form.receiverName" placeholder="请输入收件人姓名" style="width:350px" />
+        </el-form-item>
+        <el-form-item label="收件人电话" prop="receiverMobile" v-if="isAudit">
+          <el-input v-model="form.receiverMobile" placeholder="请输入收件人电话" style="width:350px" />
+        </el-form-item>
+        <el-form-item label="省市区" prop="provinces" v-if="isAudit">
+          <el-cascader style="width:350px"
+                       size="large"
+                       :options="pcaTextArr"
+                       v-model="form.provinces">
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="receiverAddress" v-if="isAudit">
+          <el-input v-model="form.receiverAddress" placeholder="请输入收件地址" style="width:350px" />
+        </el-form-item>
+        <!--        <el-form-item label="发货方式" prop="shipType" v-if="isAudit">-->
+        <!--          <el-select v-model="form.shipType" placeholder="发货类型" style="width:350px">-->
+        <!--            <el-option label="供应商代发" value="1"></el-option>-->
+        <!--            <el-option label="仓库发货" value="0"></el-option>-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
+
+      </el-form>
+      <div slot="footer" class="dialog-footer" v-if="isAudit">
+        <el-button type="primary" @click="submitConfirmForm" v-if="form.auditStatus===0">确认发货</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import {listOrder, pullOrder, getOrder, pushOms, pullOrderDetail} from "@/api/tao/order";
+import {listOrder, pullOrder, getOrder, pushOms, pullOrderDetail,confirmOrder} from "@/api/tao/order";
 import { listShop } from "@/api/shop/shop";
-import { searchSku } from "@/api/goods/goods";
 import {MessageBox} from "element-ui";
 import {isRelogin} from "../../../utils/request";
 import Clipboard from "clipboard";
-
+import {pcaTextArr} from "element-china-area-data";
+import {float} from "quill/ui/icons";
 export default {
   name: "OrderTao",
   data() {
     return {
+      pcaTextArr,
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -233,6 +354,8 @@ export default {
       single: true,
       detailOpen: false,
       multiple: true,
+      isAudit: false,
+      detailTitle:'',
       // 总条数
       total: 0,
       // 淘宝订单表格数据
@@ -253,6 +376,10 @@ export default {
       form: {
       },
       rules: {
+        receiverName:[{ required: true, message: "不能为空", trigger: "blur" }],
+        receiverMobile:[{ required: true, message: "不能为空", trigger: "blur" }],
+        provinces:[{ required: true, message: "不能为空", trigger: "blur" }],
+        receiverAddress:[{ required: true, message: "不能为空", trigger: "blur" }],
       }
     };
   },
@@ -283,6 +410,7 @@ export default {
       })
     },
     amountFormatter(row, column, cellValue, index) {
+      cellValue = parseFloat(cellValue)
       return '￥' + cellValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
     },
     /** 查询淘宝订单列表 */
@@ -318,6 +446,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      this.pullLoading = false
       this.queryParams.pageNum = 1;
       this.getList();
     },
@@ -364,8 +493,6 @@ export default {
             // return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
           }else{
             this.$modal.msgSuccess(JSON.stringify(response));
-            this.getList()
-            this.pullLoading =false
           }
           this.pullLoading = false
         })
@@ -395,7 +522,6 @@ export default {
       const id = row.id || this.ids
       getOrder(id).then(response => {
         this.form = response.data;
-        this.goodsList = response.data.taoOrderItemList;
         this.detailOpen = true;
         this.detailTitle = "订单详情";
       });
@@ -417,6 +543,48 @@ export default {
         // this.getList();
         this.$modal.msgSuccess("推送成功");
       }).catch(() => {});
+    },
+    handleConfirm(row) {
+      this.reset();
+      const id = row.id || this.ids
+      getOrder(id).then(response => {
+        this.form = response.data;
+        this.form.provinces = []
+        this.form.provinces.push(response.data.receiverState)
+        this.form.provinces.push(response.data.receiverCity)
+        this.form.provinces.push(response.data.receiverDistrict)
+        this.detailOpen = true;
+        this.detailTitle = "确认订单";
+        this.isAudit = true
+      });
+    },
+    submitConfirmForm(){
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          const form = {
+            orderId:this.form.id,
+            province:this.form.provinces[0],
+            city:this.form.provinces[1],
+            town:this.form.provinces[2],
+            address:this.form.receiverAddress,
+            receiver:this.form.receiverName,
+            mobile:this.form.receiverMobile
+          }
+
+          confirmOrder(form).then(response => {
+            if(response.code===200){
+              this.$modal.msgSuccess("订单确认成功");
+              this.detailOpen = false;
+              this.isAudit = false
+              this.getList();
+            }else{
+              this.$modal.msgError(response.msg);
+            }
+
+          });
+
+        }
+      })
     },
   }
 };

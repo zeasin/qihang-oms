@@ -37,12 +37,12 @@
           </el-option>
         </el-select>
       </el-form-item>
-<!--      <el-form-item label="是否关联" prop="hasLink">-->
-<!--        <el-select v-model="queryParams.hasLink" placeholder="是否关联" clearable @change="handleQuery">-->
-<!--          <el-option label="未关联" value="0"></el-option>-->
-<!--          <el-option label="已关联" value="1"></el-option>-->
-<!--        </el-select>-->
-<!--      </el-form-item>-->
+      <el-form-item label="是否关联" prop="hasLink">
+        <el-select v-model="queryParams.hasLink" placeholder="是否关联" clearable @change="handleQuery">
+          <el-option label="未关联" value="0"></el-option>
+          <el-option label="已关联" value="1"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -88,7 +88,7 @@
 <!--        </template>-->
 <!--      </el-table-column>-->
       <el-table-column label="SKU属性" align="center" prop="spec" ></el-table-column>
-      <el-table-column label="商品库SkuId" align="center" prop="erpGoodsSkuId" />
+      <el-table-column label="商品库SkuId" align="center" prop="ogoodsSkuId" />
       <el-table-column label="状态" align="center" prop="isSkuOnsale" >
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.isSkuOnsale === 1">上架中</el-tag>
