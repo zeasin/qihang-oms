@@ -395,7 +395,7 @@ public class DouOrder implements Serializable {
     /**
      * 系统店铺id
      */
-    private Integer sShopId;
+    private Long sShopId;
 
     /**
      * 第一次拉取时间

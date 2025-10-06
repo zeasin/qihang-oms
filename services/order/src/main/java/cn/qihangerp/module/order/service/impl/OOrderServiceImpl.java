@@ -111,8 +111,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
 //                queryWrapper.gt(OOrder::getErpPushResult, 200);
 //            }
 //        }
-        pageQuery.setOrderByColumn("order_time");
-        pageQuery.setIsAsc("desc");
+//        pageQuery.setOrderByColumn("order_time");
+//        pageQuery.setIsAsc("desc");
         Page<OOrder> pages = orderMapper.selectPage(pageQuery.build(), queryWrapper);
 
         // 查询子订单
