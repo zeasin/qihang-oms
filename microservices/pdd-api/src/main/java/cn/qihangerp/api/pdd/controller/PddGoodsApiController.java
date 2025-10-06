@@ -2,6 +2,7 @@ package cn.qihangerp.api.pdd.controller;
 
 
 import cn.qihangerp.api.pdd.PddApiCommon;
+import cn.qihangerp.api.pdd.PddPullRequest;
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.enums.EnumShopType;
 import cn.qihangerp.common.enums.HttpStatus;
@@ -17,7 +18,6 @@ import cn.qihangerp.open.common.ApiResultVo;
 
 import cn.qihangerp.open.pdd.PddGoodsApiHelper;
 import cn.qihangerp.open.pdd.model.GoodsResultVo;
-import cn.qihangerp.sdk.pdd.PullRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +48,7 @@ public class PddGoodsApiController {
      * @throws Exception
      */
     @RequestMapping(value = "/pull_goods", method = RequestMethod.POST)
-    public AjaxResult pullSkuList(@RequestBody PullRequest params) throws Exception {
+    public AjaxResult pullSkuList(@RequestBody PddPullRequest params) throws Exception {
         if (params.getShopId() == null || params.getShopId() <= 0) {
             return AjaxResult.error(HttpStatus.PARAMS_ERROR, "参数错误，没有店铺Id");
         }

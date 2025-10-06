@@ -2,6 +2,7 @@ package cn.qihangerp.api.dou.controller;
 
 
 import cn.qihangerp.api.dou.DouApiCommon;
+import cn.qihangerp.api.dou.DouPullRequest;
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.common.enums.EnumShopType;
@@ -21,7 +22,6 @@ import cn.qihangerp.open.dou.DouOrderApiHelper;
 import cn.qihangerp.open.dou.DouTokenApiHelper;
 import cn.qihangerp.open.dou.model.Token;
 import cn.qihangerp.open.dou.model.order.Order;
-import cn.qihangerp.sdk.dou.PullRequest;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class DouOrderApiController {
      */
     @PostMapping("/pull_order")
     @ResponseBody
-    public AjaxResult pullOrder(@RequestBody PullRequest req)   {
+    public AjaxResult pullOrder(@RequestBody DouPullRequest req)   {
         log.info("/**************增量拉取dou订单****************/");
         if (req.getShopId() == null || req.getShopId() <= 0) {
             return AjaxResult.error(HttpStatus.PARAMS_ERROR, "参数错误，没有店铺Id");
