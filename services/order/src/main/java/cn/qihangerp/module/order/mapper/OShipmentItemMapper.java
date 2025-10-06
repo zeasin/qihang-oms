@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2025-06-01 23:25:11
 * @Entity cn.qihangerp.module.order.domain.ErpShipmentItem
 */
-public interface ErpShipmentItemMapper extends BaseMapper<OShipmentItem> {
+public interface OShipmentItemMapper extends BaseMapper<OShipmentItem> {
 
 }
 

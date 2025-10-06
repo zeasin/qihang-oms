@@ -4,12 +4,12 @@ import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.model.entity.OShipment;
 import cn.qihangerp.model.entity.OShipmentItem;
-import cn.qihangerp.module.order.mapper.ErpShipmentItemMapper;
+import cn.qihangerp.module.order.mapper.OShipmentItemMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.qihangerp.module.order.service.ErpShipmentService;
-import cn.qihangerp.module.order.mapper.ErpShipmentMapper;
+import cn.qihangerp.module.order.mapper.OShipmentMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,9 +21,9 @@ import org.springframework.util.StringUtils;
 */
 @AllArgsConstructor
 @Service
-public class ErpShipmentServiceImpl extends ServiceImpl<ErpShipmentMapper, OShipment>
+public class ErpShipmentServiceImpl extends ServiceImpl<OShipmentMapper, OShipment>
     implements ErpShipmentService{
-    private final ErpShipmentItemMapper shipmentItemMapper;
+    private final OShipmentItemMapper shipmentItemMapper;
     @Override
     public PageResult<OShipment> queryPageList(OShipment shipping, PageQuery pageQuery) {
         LambdaQueryWrapper<OShipment> queryWrapper = new LambdaQueryWrapper<OShipment>()

@@ -53,8 +53,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
     private final OOrderShipListMapper orderShipListMapper;
     private final OOrderShipListItemMapper orderShipListItemMapper;
 
-    private final ErpShipmentMapper shipmentMapper;
-    private final ErpShipmentItemMapper shipmentItemMapper;
+    private final OShipmentMapper shipmentMapper;
+    private final OShipmentItemMapper shipmentItemMapper;
 
     private final OLogisticsCompanyMapper oLogisticsCompanyMapper;
 
@@ -330,9 +330,9 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
                 new LambdaQueryWrapper<OOrderItem>()
                         .eq(OOrderItem::getOrderId, erpOrder.getId())
                         .eq(OOrderItem::getShipStatus,0)
-                        .eq(OOrderItem::getShipper,0)
+                        .eq(OOrderItem::getShipType,0)
         );
-        if(oOrderItems==null) return ResultVo.error("订单 item 数据错误，无法发货！");
+        if(oOrderItems==null||oOrderItems.isEmpty()) return ResultVo.error("订单 item 数据错误，无法发货！");
 
         // 添加到备货单
         OOrderShipList shipList = new OOrderShipList();
