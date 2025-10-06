@@ -5,7 +5,7 @@ import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.TableDataInfo;
-import cn.qihangerp.domain.SysTask;
+import cn.qihangerp.model.entity.SysTask;
 import cn.qihangerp.module.service.SysTaskService;
 import cn.qihangerp.module.service.SysTaskLogsService;
 import cn.qihangerp.security.common.BaseController;

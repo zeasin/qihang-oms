@@ -4,9 +4,9 @@ package cn.qihangerp.api.goods.controller;
 
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.TableDataInfo;
-import cn.qihangerp.module.goods.domain.OGoodsCategory;
-import cn.qihangerp.module.goods.domain.OGoodsCategoryAttribute;
-import cn.qihangerp.module.goods.domain.OGoodsCategoryAttributeValue;
+import cn.qihangerp.model.entity.OGoodsCategory;
+import cn.qihangerp.model.entity.OGoodsCategoryAttribute;
+import cn.qihangerp.model.entity.OGoodsCategoryAttributeValue;
 import cn.qihangerp.module.goods.service.OGoodsCategoryAttributeService;
 import cn.qihangerp.module.goods.service.OGoodsCategoryAttributeValueService;
 import cn.qihangerp.module.goods.service.OGoodsCategoryService;

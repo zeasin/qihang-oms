@@ -1,6 +1,5 @@
 package cn.qihangerp.api.tao.controller;
 
-
 import cn.qihangerp.api.tao.TaoApiCommon;
 import cn.qihangerp.api.tao.TaoRequest;
 import cn.qihangerp.common.AjaxResult;
@@ -10,18 +9,15 @@ import cn.qihangerp.common.enums.EnumShopType;
 import cn.qihangerp.common.enums.HttpStatus;
 import cn.qihangerp.common.utils.DateUtils;
 import cn.qihangerp.common.utils.StringUtils;
-import cn.qihangerp.domain.OShopPullLasttime;
-import cn.qihangerp.domain.OShopPullLogs;
+import cn.qihangerp.model.entity.OShopPullLasttime;
+import cn.qihangerp.model.entity.OShopPullLogs;
 import cn.qihangerp.module.open.tao.domain.TaoGoods;
 import cn.qihangerp.module.open.tao.domain.TaoGoodsSku;
 import cn.qihangerp.module.open.tao.service.TaoGoodsService;
-
 import cn.qihangerp.module.service.OShopPullLasttimeService;
 import cn.qihangerp.module.service.OShopPullLogsService;
 import cn.qihangerp.open.common.ApiResultVo;
-
 import cn.qihangerp.open.tao.TaoGoodsApiHelper;
-
 import cn.qihangerp.open.tao.response.TaoGoodsResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;

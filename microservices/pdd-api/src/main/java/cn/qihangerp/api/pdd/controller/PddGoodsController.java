@@ -1,10 +1,7 @@
 package cn.qihangerp.api.pdd.controller;
 
-
 import cn.qihangerp.common.*;
 import cn.qihangerp.domain.bo.LinkErpGoodsSkuBo;
-import cn.qihangerp.module.goods.domain.OGoodsSku;
-import cn.qihangerp.module.goods.service.OGoodsSkuService;
 import cn.qihangerp.module.open.pdd.domain.PddGoods;
 import cn.qihangerp.module.open.pdd.domain.PddGoodsSku;
 import cn.qihangerp.module.open.pdd.domain.bo.PddGoodsBo;
@@ -22,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class PddGoodsController extends BaseController {
     private final PddGoodsService goodsService;
     private final PddGoodsSkuService skuService;
-    private final OGoodsSkuService oGoodsSkuService;
+
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public TableDataInfo goodsList(PddGoodsBo bo, PageQuery pageQuery) {
         PageResult<PddGoods> result = goodsService.queryPageList(bo, pageQuery);

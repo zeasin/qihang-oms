@@ -1,10 +1,7 @@
 package cn.qihangerp.api.wei.controller;
 
-
 import cn.qihangerp.common.*;
 import cn.qihangerp.domain.bo.LinkErpGoodsSkuBo;
-import cn.qihangerp.module.goods.domain.OGoodsSku;
-import cn.qihangerp.module.goods.service.OGoodsSkuService;
 import cn.qihangerp.module.open.wei.domain.OmsWeiGoodsSku;
 import cn.qihangerp.module.open.wei.service.OmsWeiGoodsSkuService;
 import cn.qihangerp.security.common.BaseController;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class WeiGoodsController extends BaseController {
     private final OmsWeiGoodsSkuService skuService;
-    private final OGoodsSkuService oGoodsSkuService;
 
     @RequestMapping(value = "/skuList", method = RequestMethod.GET)
     public TableDataInfo skuList(OmsWeiGoodsSku bo, PageQuery pageQuery) {

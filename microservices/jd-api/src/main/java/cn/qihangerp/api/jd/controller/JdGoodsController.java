@@ -1,14 +1,10 @@
 package cn.qihangerp.api.jd.controller;
 
-
 import cn.qihangerp.common.*;
 import cn.qihangerp.domain.bo.LinkErpGoodsSkuBo;
-import cn.qihangerp.module.goods.domain.OGoodsSku;
-import cn.qihangerp.module.goods.service.OGoodsSkuService;
 import cn.qihangerp.module.open.jd.domain.JdGoods;
 import cn.qihangerp.module.open.jd.domain.JdGoodsSku;
 import cn.qihangerp.module.open.jd.domain.bo.JdGoodsBo;
-import cn.qihangerp.module.open.jd.domain.vo.JdGoodsSkuListVo;
 import cn.qihangerp.module.open.jd.service.JdGoodsService;
 import cn.qihangerp.module.open.jd.service.JdGoodsSkuService;
 import cn.qihangerp.security.common.BaseController;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class JdGoodsController extends BaseController {
     private final JdGoodsService goodsService;
     private final JdGoodsSkuService skuService;
-    private final OGoodsSkuService oGoodsSkuService;
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public TableDataInfo goodsList(JdGoodsBo bo, PageQuery pageQuery) {
         PageResult<JdGoods> result = goodsService.queryPageList(bo, pageQuery);

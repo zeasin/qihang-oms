@@ -1,13 +1,12 @@
 package cn.qihangerp.api.jd.controller;
 
-
 import cn.qihangerp.api.jd.JdApiCommon;
 import cn.qihangerp.api.jd.JdPullRequest;
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.enums.EnumShopType;
 import cn.qihangerp.common.enums.HttpStatus;
-import cn.qihangerp.domain.OShopPullLasttime;
-import cn.qihangerp.domain.OShopPullLogs;
+import cn.qihangerp.model.entity.OShopPullLasttime;
+import cn.qihangerp.model.entity.OShopPullLogs;
 import cn.qihangerp.module.open.jd.domain.JdGoodsSku;
 import cn.qihangerp.module.open.jd.service.JdGoodsService;
 import cn.qihangerp.module.service.OShopPullLasttimeService;

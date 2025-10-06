@@ -1,13 +1,10 @@
 package cn.qihangerp.security;
 
-
 import cn.qihangerp.common.ServiceException;
 import cn.qihangerp.common.enums.UserStatus;
 import cn.qihangerp.common.utils.MessageUtils;
 import cn.qihangerp.common.utils.StringUtils;
 import cn.qihangerp.service.ISysUserService;
-
-
 import cn.qihangerp.domain.SysUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.HashSet;
 import java.util.Set;
 

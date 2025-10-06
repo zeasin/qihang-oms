@@ -1,10 +1,7 @@
 package cn.qihangerp.api.tao.controller;
 
-
 import cn.qihangerp.common.*;
 import cn.qihangerp.domain.bo.LinkErpGoodsSkuBo;
-import cn.qihangerp.module.goods.domain.OGoodsSku;
-import cn.qihangerp.module.goods.service.OGoodsSkuService;
 import cn.qihangerp.module.open.tao.domain.TaoGoods;
 import cn.qihangerp.module.open.tao.domain.TaoGoodsSku;
 import cn.qihangerp.module.open.tao.domain.bo.TaoGoodsBo;
@@ -22,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class TaoGoodsController extends BaseController {
     private final TaoGoodsService goodsService;
     private final TaoGoodsSkuService skuService;
-    private final OGoodsSkuService oGoodsSkuService;
+
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public TableDataInfo goodsList(TaoGoodsBo bo, PageQuery pageQuery) {
         PageResult<TaoGoods> result = goodsService.queryPageList(bo, pageQuery);
