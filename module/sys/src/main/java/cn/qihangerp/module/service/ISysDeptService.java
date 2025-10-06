@@ -1,9 +1,6 @@
 package cn.qihangerp.module.service;
 
-
-
-
-import cn.qihangerp.module.domain.SysDept;
+import cn.qihangerp.model.entity.SysDept;
 import cn.qihangerp.module.domain.vo.TreeSelect;
 
 import java.util.List;

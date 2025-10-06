@@ -1,24 +1,20 @@
 package cn.qihangerp.module.service.impl;
 
-
 import cn.qihangerp.common.constant.Constants;
 import cn.qihangerp.common.constant.UserConstants;
 import cn.qihangerp.common.utils.StringUtils;
-
 import cn.qihangerp.domain.SysRole;
 import cn.qihangerp.domain.SysUser;
 import cn.qihangerp.domain.vo.MetaVo;
 import cn.qihangerp.domain.vo.RouterVo;
-import cn.qihangerp.module.domain.SysMenu;
+import cn.qihangerp.model.entity.SysMenu;
 import cn.qihangerp.module.domain.vo.TreeSelect;
 import cn.qihangerp.module.mapper.SysMenuMapper;
 import cn.qihangerp.module.mapper.SysRoleMapper;
 import cn.qihangerp.module.mapper.SysRoleMenuMapper;
 import cn.qihangerp.module.service.ISysMenuService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,7 @@
 package cn.qihangerp.module.order.mapper;
 
-import cn.qihangerp.module.order.domain.ErpShipment;
+
+import cn.qihangerp.model.entity.OShipment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,7 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2025-06-01 23:22:40
 * @Entity cn.qihangerp.module.order.domain.ErpShipment
 */
-public interface ErpShipmentMapper extends BaseMapper<ErpShipment> {
+public interface ErpShipmentMapper extends BaseMapper<OShipment> {
 
 }
 

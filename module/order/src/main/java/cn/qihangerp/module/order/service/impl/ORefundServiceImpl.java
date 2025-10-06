@@ -5,10 +5,10 @@ import cn.qihangerp.module.goods.domain.OGoodsSku;
 
 
 import cn.qihangerp.module.goods.mapper.OGoodsSkuMapper;
-import cn.qihangerp.module.order.domain.OAfterSale;
-import cn.qihangerp.module.order.domain.OOrder;
-import cn.qihangerp.module.order.domain.OOrderItem;
-import cn.qihangerp.module.order.domain.ORefund;
+import cn.qihangerp.model.entity.OAfterSale;
+import cn.qihangerp.model.entity.OOrder;
+import cn.qihangerp.model.entity.OOrderItem;
+import cn.qihangerp.model.entity.ORefund;
 import cn.qihangerp.module.order.domain.bo.RefundProcessingBo;
 import cn.qihangerp.module.order.domain.bo.RefundSearchBo;
 import cn.qihangerp.module.order.mapper.OAfterSaleMapper;

@@ -1,7 +1,7 @@
 package cn.qihangerp.module.order.service;
 
 
-import cn.qihangerp.module.order.domain.ORefund;
+import cn.qihangerp.model.entity.ORefund;
 import cn.qihangerp.module.order.domain.bo.RefundProcessingBo;
 import cn.qihangerp.module.order.domain.bo.RefundSearchBo;
 import com.alibaba.fastjson2.JSONObject;

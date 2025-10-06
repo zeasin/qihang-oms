@@ -1,5 +1,6 @@
 package cn.qihangerp.model.entity;
 
+
 import cn.qihangerp.model.vo.OrderDiscountVo;
 import cn.qihangerp.model.vo.OrderItemListVo;
 import com.baomidou.mybatisplus.annotation.IdType;

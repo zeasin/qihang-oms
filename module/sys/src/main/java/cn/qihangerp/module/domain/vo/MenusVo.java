@@ -1,5 +1,7 @@
 package cn.qihangerp.module.domain.vo;
 
+import cn.qihangerp.model.vo.MenusDetailVo;
+
 import java.util.List;
 
 public class MenusVo {

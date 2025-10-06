@@ -8,7 +8,7 @@ import cn.qihangerp.common.utils.SpringUtils;
 import cn.qihangerp.common.utils.StringUtils;
 import cn.qihangerp.domain.SysRole;
 import cn.qihangerp.domain.SysUser;
-import cn.qihangerp.module.domain.SysDept;
+import cn.qihangerp.model.entity.SysDept;
 import cn.qihangerp.module.domain.vo.TreeSelect;
 import cn.qihangerp.module.mapper.SysDeptMapper;
 import cn.qihangerp.module.mapper.SysRoleMapper;

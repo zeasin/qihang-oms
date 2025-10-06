@@ -25,6 +25,11 @@
             <version>1.0</version>
         </dependency>
         <dependency>
+            <groupId>cn.qihangerp.model</groupId>
+            <artifactId>model</artifactId>
+            <version>1.10.6</version>
+        </dependency>
+        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>3.5.5</version>

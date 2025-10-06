@@ -5,7 +5,7 @@ import cn.qihangerp.common.TableDataInfo;
 import cn.qihangerp.common.utils.StringUtils;
 import cn.qihangerp.domain.SysRole;
 import cn.qihangerp.domain.SysUser;
-import cn.qihangerp.module.domain.SysDept;
+import cn.qihangerp.model.entity.SysDept;
 import cn.qihangerp.module.service.ISysDeptService;
 import cn.qihangerp.module.service.ISysRoleService;
 import cn.qihangerp.security.common.BaseController;

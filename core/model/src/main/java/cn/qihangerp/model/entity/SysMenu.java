@@ -54,7 +54,7 @@ public class SysMenu extends BaseEntity
     private String visible;
     
     /** 菜单状态（0正常 1停用） */
-    private String status="0";
+    private String status;
 
     /** 权限字符串 */
     private String perms;
