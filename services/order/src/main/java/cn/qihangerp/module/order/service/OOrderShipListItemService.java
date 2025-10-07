@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OOrderShipListItemService extends IService<OOrderShipListItem> {
     PageResult<OOrderShipListItem> queryPageList(ShipStockUpBo bo, PageQuery pageQuery);
-
+    PageResult<OOrderShipListItem> queryWarehousePageList(ShipStockUpBo bo, PageQuery pageQuery);
     /**
      * 备货完成
      * @param bo

@@ -1,9 +1,17 @@
 import request from '@/utils/request'
 
 // 备货清单
-export function listShipStockup(query) {
+// export function listShipStockup(query) {
+//   return request({
+//     url: '/ship/stock_up_list',
+//     method: 'get',
+//     params: query
+//   })
+// }
+// 备货清单-仓库发货
+export function listShipStockupWarehouse(query) {
   return request({
-    url: '/ship/stock_up_list',
+    url: '/ship/stock_up_list_by_warehouse',
     method: 'get',
     params: query
   })

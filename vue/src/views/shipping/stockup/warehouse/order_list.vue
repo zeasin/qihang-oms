@@ -1,12 +1,19 @@
 <template>
   <div class="app-container" >
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="店铺" prop="shopId">
-        <el-select v-model="queryParams.shopId" filterable  placeholder="搜索店铺" clearable @change="handleQuery">
+      <el-form-item label="订单号" prop="orderNum">
+        <el-input
+          v-model="queryParams.orderNum"
+          placeholder="请输入订单号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="店铺" prop="shopId" >
+        <el-select v-model="queryParams.shopId" clearable filterable  placeholder="搜索店铺" @change="handleQuery">
           <el-option v-for="item in shopList" :key="item.id" :label="item.name" :value="item.id">
             <span style="float: left">{{ item.name }}</span>
-
-              <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 500">微信小店</span>
+              <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 500">视频号小店</span>
               <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 200">京东POP</span>
               <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 280">京东自营</span>
               <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 100">淘宝天猫</span>
@@ -40,16 +47,16 @@
 <!--          @keyup.enter.native="handleQuery"-->
 <!--        />-->
 <!--      </el-form-item>-->
-      <el-form-item label="订单号" prop="orderNum">
+      <el-form-item label="规格编码" prop="specNum">
         <el-input
-          v-model="queryParams.orderNum"
-          placeholder="请输入订单号"
+          v-model="queryParams.specNum"
+          placeholder="请输入商品规格编码"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="备货状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择" clearable @change="handleQuery">
+        <el-select v-model="queryParams.status" placeholder="请选择" clearable  @change="handleQuery">
         <el-option
           v-for="item in statusList"
           :key="item.value"
@@ -89,9 +96,9 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <el-table v-loading="loading" :data="shippingList" @selection-change="handleSelectionChange"  >
-       <el-table-column type="selection" width="55" v-if="queryParams.status==='0'" align="center" />
-      <!-- <el-table-column label="主键" align="center" prop="id" /> -->
-      <el-table-column label="订单号" align="left" prop="orderNum" width="200px">
+       <el-table-column type="selection" width="55"  align="center" />
+      <!-- <el-table-column label="主键" align="center" prop="id" v-if="queryParams.status==='0'"/> -->
+      <el-table-column label="订单编号" align="left" prop="orderNum" width="200px">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -99,8 +106,12 @@
             icon="el-icon-view"
           >{{scope.row.orderNum}} </el-button>
           <i class="el-icon-copy-document tag-copy" :data-clipboard-text="scope.row.orderNum" @click="copyActiveCode($event,scope.row.orderNum)" ></i>
-          <br/>
-          <el-tag type="info">{{ shopList.find(x=>x.id === scope.row.shopId) ? shopList.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
+
+        </template>
+      </el-table-column>
+       <el-table-column label="店铺" align="left" prop="shopId" width="200">
+        <template slot-scope="scope">
+          <el-tag>{{ shopList.find(x=>x.id === scope.row.shopId)?shopList.find(x=>x.id === scope.row.shopId).name:''  }}</el-tag>
         </template>
       </el-table-column>
       <!-- <el-table-column label="子订单编号" align="center" prop="orderItemId" /> -->
@@ -111,22 +122,22 @@
 <!--      </el-table-column>-->
       <el-table-column label="商品明细" align="left" >
         <template slot="header">
-            <table>
-              <th>
-                <td width="50px">图片</td>
-                <td width="300px" align="left">标题</td>
-                <td width="250" align="left">规格</td>
-                <td width="150" align="left">Sku编码</td>
-                <td width="150" align="left">系统SkuId</td>
-                <td width="50" align="left">数量</td>
-              </th>
-            </table>
+          <table>
+            <th>
+              <td width="50px">图片</td>
+              <td width="300px" align="left">标题</td>
+              <td width="250" align="left">规格</td>
+              <td width="150" align="left">Sku编码</td>
+              <td width="150" align="left">系统SkuId</td>
+              <td width="50" align="left">数量</td>
+            </th>
+          </table>
         </template>
         <template slot-scope="scope">
           <el-table :data="scope.row.children"  :show-header="false" style="width: 100%"  >
             <el-table-column label="图片" width="50px">
               <template slot-scope="scope">
-                    <el-image  style="width: 40px; height: 40px;" :src="scope.row.goodsImg" :preview-src-list="[scope.row.goodsImg]"></el-image>
+                <el-image  style="width: 40px; height: 40px;" :src="scope.row.goodsImg" :preview-src-list="[scope.row.goodsImg]"></el-image>
               </template>
             </el-table-column>
             <el-table-column label="商品" align="left" width="300px" prop="goodsTitle" />
@@ -136,30 +147,38 @@
               </template>
             </el-table-column>
             <el-table-column label="Sku编码" align="left" prop="skuNum" width="150"/>
-                  <el-table-column label="商品SkuId" align="center" prop="skuId" width="150">
-                    <template slot-scope="scope">
-                      <span style="margin-right: 15px">{{scope.row.skuId}}</span>
-<!--                      <a style="color:royalblue" href="javascript:void(0);"-->
-<!--                        v-if="!scope.row.specId||scope.row.specId === 0"-->
-<!--                        size="mini"-->
-<!--                        type="primary"-->
-<!--                        plain-->
-<!--                        @click="handleUpdateLink(scope.row)"-->
-<!--                      >修改商品SkuId</a>-->
-<!--                      <el-button icon="el-icon-edit" size="mini"  @click="handleUpdateLink(scope.row)"></el-button>-->
+            <el-table-column label="商品SkuId" align="center" prop="skuId" width="150">
+              <template slot-scope="scope">
+                <span style="margin-right: 15px">{{scope.row.skuId}}</span>
+                <el-button icon="el-icon-edit" size="mini" plain @click="handleUpdateLink(scope.row)"></el-button>
+              </template>
+            </el-table-column>
 
-                    </template>
-                  </el-table-column>
-
-                   <el-table-column label="商品数量" align="center" prop="quantity" width="50px">
-                     <template slot-scope="scope">
-                     <el-tag size="small">{{scope.row.quantity}}</el-tag>
-                     </template>
-                   </el-table-column>
+            <el-table-column label="商品数量" align="center" prop="quantity" width="50px">
+              <template slot-scope="scope">
+                <el-tag size="small">{{scope.row.quantity}}</el-tag>
+              </template>
+            </el-table-column>
           </el-table>
         </template>
       </el-table-column>
-
+<!--      <el-table-column label="商品图片" >-->
+<!--        <template slot-scope="scope">-->
+<!--              <el-image  style="width: 70px; height: 70px;" :src="scope.row.goodsImg"></el-image>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="商品标题" align="center" prop="goodsTitle" />-->
+<!--      <el-table-column label="规格" align="center" prop="goodsSpec" />-->
+<!--      <el-table-column label="规格编码" align="center" prop="specNum" />-->
+<!--      <el-table-column label="erp商品id" align="center" prop="goodsId" />-->
+<!--      <el-table-column label="erp商品SkuId" align="center" prop="specId" />-->
+<!--      <el-table-column label="商品Sku编码" align="center" prop="specNum" />-->
+<!--       <el-table-column label="商品数量" align="center" prop="quantity" >-->
+<!--         <template slot-scope="scope">-->
+<!--         <el-tag size="small">{{scope.row.quantity}}</el-tag>-->
+<!--         </template>-->
+<!--       </el-table-column>-->
+<!--      <el-table-column label="仓库库存" align="center" prop="inventory" />-->
       <el-table-column label="状态" align="center" prop="status" width="100">
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.status === 0">待备货</el-tag>
@@ -168,18 +187,18 @@
           <el-tag size="small" v-if="scope.row.status === 3">已发货</el-tag>
         </template>
       </el-table-column>
-<!--      <el-table-column label="操作" align="center" width="150">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            v-if="scope.row.status ===0 || scope.row.status === 1"-->
-<!--            plain-->
-<!--            type="success"-->
-<!--            icon="el-icon-document-copy"-->
-<!--            @click="stockupCompleteByOrder(scope.row)"-->
-<!--          >确认备货完成</el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="操作" align="center" width="150">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            v-if="scope.row.status ===0 || scope.row.status === 1"
+            plain
+            type="success"
+            icon="el-icon-document-copy"
+            @click="stockupCompleteByOrder(scope.row)"
+          >确认备货完成</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
@@ -192,20 +211,20 @@
 
     <!-- 对话框 -->
 
-    <el-dialog :title="title" :visible.sync="open" width="840px" append-to-body >
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body >
       <div id="dialogContent">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" inline>
 <!--        <el-form-item label="单号" prop="stockOutNum" v-if="isGen">-->
 <!--          <el-input v-model="form.stockOutNum" disabled placeholder="请输入单号" />-->
 <!--        </el-form-item>-->
-        <el-form-item label="完成时间" prop="completeTime" v-if="isGen">
-          <el-date-picker clearable
-            v-model="form.completeTime"
-            type="datetime" disabled
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="请选择时间">
-          </el-date-picker>
-        </el-form-item>
+<!--        <el-form-item label="完成时间" prop="completeTime" v-if="isGen">-->
+<!--          <el-date-picker clearable-->
+<!--            v-model="form.completeTime"-->
+<!--            type="datetime" disabled-->
+<!--            value-format="yyyy-MM-dd HH:mm:ss"-->
+<!--            placeholder="请选择时间">-->
+<!--          </el-date-picker>-->
+<!--        </el-form-item>-->
 <!--        <el-form-item label="打印时间" prop="completeTime" v-if="!isGen">-->
 <!--          <el-date-picker clearable-->
 <!--                          v-model="form.completeTime"-->
@@ -214,9 +233,9 @@
 <!--                          placeholder="请选择时间">-->
 <!--          </el-date-picker>-->
 <!--        </el-form-item>-->
-        <el-divider content-position="center" v-if="isGen">备货商品</el-divider>
+<!--        <el-divider content-position="center" v-if="isGen">备货商品</el-divider>-->
         <el-table :data="skuList" :row-class-name="rowItemIndex" ref="skuItem">
-<!--          <el-table-column type="selection" width="50" align="center" />-->
+          <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="序号" align="center" prop="index" width="50"/>
           <el-table-column label="图片" prop="goodsImg" width="55">
             <template slot-scope="scope">
@@ -224,11 +243,14 @@
             </template>
           </el-table-column>
           <el-table-column label="商品" prop="goodsTitle" ></el-table-column>
-          <el-table-column label="规格" prop="skuName" ></el-table-column>
+          <el-table-column label="规格" prop="skuName" >
+            <template slot-scope="scope">
+              {{ getSkuValues(scope.row.skuName)}}
+            </template>
+          </el-table-column>
           <el-table-column label="Sku编码" prop="skuNum" width="150"></el-table-column>
           <el-table-column label="数量" prop="quantity" width="60"></el-table-column>
-<!--          <el-table-column label="仓库库存" prop="inventory"></el-table-column>-->
-
+          <!--          <el-table-column label="仓库库存" prop="inventory"></el-table-column>-->
         </el-table>
       </el-form>
     </div>
@@ -241,18 +263,35 @@
       </div>
     </el-dialog>
 
+    <!-- 修改skuid对话框 -->
+    <el-dialog title="修改SkuId" :visible.sync="skuIdUpdateOpen" width="500px" append-to-body>
+      <el-form ref="form2" :model="form2" :rules="rules2" label-width="120px" inline>
+<!--        <el-form-item label="ERP商品ID" prop="erpGoodsId" >-->
+<!--          <el-input v-model="form2.erpGoodsId" disabled placeholder="请输入ERP商品ID" />-->
+<!--        </el-form-item>-->
+        <el-form-item label="ERP商品SkuId" prop="erpGoodsSpecId" >
+          <el-input type="number" v-model="form2.erpGoodsSpecId" placeholder="请输入ERP商品SkuId" />
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitSkuIdUpdateForm">修改</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import {
-  listShipStockup,
+  listShipStockupWarehouse,
   shipStockupCompleteByOrder
 } from "@/api/shipping/shipping";
 import {orderItemSpecIdUpdate} from "@/api/order/order";
-
 import { listShop } from "@/api/shop/shop";
 import Clipboard from "clipboard";
+
 export default {
   name: "ShipStockupOrder",
   // computed: {
@@ -315,9 +354,6 @@ export default {
           value: '0',
           label: '待备货'
         }, {
-          value: '1',
-          label: '备货中'
-        }, {
           value: '2',
           label: '备货完成'
         }
@@ -368,6 +404,9 @@ export default {
         clipboard.destroy()
       })
     },
+    rowItemIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
     getSkuValues(spec){
       try {
         // 解析 JSON，返回一个数组
@@ -379,13 +418,10 @@ export default {
         return spec; // 如果 JSON 解析出错，返回空字符串
       }
     },
-    rowItemIndex({ row, rowIndex }) {
-      row.index = rowIndex + 1;
-    },
     /** 查询仓库订单发货列表 */
     getList() {
       this.loading = true;
-      listShipStockup(this.queryParams).then(response => {
+      listShipStockupWarehouse(this.queryParams).then(response => {
         this.shippingListOrigin = response.rows;
         // this.shippingList = response.rows;
         // this.total = response.total;

@@ -24,13 +24,25 @@ public class ShipStockupController  extends BaseController {
      * @param pageQuery
      * @return
      */
-    @GetMapping("/stock_up_list")
+//    @GetMapping("/stock_up_list")
+//    public TableDataInfo stock_up_list(ShipStockUpBo bo, PageQuery pageQuery)
+//    {
+//        var pageList = orderShipListItemService.queryPageList(bo,pageQuery);
+//        return getDataTable(pageList);
+//    }
+
+    /**
+     * 备货列表(仓库发货)
+     * @param bo
+     * @param pageQuery
+     * @return
+     */
+    @GetMapping("/stock_up_list_by_warehouse")
     public TableDataInfo stock_up_list(ShipStockUpBo bo, PageQuery pageQuery)
     {
-        var pageList = orderShipListItemService.queryPageList(bo,pageQuery);
+        var pageList = orderShipListItemService.queryWarehousePageList(bo,pageQuery);
         return getDataTable(pageList);
     }
-
     /**
      * 备货中-供应商代发
      * @param bo
