@@ -11,7 +11,7 @@ export function listShipStockup(query) {
 // 备货完成
 export function shipStockupComplete(data) {
   return request({
-    url: '/api/oms-api/ship/stock_up_complete',
+    url: '/ship/stock_up_complete',
     method: 'post',
     data: data
   })
@@ -19,12 +19,20 @@ export function shipStockupComplete(data) {
 // 备货完成by order
 export function shipStockupCompleteByOrder(data) {
   return request({
-    url: '/api/oms-api/ship/stock_up_complete_by_order',
+    url: '/ship/stock_up_complete_by_order',
     method: 'post',
     data: data
   })
 }
 
+// 备货清单-供应商发货
+export function listShipStockupSupplier(query) {
+  return request({
+    url: '/ship/stock_up_list_by_supplier',
+    method: 'get',
+    params: query
+  })
+}
 
 
 // 生成出库单（备货清单生成出库单）

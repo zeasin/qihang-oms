@@ -1,6 +1,9 @@
 package cn.qihangerp.module.order.service;
 
+import cn.qihangerp.common.PageQuery;
+import cn.qihangerp.common.PageResult;
 import cn.qihangerp.model.entity.OOrderShipList;
+import cn.qihangerp.module.order.domain.bo.ShipStockUpBo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,5 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2025-06-01 23:07:24
 */
 public interface OOrderShipListService extends IService<OOrderShipList> {
-
+    PageResult<OOrderShipList> querySupplierPageList(ShipStockUpBo bo, PageQuery pageQuery);
 }

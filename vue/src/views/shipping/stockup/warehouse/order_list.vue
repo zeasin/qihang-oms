@@ -101,7 +101,7 @@
           <i class="el-icon-copy-document tag-copy" :data-clipboard-text="scope.row.orderNum" @click="copyActiveCode($event,scope.row.orderNum)" ></i>
           <br/>
           <el-tag type="info">{{ shopList.find(x=>x.id === scope.row.shopId) ? shopList.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
-        </template>>
+        </template>
       </el-table-column>
       <!-- <el-table-column label="子订单编号" align="center" prop="orderItemId" /> -->
 <!--      <el-table-column label="订单日期" align="center" prop="orderDate" width="180">-->
@@ -130,7 +130,11 @@
               </template>
             </el-table-column>
             <el-table-column label="商品" align="left" width="300px" prop="goodsTitle" />
-            <el-table-column label="规格" align="left" prop="skuName" width="250"/>
+            <el-table-column label="规格" align="left" prop="skuName" width="250">
+              <template slot-scope="scope">
+                {{ getSkuValues(scope.row.skuName)}}
+              </template>
+            </el-table-column>
             <el-table-column label="Sku编码" align="left" prop="skuNum" width="150"/>
                   <el-table-column label="商品SkuId" align="center" prop="skuId" width="150">
                     <template slot-scope="scope">
@@ -363,6 +367,17 @@ export default {
         // 释放内存
         clipboard.destroy()
       })
+    },
+    getSkuValues(spec){
+      try {
+        // 解析 JSON，返回一个数组
+        const parsedSpec = JSON.parse(spec) || [];
+
+        // 使用 map 提取所有 value，使用 join() 用逗号连接
+        return parsedSpec.map(item => item.attr_value || item.value).join(', ') || '';
+      } catch (error) {
+        return spec; // 如果 JSON 解析出错，返回空字符串
+      }
     },
     rowItemIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;

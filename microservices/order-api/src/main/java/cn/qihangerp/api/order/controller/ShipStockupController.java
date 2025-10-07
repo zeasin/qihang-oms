@@ -6,6 +6,7 @@ import cn.qihangerp.common.TableDataInfo;
 import cn.qihangerp.module.order.domain.bo.ShipStockUpBo;
 import cn.qihangerp.module.order.domain.bo.ShipStockUpCompleteBo;
 import cn.qihangerp.module.order.service.OOrderShipListItemService;
+import cn.qihangerp.module.order.service.OOrderShipListService;
 import cn.qihangerp.module.order.service.OShipWaybillService;
 import cn.qihangerp.security.common.BaseController;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ship")
 public class ShipStockupController  extends BaseController {
     private final OOrderShipListItemService orderShipListItemService;
-
+    private final OOrderShipListService shipStockUpService;
     /**
      * 备货列表
      * @param bo
@@ -29,6 +30,29 @@ public class ShipStockupController  extends BaseController {
         var pageList = orderShipListItemService.queryPageList(bo,pageQuery);
         return getDataTable(pageList);
     }
+
+    /**
+     * 备货中-供应商代发
+     * @param bo
+     * @param pageQuery
+     * @return
+     */
+    @GetMapping("/stock_up_list_by_supplier")
+    public TableDataInfo supplierShipList(ShipStockUpBo bo, PageQuery pageQuery)
+    {
+//        bo.setShipper(1);
+//        bo.setStockStatus(0);
+//        bo.setTenantId(getUserId());
+//        PageResult<ErpShipmentItem> list = shippingItemService.queryPageList(bo, pageQuery);
+//        return getDataTable(list);
+//        bo.setShipper(1);
+//        bo.setTenantId(getUserId());
+//        PageResult<ErpShipment> erpShipmentPageResult = shippingService.queryPageList(bo, pageQuery);
+//        return getDataTable(erpShipmentPageResult);
+        var pageList = shipStockUpService.querySupplierPageList(bo,pageQuery);
+        return getDataTable(pageList);
+    }
+
 
     @PostMapping("/stock_up_complete")
     public AjaxResult stock_up_complete(@RequestBody ShipStockUpCompleteBo bo)
