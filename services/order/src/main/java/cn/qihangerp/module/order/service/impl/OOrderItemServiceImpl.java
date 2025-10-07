@@ -1,6 +1,8 @@
 package cn.qihangerp.module.order.service.impl;
 
 
+import cn.qihangerp.mapper.goods.OGoodsSkuMapper;
+import cn.qihangerp.model.entity.OGoodsSku;
 import cn.qihangerp.model.entity.OOrderItem;
 import cn.qihangerp.module.order.domain.bo.OrderItemListBo;
 import cn.qihangerp.model.vo.OrderItemListVo;
@@ -33,6 +35,7 @@ import java.util.regex.Pattern;
 public class OOrderItemServiceImpl extends ServiceImpl<OOrderItemMapper, OOrderItem>
     implements OOrderItemService {
     private final OOrderItemMapper mapper;
+    private final OGoodsSkuMapper goodsSkuMapper;
     private final String DATE_PATTERN =
             "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
     private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
@@ -73,9 +76,19 @@ public class OOrderItemServiceImpl extends ServiceImpl<OOrderItemMapper, OOrderI
     }
 
     @Override
-    public ResultVo<Integer> updateErpSkuId(String id, Long erpSkuId) {
+    public ResultVo<Integer> updateErpSkuId(Long orderItemId, Long erpSkuId) {
+        OOrderItem oOrderItem = mapper.selectById(orderItemId);
+        if(oOrderItem==null){
+            return ResultVo.error("找不到数据");
+        }else if(oOrderItem.getShipStatus()!=0) return ResultVo.error("发货之后的订单item不允许修改");
+
+        OGoodsSku oGoodsSku = goodsSkuMapper.selectById(erpSkuId);
+        if(oGoodsSku==null){
+            return ResultVo.error("找不到商品Sku数据");
+        }
+
         OOrderItem update = new OOrderItem();
-        update.setId(id);
+        update.setId(oOrderItem.getId());
         update.setGoodsSkuId(erpSkuId);
         update.setUpdateBy("手动修改ERP SKU ID");
         update.setUpdateTime(new Date());

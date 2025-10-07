@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-tabs v-model="activeName" @tab-click="handleClick">
 
-      <el-tab-pane label="备货订单" name="stockupOrder">
+      <el-tab-pane label="备货订单" name="stockupOrder" lazy>
         <ship-stockup-order></ship-stockup-order>
       </el-tab-pane>
       <el-tab-pane label="备货商品明细" name="stockupOrderItem" lazy>
@@ -31,7 +31,7 @@ export default {
   components:{ShipStockupOrder,ShipStockupOrderItem},
   data() {
     return {
-      activeName: 'stockupOrder'
+      activeName: 'stockupOrderItem'
     };
   },
   created() {

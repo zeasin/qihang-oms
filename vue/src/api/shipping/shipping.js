@@ -25,13 +25,7 @@ export function shipStockupCompleteByOrder(data) {
   })
 }
 
-export function orderItemSpecIdUpdate(data) {
-  return request({
-    url: '/shipping/order_item_spec_id_update',
-    method: 'post',
-    data: data
-  })
-}
+
 
 // 生成出库单（备货清单生成出库单）
 export function generateStockOutEntry(data) {

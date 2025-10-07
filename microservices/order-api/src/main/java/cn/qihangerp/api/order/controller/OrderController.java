@@ -1,6 +1,8 @@
 package cn.qihangerp.api.order.controller;
 
 
+import cn.qihangerp.api.order.OrderCancelRequest;
+import cn.qihangerp.api.order.OrderItemSpecIdUpdateBo;
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.TableDataInfo;
@@ -10,8 +12,11 @@ import cn.qihangerp.module.order.service.OOrderItemService;
 import cn.qihangerp.module.order.service.OOrderService;
 import cn.qihangerp.request.OrderSearchRequest;
 import cn.qihangerp.security.common.BaseController;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
  * @author qihang
  * @date 2023-12-31
  */
+@Slf4j
 @AllArgsConstructor
 @RestController
 @RequestMapping("/order")
@@ -112,6 +118,48 @@ public class OrderController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return success(orderService.queryDetailById(id));
+    }
+    /**
+     * 取消订单（如果有itemId就是取消子订单）
+     * @param request
+     * @return
+     */
+    @PostMapping("/cancelOrder")
+    public AjaxResult cancelOrder(@RequestBody OrderCancelRequest request) {
+        if (request.getId() == null) return AjaxResult.error("确实参数：Id");
+        if (StringUtils.isEmpty(request.getCancelReason())) return AjaxResult.error("请填写取消原因");
+        if (request.getOrderItemId() != null && request.getOrderItemId() > 0) {
+            log.info("=====取消子订单====={}", JSONObject.toJSONString(request));
+            var result = orderService.cancelOrderItem(request.getOrderItemId(), request.getCancelReason(), getUsername());
+            if (result.getCode() == 0) {
+                log.info("==============子订单取消成功=========");
+                return AjaxResult.success();
+            } else return AjaxResult.error(result.getMsg());
+        } else {
+            log.info("======取消订单======{}", JSONObject.toJSONString(request));
+            var result = orderService.cancelOrder(request.getId(), request.getCancelReason(), getUsername());
+            if (result.getCode() == 0) {
+                log.info("==============订单取消成功=========");
+                return AjaxResult.success();
+            } else return AjaxResult.error(result.getMsg());
+        }
+    }
+    /**
+     * 修改订单明细specId
+     * @param bo
+     * @return
+     */
+    @PostMapping("/order_item_sku_id_update")
+    public AjaxResult orderItemSpecIdUpdate(@RequestBody OrderItemSpecIdUpdateBo bo)
+    {
+        if(bo.getOrderItemId()==null || bo.getOrderItemId() ==0) return AjaxResult.error("参数错误：orderItemId为空");
+        if(bo.getErpGoodsSpecId()==null || bo.getErpGoodsSpecId() ==0) return AjaxResult.error("参数错误：ErpGoodsSpecId为空");
+
+        var result = orderItemService.updateErpSkuId(bo.getOrderItemId(),bo.getErpGoodsSpecId());
+        if (result.getCode() == 0) {
+            return AjaxResult.success();
+        } else return AjaxResult.error(result.getMsg());
+
     }
 
     /**

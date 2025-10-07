@@ -144,14 +144,16 @@
 
 <script>
 import {
+  listPlatform
+} from "@/api/shop/shop";
+import {
   listLogistics,
   updateStatus,
   addLogistics,
   getLogistics,
   updateLogistics,
-  delLogistics,
-  listPlatform
-} from "@/api/shop/shop";
+  delLogistics
+} from "@/api/shipping/logistics";
 import {MessageBox} from "element-ui";
 import {isRelogin} from "@/utils/request";
 import {pullLogisticsTao,pullLogisticsJd} from "@/api/tao/shop_api";

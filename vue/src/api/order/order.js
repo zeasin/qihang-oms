@@ -93,7 +93,22 @@ export function pushErp(id) {
 // 新增店铺订单
 export function addOrder(data) {
   return request({
-    url: '/order',
+    url: '/order/add',
+    method: 'post',
+    data: data
+  })
+}
+// 取消订单
+export function cancelOrder(data) {
+  return request({
+    url: '/order/cancelOrder',
+    method: 'post',
+    data: data
+  })
+}
+export function orderItemSpecIdUpdate(data) {
+  return request({
+    url: '/order/order_item_sku_id_update',
     method: 'post',
     data: data
   })
