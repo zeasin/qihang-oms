@@ -147,13 +147,13 @@
           <el-tag size="small" v-if="scope.row.status === 0">待备货</el-tag>
           <el-tag size="small" v-if="scope.row.status === 1">备货中</el-tag>
           <el-tag size="small" v-if="scope.row.status === 2">备货完成</el-tag>
-          <el-tag size="small" v-if="scope.row.status === 3">已发货</el-tag>
+          <el-tag size="small" v-if="scope.row.status === 3">已出库</el-tag>
         </template>
       </el-table-column>
             <el-table-column label="操作" align="center" >
               <template slot-scope="scope">
                 <el-button
-                  v-if="!scope.row.specId||scope.row.specId === 0"
+                  v-if="scope.row.status!=3"
                   size="mini" plain
                   type="primary"
                   icon="el-icon-edit"
@@ -235,7 +235,7 @@
 </template>
 
 <script>
-import {listShipStockupItemWarehouse, shipOrderItemSkuIdUpdate, shipStockupComplete} from "@/api/shipping/shipping";
+import {listShipStockupItemWarehouse, shipOrderItemSkuIdUpdate} from "@/api/shipping/shipping";
 import { listShop } from "@/api/shop/shop";
 import Clipboard from "clipboard";
 export default {
@@ -300,6 +300,9 @@ export default {
         }, {
           value: '2',
           label: '备货完成'
+        }, {
+          value: '3',
+          label: '已出库'
         }
       ],
       // 表单校验

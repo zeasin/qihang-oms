@@ -16,3 +16,11 @@ export function getGoodsInventory(id) {
     method: 'get'
   })
 }
+// 库存操作
+export function modifyInventory(data) {
+  return request({
+    url: '/goodsInventory/modify',
+    method: 'post',
+    data: data
+  })
+}

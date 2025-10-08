@@ -17,15 +17,8 @@ export function listShipStockupItemWarehouse(query) {
     params: query
   })
 }
-// 备货完成
-export function shipStockupComplete(data) {
-  return request({
-    url: '/ship/stock_up_complete',
-    method: 'post',
-    data: data
-  })
-}
-// 备货完成by order
+
+// 备货出库by order
 export function shipStockupCompleteByOrder(data) {
   return request({
     url: '/ship/stock_up_complete_by_order',

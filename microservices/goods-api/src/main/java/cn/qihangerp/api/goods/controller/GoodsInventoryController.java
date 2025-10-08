@@ -1,21 +1,17 @@
 package cn.qihangerp.api.goods.controller;
 
 
-import cn.qihangerp.common.AjaxResult;
-import cn.qihangerp.common.PageQuery;
-import cn.qihangerp.common.PageResult;
-import cn.qihangerp.common.TableDataInfo;
+import cn.qihangerp.common.*;
 import cn.qihangerp.model.entity.OGoodsInventory;
 import cn.qihangerp.model.entity.OGoodsInventoryBatch;
+import cn.qihangerp.module.goods.GoodsInventoryModifyBo;
+import cn.qihangerp.module.goods.domain.bo.GoodsAddBo;
 import cn.qihangerp.module.goods.service.OGoodsInventoryBatchService;
 import cn.qihangerp.module.goods.service.OGoodsInventoryService;
 import cn.qihangerp.security.common.BaseController;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -42,5 +38,13 @@ public class GoodsInventoryController extends BaseController {
             return AjaxResult.success(list);
         }
         return success();
+    }
+
+    @PostMapping("/modify")
+    public AjaxResult modify(@RequestBody GoodsInventoryModifyBo bo)
+    {
+        ResultVo<Long> resultVo = goodsInventoryService.modifyInventory(bo);
+        if(resultVo.getCode()!=0) return AjaxResult.error(resultVo.getMsg());
+        else return AjaxResult.success(resultVo.getData());
     }
 }

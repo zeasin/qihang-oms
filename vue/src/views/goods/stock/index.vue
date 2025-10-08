@@ -34,23 +34,29 @@
         />
       </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
+<!--      <el-form-item>-->
+<!--        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>-->
+<!--        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>-->
+<!--      </el-form-item>-->
     </el-form>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['api:goodsInventory:export']"
-        >导出</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          plain-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['api:goodsInventory:export']"-->
+<!--        >导出</el-button>-->
+<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -83,11 +89,17 @@
 
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button style="padding-left: 6px;padding-right: 6px;"
+            size="mini" plain
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['api:goodsInventory:edit']"
+          >库存操作</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-view"
-            @click="handleUpdate(scope.row)"
+            @click="handleDetail(scope.row)"
             v-hasPermi="['api:goodsInventory:edit']"
           >库存详情</el-button>
         </template>
@@ -103,9 +115,30 @@
     />
 
     <!-- 添加或修改商品库存对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="880px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="操作类型" prop="type">
+          <el-select v-model="form.type" placeholder="操作类型">
+            <el-option label="增加库存" value="1"></el-option>
+            <el-option label="减少库存" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="变动数量" prop="qty">
+          <el-input type="number" v-model.number="form.qty" placeholder="请输入店铺名" />
+        </el-form-item>
 
+        <el-form-item label="描述" prop="remark">
+          <el-input type="textarea" v-model="form.remark" placeholder="请输入描述" />
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 库存详情对话框 -->
+    <el-dialog :title="title" :visible.sync="detailOpen" width="880px" append-to-body>
         <el-table :data="erpGoodsInventoryDetailList" :row-class-name="rowErpGoodsInventoryDetailIndex" ref="erpGoodsInventoryDetail">
           <el-table-column label="序号" align="center" prop="index" width="50"/>
           <el-table-column label="时间" prop="createTime" width="180">
@@ -124,13 +157,13 @@
           </el-table-column>
 <!--          <el-table-column label="操作人" prop="createBy" width="150"></el-table-column>-->
         </el-table>
-      </el-form>
+
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { listGoodsInventory, getGoodsInventory } from "@/api/goods/goodsInventory";
+import {listGoodsInventory, getGoodsInventory, modifyInventory} from "@/api/goods/goodsInventory";
 
 export default {
   name: "GoodsInventory",
@@ -157,7 +190,8 @@ export default {
       // 弹出层标题
       title: "",
       // 是否显示弹出层
-      open: false,
+      detailOpen: false,
+      open:false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -168,33 +202,23 @@ export default {
         specNumber: null
       },
       // 表单参数
-      form: {},
+      form: {
+        id:null,
+        type:null,
+        qty:null,
+        remark:null
+      },
       // 表单校验
       rules: {
-        goodsId: [
-          { required: true, message: "商品id不能为空", trigger: "blur" }
+        type: [
+          { required: true, message: "不能为空", trigger: "blur" }
         ],
-        specId: [
-          { required: true, message: "商品规格id不能为空", trigger: "blur" }
+        qty: [
+          { required: true, message: "不能为空", trigger: "blur" }
         ],
-        specNumber: [
-          { required: true, message: "规格编码不能为空", trigger: "blur" }
-        ],
-        currentQty: [
-          { required: true, message: "当前库存不能为空", trigger: "blur" }
-        ],
-        lockedQty: [
-          { required: true, message: "锁定库存不能为空", trigger: "blur" }
-        ],
-        isDelete: [
-          { required: true, message: "0正常  1删除不能为空", trigger: "blur" }
-        ],
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
-        ],
-        updateTime: [
-          { required: true, message: "更新时间不能为空", trigger: "blur" }
-        ],
+        remark: [
+          { required: true, message: "不能为空", trigger: "blur" }
+        ]
       }
     };
   },
@@ -214,18 +238,10 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        id: null,
-        goodsId: null,
-        goodsNumber: null,
-        specId: null,
-        specNumber: null,
-        currentQty: null,
-        lockedQty: null,
-        isDelete: null,
-        createTime: null,
-        createBy: null,
-        updateTime: null,
-        updateBy: null
+        id:null,
+        type:null,
+        qty:null,
+        remark:null
       };
       this.erpGoodsInventoryDetailList = [];
       this.resetForm("form");
@@ -249,25 +265,50 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getGoodsInventory(id).then(response => {
+      this.form.id = row.id
+      this.open = true;
+      this.title = "库存操作";
+    },
+    handleDetail(row) {
+      getGoodsInventory(row.id).then(response => {
         this.form = response.data;
         this.erpGoodsInventoryDetailList = response.data;
-        this.open = true;
-        this.title = "商品库存详情";
+        this.detailOpen = true;
+        this.title = "库存详情";
       });
     },
 	/** 商品库存明细序号 */
     rowErpGoodsInventoryDetailIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
-
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.detailOpen = false;
+      this.reset();
+    },
     /** 导出按钮操作 */
     handleExport() {
       this.download('api/goodsInventory/export', {
         ...this.queryParams
       }, `goodsInventory_${new Date().getTime()}.xlsx`)
-    }
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          modifyInventory(this.form).then(resp=>{
+            if(resp.code===200){
+              this.$modal.msgSuccess("库存操作成功")
+              this.open = false
+              this.getList()
+            }else{
+              this.$modal.msgError(resp.msg)
+            }
+          })
+        }
+      });
+    },
   }
 };
 </script>

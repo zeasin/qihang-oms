@@ -2,7 +2,9 @@ package cn.qihangerp.module.goods.service;
 
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
+import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.model.entity.OGoodsInventory;
+import cn.qihangerp.module.goods.GoodsInventoryModifyBo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,4 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface OGoodsInventoryService extends IService<OGoodsInventory> {
     PageResult<OGoodsInventory> queryPageList(OGoodsInventory bo, PageQuery pageQuery);
     long getAllInventoryQuantity();
+
+    /**
+     * 库存变更
+     * @param bo
+     * @return
+     */
+    ResultVo<Long> modifyInventory(GoodsInventoryModifyBo bo);
 }
