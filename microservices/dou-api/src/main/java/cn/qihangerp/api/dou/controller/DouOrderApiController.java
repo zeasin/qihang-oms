@@ -139,15 +139,15 @@ public class DouOrderApiController {
             BeanUtils.copyProperties(gitem, douOrder);
             douOrder.setOrderPhaseList(JSONObject.toJSONString(gitem.getOrderPhaseList()));
             douOrder.setEncryptPostAddress(gitem.getPostAddr().getEncryptDetail());
-            douOrder.setProvinceName(gitem.getPostAddr().getProvince().getName());
-            douOrder.setProvinceId(gitem.getPostAddr().getProvince().getId());
-            douOrder.setCityName(gitem.getPostAddr().getCity().getName());
-            douOrder.setCityId(gitem.getPostAddr().getCity().getId());
-            douOrder.setTownName(gitem.getPostAddr().getTown().getName());
-            douOrder.setTownId(gitem.getPostAddr().getTown().getId());
-            douOrder.setStreetName(gitem.getPostAddr().getStreet().getName());
-            douOrder.setStreetId(gitem.getPostAddr().getStreet().getId());
-            douOrder.setMaskPostAddress(gitem.getMaskPostAddr().getDetail());
+            douOrder.setProvinceName(gitem.getPostAddr().getProvince()!=null?gitem.getPostAddr().getProvince().getName():"");
+            douOrder.setProvinceId(gitem.getPostAddr().getProvince()!=null?gitem.getPostAddr().getProvince().getId():"0");
+            douOrder.setCityName(gitem.getPostAddr().getCity()!=null?gitem.getPostAddr().getCity().getName():"0");
+            douOrder.setCityId(gitem.getPostAddr().getCity()!=null?gitem.getPostAddr().getCity().getId():"");
+            douOrder.setTownName(gitem.getPostAddr().getTown()!=null?gitem.getPostAddr().getTown().getName():"");
+            douOrder.setTownId(gitem.getPostAddr().getTown()!=null?gitem.getPostAddr().getTown().getId():"0");
+            douOrder.setStreetName(gitem.getPostAddr().getStreet()!=null?gitem.getPostAddr().getStreet().getName():"");
+            douOrder.setStreetId(gitem.getPostAddr().getStreet()!=null?gitem.getPostAddr().getStreet().getId():"0");
+            douOrder.setMaskPostAddress(gitem.getMaskPostAddr()!=null?gitem.getMaskPostAddr().getDetail():"");
             douOrder.setLogisticsInfo(JSONObject.toJSONString(gitem.getLogisticsInfo()));
             List<DouOrderItem> items = new ArrayList<>();
             if (gitem.getSkuOrderList() != null) {
