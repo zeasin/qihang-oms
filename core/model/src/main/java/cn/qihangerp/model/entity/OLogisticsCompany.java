@@ -31,7 +31,7 @@ public class OLogisticsCompany implements Serializable {
     /**
      * 物流公司id（值来自于平台返回）
      */
-    private Long logisticsId;
+    private String logisticsId;
 
     /**
      * 物流公司编码（值来自于平台返回）

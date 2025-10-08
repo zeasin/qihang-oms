@@ -12,7 +12,7 @@ import java.util.List;
 * @createDate 2024-03-22 11:03:11
 */
 public interface OLogisticsCompanyService extends IService<OLogisticsCompany> {
-    PageResult<OLogisticsCompany> queryPageList(Integer platform, Integer shopId, PageQuery pageQuery);
+    PageResult<OLogisticsCompany> queryPageList(Integer platform,String name,String code, PageQuery pageQuery);
     List<OLogisticsCompany> queryListByStatus(Integer status, Integer shopType, Integer shopId);
     int updateStatus(String id,Integer status);
     int insert(OLogisticsCompany logisticsCompany);

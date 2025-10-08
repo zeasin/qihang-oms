@@ -1,14 +1,22 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-<!--      <el-form-item label="店铺名" prop="name">-->
-<!--        <el-input-->
-<!--          v-model="queryParams.name"-->
-<!--          placeholder="请输入店铺名"-->
-<!--          clearable-->
-<!--          @keyup.enter.native="handleQuery"-->
-<!--        />-->
-<!--      </el-form-item>-->
+      <el-form-item label="快递公司" prop="name">
+        <el-input
+          v-model="queryParams.name"
+          placeholder="请输入快递公司"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="快递编码" prop="code">
+        <el-input
+          v-model="queryParams.code"
+          placeholder="请输入快递编码"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="平台" prop="type">
         <el-select v-model="queryParams.type" placeholder="请选择平台" @change="handleQuery">
           <el-option
@@ -157,6 +165,7 @@ import {
 import {MessageBox} from "element-ui";
 import {isRelogin} from "@/utils/request";
 import {pullLogisticsTao,pullLogisticsJd} from "@/api/tao/shop_api";
+import {pullLogisticsPdd} from "@/api/pdd/logistics";
 
 export default {
   name: "Shop",
@@ -249,6 +258,11 @@ export default {
     handlePull() {
       if(this.queryParams.type) {
         console.log('=====拉取快递公司=====', this.queryParams.type)
+        if(this.queryParams.type===300){
+          pullLogisticsPdd({}).then(resp=>{
+            this.$modal.msgError(resp.msg)
+          })
+        }
         // if (this.queryParams.type === 100) {
         //   pullLogisticsTao({}).then(response => {
         //     console.log('拉取TAO接口返回=====', response)
@@ -301,10 +315,12 @@ export default {
         //   })
         // }else if(this.queryParams.type=999){
         //   this.$modal.msgSuccess("线下渠道请手动添加");
-        // }else{
-        //   this.$modal.msgSuccess("还未实现");
         // }
-        this.$modal.msgSuccess("开源版本不支持拉取！请手动添加");
+        else{
+          // this.$modal.msgSuccess("还未实现");
+          this.$modal.msgError("开源版本不支持拉取！请手动添加");
+        }
+
       }else{
         this.$modal.msgWarning("请先选择平台");
       }

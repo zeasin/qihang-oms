@@ -53,8 +53,6 @@ export function updateStatus(data) {
   })
 }
 
-
-
 // 删除物流公司
 export function delLogistics(id) {
   return request({

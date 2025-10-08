@@ -10,6 +10,7 @@ import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -25,12 +26,14 @@ public class OLogisticsCompanyServiceImpl extends ServiceImpl<OLogisticsCompanyM
     private final OLogisticsCompanyMapper mapper;
 
     @Override
-    public PageResult<OLogisticsCompany> queryPageList(Integer platform, Integer shopId, PageQuery pageQuery) {
+    public PageResult<OLogisticsCompany> queryPageList(Integer platform,String name,String code, PageQuery pageQuery) {
         pageQuery.setOrderByColumn("status");
         pageQuery.setIsAsc("desc");
         LambdaQueryWrapper<OLogisticsCompany> queryWrapper = new LambdaQueryWrapper<OLogisticsCompany>().
                 eq(OLogisticsCompany::getPlatformId, platform)
-                .eq(shopId != null, OLogisticsCompany::getShopId, shopId);
+                .like(StringUtils.hasText(name), OLogisticsCompany::getName, name)
+                .like(StringUtils.hasText(code), OLogisticsCompany::getCode, code)
+                ;
 
         Page<OLogisticsCompany> pages = mapper.selectPage(pageQuery.build(), queryWrapper);
         return PageResult.build(pages);

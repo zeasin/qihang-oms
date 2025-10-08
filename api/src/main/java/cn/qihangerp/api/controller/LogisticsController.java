@@ -39,10 +39,10 @@ public class LogisticsController extends BaseController {
      * 查询店铺列表logistics
      */
     @GetMapping("/logistics")
-    public TableDataInfo logisticsList(Integer type, Integer shopId, PageQuery pageQuery)
+    public TableDataInfo logisticsList(Integer type ,String name,String code, PageQuery pageQuery)
     {
         if(type==null)type=0;
-        PageResult<OLogisticsCompany> result = logisticsCompanyService.queryPageList(type, shopId, pageQuery);
+        PageResult<OLogisticsCompany> result = logisticsCompanyService.queryPageList(type, name,code, pageQuery);
         return getDataTable(result);
     }
 
