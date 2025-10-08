@@ -58,31 +58,8 @@ public class OrderController extends BaseController
         return getDataTable(pageList);
     }
 
-    /**
-     * 已分配供应商发货列表
-     * @param order
-     * @param pageQuery
-     * @return
-     */
-    @GetMapping("/assignedShipmentList")
-    public TableDataInfo assignedShipmentList(OrderSearchRequest order, PageQuery pageQuery)
-    {
-        var pageList = orderService.queryAssignedShipmentList(order,pageQuery);
-        return getDataTable(pageList);
-    }
 
-    /**
-     * 已发货列表
-     * @param order
-     * @param pageQuery
-     * @return
-     */
-    @GetMapping("/shippedList")
-    public TableDataInfo shippedList(OrderSearchRequest order, PageQuery pageQuery)
-    {
-        var pageList = orderService.queryShippedPageList(order,pageQuery);
-        return getDataTable(pageList);
-    }
+
 
     /**
      * 订单发货(手动发货)
@@ -144,55 +121,9 @@ public class OrderController extends BaseController
             } else return AjaxResult.error(result.getMsg());
         }
     }
-    /**
-     * 修改订单明细specId
-     * @param bo
-     * @return
-     */
-    @PostMapping("/order_item_sku_id_update")
-    public AjaxResult orderItemSpecIdUpdate(@RequestBody OrderItemSpecIdUpdateBo bo)
-    {
-        if(bo.getOrderItemId()==null || bo.getOrderItemId() ==0) return AjaxResult.error("参数错误：orderItemId为空");
-        if(bo.getErpGoodsSpecId()==null || bo.getErpGoodsSpecId() ==0) return AjaxResult.error("参数错误：ErpGoodsSpecId为空");
 
-        var result = orderItemService.updateErpSkuId(bo.getOrderItemId(),bo.getErpGoodsSpecId());
-        if (result.getCode() == 0) {
-            return AjaxResult.success();
-        } else return AjaxResult.error(result.getMsg());
 
-    }
 
-    /**
-     * 推送订单到ERP
-     * @param ids
-     * @return
-     */
-    @PostMapping("/pushErp/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
-//        for (Long id : ids) {
-//            OOrder oOrder = orderService.getById(id);
-//            if (oOrder != null) {
-//                oOrder.setItemList(orderItemService.getOrderItemListByOrderId(id));
-//                ResultVo resultVo = erpPushHelper.pushOrderSingle(oOrder);
-//                OOrder pushUpdate = new OOrder();
-//                if (oOrder.getOrderStatus() == 1 || oOrder.getOrderStatus() == 2 || oOrder.getOrderStatus() == 3) {
-//                    // 待发货、已发货、已完成 订单推送
-//                    pushUpdate.setErpPushStatus(resultVo.getCode() == 0 ? 200 : resultVo.getCode());
-//
-//                } else if (oOrder.getOrderStatus() == 11) {
-//                    pushUpdate.setErpPushStatus(resultVo.getCode() == 0 ? 100 : resultVo.getCode());//推送状态200 订单推送成功 100 取消订单推送成功
-//                }
-//                pushUpdate.setErpPushResult(resultVo.getMsg());
-//                pushUpdate.setErpPushTime(new Date());
-//                pushUpdate.setUpdateBy("手动推送到ERP");
-//                pushUpdate.setUpdateTime(new Date());
-//                pushUpdate.setId(id.toString());
-//                orderService.updateById(pushUpdate);
-//            }
-//        }
-
-        return success();
-    }
 //    @PostMapping
 //    public AjaxResult add(@RequestBody OrderCreateBo order)
 //    {
@@ -203,21 +134,6 @@ public class OrderController extends BaseController
 //        if(result == -2) return new AjaxResult(502,"请添加订单商品！");
 //        if(result == -3) return new AjaxResult(503,"请完善订单商品明细！");
 //        if(result == -4) return new AjaxResult(504,"请选择店铺！");
-//        return toAjax(result);
-//    }
-//    /**
-//     * 订单发货
-//     * @param order
-//     * @return
-//     */
-//    @Log(title = "店铺订单", businessType = BusinessType.UPDATE)
-//    @PostMapping("/ship")
-//    public AjaxResult ship(@RequestBody ErpOrder order)
-//    {
-//        order.setUpdateBy(getUsername());
-//        int result = orderService.shipErpOrder(order);
-//        if(result == -1) return new AjaxResult(501,"订单不存在！");
-//        else if(result == -2) return new AjaxResult(502,"订单号已存在！");
 //        return toAjax(result);
 //    }
 

@@ -68,27 +68,6 @@
 
     <el-row :gutter="10" class="mb8">
 
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          :loading="pushLoading"-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-refresh"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handlePushErp"-->
-<!--        >手动将选中订单推送到ERP</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['shop:order:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -431,7 +410,7 @@
 </template>
 
 <script>
-import {listOrder, getOrder, delOrder, addOrder, updateOrder, pushErp,cancelOrder} from "@/api/order/order";
+import {listOrder, getOrder, cancelOrder} from "@/api/order/order";
 import { listShop } from "@/api/shop/shop";
 import Clipboard from "clipboard";
 
@@ -566,19 +545,6 @@ export default {
       this.detailOpen = false
     },
     reset(){
-
-    },
-    handlePushErp(row){
-      const id = row.id || this.ids
-      this.pushLoading = true
-      pushErp(id).then(response => {
-        console.log('======返回====',response)
-        this.$modal.msgSuccess("推送成功！请在订单详情查看推送结果！");
-        this.pushLoading = false
-        this.getList()
-      });
-    },
-    handleShip(row){
 
     },
     //取消订单

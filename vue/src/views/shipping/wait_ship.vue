@@ -353,7 +353,7 @@ import {
   getOrder,
   manualShipmentOrder,
   allocateShipmentOrder,
-  waitSelfShipmentList
+  waitShipmentList
 } from "@/api/order/order";
 
 import {listShop} from "@/api/shop/shop";
@@ -446,7 +446,7 @@ export default {
     /** 查询列表 */
     getList() {
       this.loading = true;
-      waitSelfShipmentList(this.queryParams).then(response => {
+      waitShipmentList(this.queryParams).then(response => {
         this.orderList = response.rows;
         this.total = response.total;
         this.loading = false;
