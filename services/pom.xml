@@ -20,7 +20,6 @@
         <module>goods</module>
         <module>order</module>
         <module>sys</module>
-        <module>stock</module>
         <module>dou</module>
         <module>jd</module>
         <module>pdd</module>
