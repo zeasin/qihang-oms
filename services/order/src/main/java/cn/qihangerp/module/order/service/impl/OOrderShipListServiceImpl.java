@@ -44,6 +44,25 @@ public class OOrderShipListServiceImpl extends ServiceImpl<OOrderShipListMapper,
 
         return PageResult.build(pages);
     }
+
+    @Override
+    public PageResult<OOrderShipList> queryWarehousePageList(ShipStockUpBo bo, PageQuery pageQuery) {
+        LambdaQueryWrapper<OOrderShipList> queryWrapper = new LambdaQueryWrapper<OOrderShipList>()
+                .eq(OOrderShipList::getShipper,0)
+                .eq(bo.getShipSupplierId()!=null,OOrderShipList::getShipSupplierId,bo.getShipSupplierId())
+                .eq(bo.getShopId()!=null,OOrderShipList::getShopId,bo.getShopId())
+                .eq(bo.getStatus()!=null,OOrderShipList::getStatus,bo.getStatus())
+                .eq(StringUtils.hasText(bo.getOrderNum()),OOrderShipList::getOrderNum,bo.getOrderNum())
+                ;
+        Page<OOrderShipList> pages = this.baseMapper.selectPage(pageQuery.build(), queryWrapper);
+        if(pages.getRecords()!=null && pages.getRecords().size()>0){
+            for(OOrderShipList o : pages.getRecords()){
+                o.setItems(shipListItemMapper.selectList(new LambdaQueryWrapper<OOrderShipListItem>().eq(OOrderShipListItem::getListId,o.getId())));
+            }
+        }
+
+        return PageResult.build(pages);
+    }
 }
 
 

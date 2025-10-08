@@ -120,65 +120,59 @@
 <!--          <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>-->
 <!--        </template>-->
 <!--      </el-table-column>-->
-      <el-table-column label="商品明细" align="left" >
+      <el-table-column label="商品明细" align="center" >
         <template slot="header">
           <table>
             <th>
               <td width="50px">图片</td>
-              <td width="300px" align="left">标题</td>
-              <td width="250" align="left">规格</td>
-              <td width="150" align="left">Sku编码</td>
-              <td width="150" align="left">系统SkuId</td>
+              <td width="250px" align="left">标题</td>
+              <td width="150" align="left">SKU名</td>
+              <td width="200" align="left">Sku编码</td>
+              <td width="150" align="left">商品库SkuId</td>
               <td width="50" align="left">数量</td>
             </th>
           </table>
         </template>
-        <template slot-scope="scope">
-          <el-table :data="scope.row.children"  :show-header="false" style="width: 100%"  >
-            <el-table-column label="图片" width="50px">
+        <template slot-scope="scope" >
+          <el-table :data="scope.row.items" :show-header="false" :cell-style="{border:0 + 'px' }"  :row-style="{border:0 + 'px' }" >
+            <el-table-column label="商品图片" width="50px">
               <template slot-scope="scope">
-                <el-image  style="width: 40px; height: 40px;" :src="scope.row.goodsImg" :preview-src-list="[scope.row.goodsImg]"></el-image>
+                <!--                <el-image  style="width: 40px; height: 40px;" :src="scope.row.goodsImg" :preview-src-list="[scope.row.goodsImg]"></el-image>-->
+                <image-preview :src="scope.row.goodsImg" :width="40" :height="40"/>
               </template>
             </el-table-column>
-            <el-table-column label="商品" align="left" width="300px" prop="goodsTitle" />
-            <el-table-column label="规格" align="left" prop="skuName" width="250">
+            <el-table-column label="商品名" align="left" width="250px" prop="goodsTitle" >
               <template slot-scope="scope">
-                {{ getSkuValues(scope.row.skuName)}}
+                {{scope.row.goodsTitle}}
+                <!--                <el-tag size="small" v-if="scope.row.refundStatus === 1">无售后或售后关闭</el-tag>-->
+                <el-tag size="small" v-if="scope.row.refundStatus === 2">售后处理中</el-tag>
+                <el-tag size="small" v-if="scope.row.refundStatus === 3">退款中</el-tag>
+                <el-tag size="small" v-if="scope.row.refundStatus === 4">退款成功</el-tag>
+                <el-tag size="small" v-if="scope.row.refundStatus === 11">已取消</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="Sku编码" align="left" prop="skuNum" width="150"/>
-            <el-table-column label="商品SkuId" align="center" prop="skuId" width="150">
+            <el-table-column label="SKU名" align="left" prop="skuName" width="150"  :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                {{ scope.row.skuName }}
+              </template>
+            </el-table-column>
+            <el-table-column label="Sku编码" align="left" prop="skuNum" width="200"/>
+
+            <el-table-column label="商品库SkuId" align="center" prop="skuId" width="150">
               <template slot-scope="scope">
                 <span style="margin-right: 15px">{{scope.row.skuId}}</span>
                 <el-button icon="el-icon-edit" size="mini" plain @click="handleUpdateLink(scope.row)"></el-button>
               </template>
             </el-table-column>
-
             <el-table-column label="商品数量" align="center" prop="quantity" width="50px">
               <template slot-scope="scope">
-                <el-tag size="small">{{scope.row.quantity}}</el-tag>
+                <el-tag size="small" type="danger">{{scope.row.quantity}}</el-tag>
               </template>
             </el-table-column>
           </el-table>
         </template>
       </el-table-column>
-<!--      <el-table-column label="商品图片" >-->
-<!--        <template slot-scope="scope">-->
-<!--              <el-image  style="width: 70px; height: 70px;" :src="scope.row.goodsImg"></el-image>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="商品标题" align="center" prop="goodsTitle" />-->
-<!--      <el-table-column label="规格" align="center" prop="goodsSpec" />-->
-<!--      <el-table-column label="规格编码" align="center" prop="specNum" />-->
-<!--      <el-table-column label="erp商品id" align="center" prop="goodsId" />-->
-<!--      <el-table-column label="erp商品SkuId" align="center" prop="specId" />-->
-<!--      <el-table-column label="商品Sku编码" align="center" prop="specNum" />-->
-<!--       <el-table-column label="商品数量" align="center" prop="quantity" >-->
-<!--         <template slot-scope="scope">-->
-<!--         <el-tag size="small">{{scope.row.quantity}}</el-tag>-->
-<!--         </template>-->
-<!--       </el-table-column>-->
-<!--      <el-table-column label="仓库库存" align="center" prop="inventory" />-->
+
       <el-table-column label="状态" align="center" prop="status" width="100">
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.status === 0">待备货</el-tag>
@@ -188,15 +182,16 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
+        <!-- v-if="scope.row.status ===0 || scope.row.status === 1"-->
         <template slot-scope="scope">
           <el-button
             size="mini"
-            v-if="scope.row.status ===0 || scope.row.status === 1"
+
             plain
             type="success"
             icon="el-icon-document-copy"
             @click="stockupCompleteByOrder(scope.row)"
-          >确认备货完成</el-button>
+          >确认出库</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -264,13 +259,13 @@
     </el-dialog>
 
     <!-- 修改skuid对话框 -->
-    <el-dialog title="修改SkuId" :visible.sync="skuIdUpdateOpen" width="500px" append-to-body>
+    <el-dialog title="修改商品库SkuId" :visible.sync="skuIdUpdateOpen" width="500px" append-to-body>
       <el-form ref="form2" :model="form2" :rules="rules2" label-width="120px" inline>
 <!--        <el-form-item label="ERP商品ID" prop="erpGoodsId" >-->
 <!--          <el-input v-model="form2.erpGoodsId" disabled placeholder="请输入ERP商品ID" />-->
 <!--        </el-form-item>-->
-        <el-form-item label="ERP商品SkuId" prop="erpGoodsSpecId" >
-          <el-input type="number" v-model="form2.erpGoodsSpecId" placeholder="请输入ERP商品SkuId" />
+        <el-form-item label="商品库SkuId" prop="erpGoodsSkuId" >
+          <el-input type="number" v-model="form2.erpGoodsSkuId" placeholder="请输入商品库SkuId" />
         </el-form-item>
 
       </el-form>
@@ -285,10 +280,10 @@
 
 <script>
 import {
-  listShipStockupWarehouse,
+  listShipOrder, shipOrderItemSkuIdUpdate,
   shipStockupCompleteByOrder
 } from "@/api/shipping/shipping";
-import {orderItemSpecIdUpdate} from "@/api/order/order";
+
 import { listShop } from "@/api/shop/shop";
 import Clipboard from "clipboard";
 
@@ -342,13 +337,12 @@ export default {
         orderItemIds:[]
       },
       form2: {
-        orderItemId:null
+        id:null,
+        erpGoodsSkuId: null
       },
       shopList: [],
       skuList:[],
       supplierList:[],
-      // 备货原始数据
-      shippingListOrigin:[],
       statusList: [
         {
           value: '0',
@@ -370,7 +364,7 @@ export default {
         supplierId: [{ required: true, message: "请选择供应商", trigger: "blur" }],
       },
       rules2: {
-        erpGoodsSpecId: [{ required: true, message: "请选择填写ERP商品SkuId", trigger: "blur" }],
+        erpGoodsSkuId: [{ required: true, message: "请选择填写商品库SkuId", trigger: "blur" }],
       }
     };
   },
@@ -421,44 +415,9 @@ export default {
     /** 查询仓库订单发货列表 */
     getList() {
       this.loading = true;
-      listShipStockupWarehouse(this.queryParams).then(response => {
-        this.shippingListOrigin = response.rows;
-        // this.shippingList = response.rows;
-        // this.total = response.total;
-        // 数据处理
-        // 原数据格式 [obj...]
-        let newList=[]
-// 用 Array.prototype.reduct 实现类似于 groupBy 的效果。
-        var categoryAndObjMapList = response.rows.reduce((result, currValue) => {
-          let currCategory = currValue.orderNum;
-          // 当前分类已经有了，非空数组，则向对应分类下的列表中新增一个元素
-          if (Object.keys(result).includes(currCategory)) {
-            result[currCategory].push(currValue);
-          } else {
-            // 初始化新的分类，并同时设置第一个元素
-            result[currCategory] = [currValue];
-          }
-          console.log({currCategory, result});
-          return result;
-        }, {});
-
-        console.log(categoryAndObjMapList);
-        Object.keys(categoryAndObjMapList).forEach(x=>{
-          let newObj = {
-            orderNum:x,
-            status:categoryAndObjMapList[x][0].status,
-            shopId:categoryAndObjMapList[x][0].shopId,
-            hasChildren:true,
-            children:categoryAndObjMapList[x]
-          }
-          newList.push(newObj)
-          // newList.push(...categoryAndObjMapList[x])
-          // console.log("============")
-          // console.log(categoryAndObjMapList[x])
-        })
-        console.log("----------------",newList)
-        this.shippingList = newList
-        this.total = newList.length
+      listShipOrder(this.queryParams).then(response => {
+        this.shippingList = response.rows;
+        this.total = response.total
 
         this.loading = false;
       });
@@ -505,9 +464,10 @@ export default {
     },
     /** 单个备货 **/
     stockupCompleteByOrder(row) {
-      this.form.orderNums = [];
-      this.form.orderNums.push(row.orderNum)
-      shipStockupCompleteByOrder(this.form).then(response => {
+      // this.form.orderNums = [];
+      // this.form.orderNums.push(row.orderNum)
+      console.log('==========',row)
+      shipStockupCompleteByOrder({shipOrderId:row.id}).then(response => {
         this.$modal.msgSuccess("备货完成");
         this.open = false;
         this.getList();
@@ -594,13 +554,13 @@ export default {
     /** 修改商品关联 */
     handleUpdateLink(row){
       this.skuIdUpdateOpen = true
-      this.form2.orderItemId = row.id
+      this.form2.id = row.id
       // this.$modal.msgError("修改商品关联");
     },
     submitSkuIdUpdateForm(){
       this.$refs["form2"].validate(valid => {
         if (valid) {
-          orderItemSpecIdUpdate(this.form2).then(response => {
+          shipOrderItemSkuIdUpdate(this.form2).then(response => {
             this.$modal.msgSuccess("SkuId修改成功");
             this.skuIdUpdateOpen = false;
             this.getList();

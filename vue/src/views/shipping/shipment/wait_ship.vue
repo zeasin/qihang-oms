@@ -71,6 +71,11 @@
           <span>{{scope.row.orderNum}}</span>
           <br/>
           <el-tag type="info">{{ shopList.find(x=>x.id == scope.row.shopId) ? shopList.find(x=>x.id == scope.row.shopId).name : '' }}</el-tag>
+          <el-tag style="margin-left: 6px" v-if="scope.row.shopType===100">淘宝天猫</el-tag>
+          <el-tag style="margin-left: 6px" v-if="scope.row.shopType===200">京东POP</el-tag>
+          <el-tag style="margin-left: 6px" v-if="scope.row.shopType===300">拼多多</el-tag>
+          <el-tag style="margin-left: 6px" v-if="scope.row.shopType===400">抖店</el-tag>
+          <el-tag style="margin-left: 6px" v-if="scope.row.shopType===500">微信小店</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="商品明细" align="center" width="900px" >

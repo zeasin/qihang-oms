@@ -57,9 +57,9 @@
     <el-table v-loading="loading" :data="goodsInventoryList" @selection-change="handleSelectionChange">
 <!--      <el-table-column type="selection" width="55" align="center" />-->
 <!--      <el-table-column label="主键ID" align="center" prop="id" />-->
+      <el-table-column label="SkuId" align="center" prop="skuId" />
       <el-table-column label="商品ID" align="center" prop="goodsId" />
       <el-table-column label="商品编码" align="center" prop="goodsNum" />
-      <el-table-column label="SkuId" align="center" prop="skuId" />
       <el-table-column label="Sku编码" align="center" prop="skuCode" />
       <el-table-column label="当前库存" align="center" prop="quantity" />
       <el-table-column label="锁定库存" align="center" prop="lockedQty" />
