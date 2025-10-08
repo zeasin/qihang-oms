@@ -171,11 +171,10 @@ A[录入拦截] -->B(通知仓库)
 
 + 创建数据库`qihang-oms`
 + 导入数据库结构：sql脚本`docs\qihang-oms.sql`
-+ 导入初始化数据：sql脚本`docs\qihang-oms-data.sql`
 
 
 #### 2 启动Redis
-项目开发采用Redis7
+
 
 #### 3 修改项目配置
 
@@ -212,7 +211,7 @@ location /prod-api/ {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header REMOTE-HOST $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_pass http://localhost:8088/;
+    proxy_pass http://localhost:8086/;
 }
 ```
 #### 7 访问web
@@ -241,12 +240,8 @@ location /prod-api/ {
 
 
 ### 6.3 捐助作者
-如果帮到了您可以请作者吃个盒饭
+如果项目对您有帮忙，方便的话可以请作者吃个盒饭💖
 
 <img src="docs/微信收款码.jpg" width="300px" />
 <img src="docs/支付宝收款码.jpg" width="300px" />
-
-### 6.4 获取授权与服务
-
-[如何获取授权与服务](https://mp.weixin.qq.com/s/mATn2nfc5bUePohS_s2WGw)
 
