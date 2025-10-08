@@ -82,17 +82,17 @@
 <!--          @click="handleSelection"-->
 <!--        >备货完成</el-button>-->
 <!--      </el-col>-->
-      <el-col :span="1.5">
-      <el-button
-        type="primary"
-        plain
-        icon="el-icon-printer"
-        size="mini"
-        :disabled="multiple"
-        @click="handleStatistics"
-      >打印备货单</el-button>
+<!--      <el-col :span="1.5">-->
+<!--      <el-button-->
+<!--        type="primary"-->
+<!--        plain-->
+<!--        icon="el-icon-printer"-->
+<!--        size="mini"-->
+<!--        :disabled="multiple"-->
+<!--        @click="handleStatistics"-->
+<!--      >打印备货单</el-button>-->
 
-      </el-col>
+<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <el-table v-loading="loading" :data="shippingList" @selection-change="handleSelectionChange"  >
@@ -178,7 +178,7 @@
           <el-tag size="small" v-if="scope.row.status === 0">待备货</el-tag>
           <el-tag size="small" v-if="scope.row.status === 1">备货中</el-tag>
           <el-tag size="small" v-if="scope.row.status === 2">备货完成</el-tag>
-          <el-tag size="small" v-if="scope.row.status === 3">已发货</el-tag>
+          <el-tag size="small" v-if="scope.row.status === 3">已出库</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150">
@@ -186,7 +186,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-
+            v-if="scope.row.status !=3"
             plain
             type="success"
             icon="el-icon-document-copy"
@@ -350,6 +350,9 @@ export default {
         }, {
           value: '2',
           label: '备货完成'
+        }, {
+          value: '3',
+          label: '已出库'
         }
       ],
       // 表单校验

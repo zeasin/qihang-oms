@@ -103,23 +103,26 @@
     />
 
     <!-- 添加或修改商品库存对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="880px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 
         <el-table :data="erpGoodsInventoryDetailList" :row-class-name="rowErpGoodsInventoryDetailIndex" ref="erpGoodsInventoryDetail">
           <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="入库时间" prop="createTime" width="180"></el-table-column>
-          <el-table-column label="入库数量" prop="inQty" width="80">
+          <el-table-column label="时间" prop="createTime" width="180">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.createTime) }}</span>
+            </template>
           </el-table-column>
-          <el-table-column label="入库仓位id" prop="inLocation" width="100"></el-table-column>
+          <el-table-column label="数量" prop="qty" width="80">
+          </el-table-column>
+<!--          <el-table-column label="入库仓位id" prop="inLocation" width="100"></el-table-column>-->
           <el-table-column label="入库前数量" prop="originQty" width="100">
           </el-table-column>
           <el-table-column label="当前库存" prop="currentQty" width="100">
           </el-table-column>
-          <el-table-column label="备注" prop="remark" width="150">
+          <el-table-column label="备注" prop="remark" >
           </el-table-column>
-          <el-table-column label="操作人" prop="createBy" width="150">
-          </el-table-column>
+<!--          <el-table-column label="操作人" prop="createBy" width="150"></el-table-column>-->
         </el-table>
       </el-form>
     </el-dialog>

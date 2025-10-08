@@ -28,6 +28,7 @@ public class OGoodsInventoryBatch implements Serializable {
      * 初始数量
      */
     private Integer originQty;
+    private Integer qty;
 
     /**
      * 当前数量

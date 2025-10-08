@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 07/10/2025 17:53:59
+ Date: 08/10/2025 16:09:55
 */
 
 SET NAMES utf8mb4;
@@ -318,11 +318,12 @@ CREATE TABLE `o_goods`  (
   UNIQUE INDEX `goods_id_unique`(`outer_erp_goods_id` ASC) USING BTREE,
   INDEX `number`(`goods_num` ASC) USING BTREE,
   INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'OMS商品表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'OMS商品表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods
 -- ----------------------------
+INSERT INTO `o_goods` VALUES (16, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', 'https://cbu01.alicdn.com/img/ibank/O1CN01LUp3xX1UZhfp9zoR1_!!2215604672532-0-cib.jpg', NULL, 'LSDX001', '', 3, '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0, '0', 25.00, 0.00, 0.00, NULL, 1975713491747684353, 0, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0, 'admin', '2025-10-08 10:57:17', NULL, NULL, NULL, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for o_goods_brand
@@ -362,11 +363,12 @@ CREATE TABLE `o_goods_category`  (
   `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新人',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_category
 -- ----------------------------
+INSERT INTO `o_goods_category` VALUES (3, 'ZM', '照明', NULL, 0, '', 0, NULL, 0, 'admin', '2025-10-08 08:02:22', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for o_goods_category_attribute
@@ -379,11 +381,13 @@ CREATE TABLE `o_goods_category_attribute`  (
   `title` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '\'属性名\'',
   `code` char(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '固定值color颜色size尺码style款式',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_category_attribute
 -- ----------------------------
+INSERT INTO `o_goods_category_attribute` VALUES (2, 3, 1, '颜色', 'color');
+INSERT INTO `o_goods_category_attribute` VALUES (3, 3, 1, '亮度', 'size');
 
 -- ----------------------------
 -- Table structure for o_goods_category_attribute_value
@@ -397,11 +401,16 @@ CREATE TABLE `o_goods_category_attribute_value`  (
   `orderNum` int NULL DEFAULT 0,
   `isDelete` int NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 427 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 432 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_category_attribute_value
 -- ----------------------------
+INSERT INTO `o_goods_category_attribute_value` VALUES (427, 2, '白光', '00', 0, 0);
+INSERT INTO `o_goods_category_attribute_value` VALUES (428, 3, '12W', '12W', 0, 0);
+INSERT INTO `o_goods_category_attribute_value` VALUES (429, 3, '18W', '18W', 0, 0);
+INSERT INTO `o_goods_category_attribute_value` VALUES (430, 3, '24W', '24W', 0, 0);
+INSERT INTO `o_goods_category_attribute_value` VALUES (431, 3, '36W', '36W', 0, 0);
 
 -- ----------------------------
 -- Table structure for o_goods_inventory
@@ -424,11 +433,15 @@ CREATE TABLE `o_goods_inventory`  (
   `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新人',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `specIdIndex`(`sku_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品库存表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品库存表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_inventory
 -- ----------------------------
+INSERT INTO `o_goods_inventory` VALUES (45, 16, 'LSDX001', NULL, NULL, 45, 'LSDX0010012W', NULL, -2, 0, '2025-10-08 10:57:17', '添加商品', '2025-10-08 15:58:59', '发货出库');
+INSERT INTO `o_goods_inventory` VALUES (46, 16, 'LSDX001', NULL, NULL, 46, 'LSDX0010018W', NULL, 0, 0, '2025-10-08 10:57:17', '添加商品', '2025-10-08 02:57:16', NULL);
+INSERT INTO `o_goods_inventory` VALUES (47, 16, 'LSDX001', NULL, NULL, 47, 'LSDX0010024W', NULL, 0, 0, '2025-10-08 10:57:17', '添加商品', '2025-10-08 02:57:16', NULL);
+INSERT INTO `o_goods_inventory` VALUES (48, 16, 'LSDX001', NULL, NULL, 48, 'LSDX0010036W', NULL, 0, 0, '2025-10-08 10:57:17', '添加商品', '2025-10-08 02:57:16', NULL);
 
 -- ----------------------------
 -- Table structure for o_goods_inventory_batch
@@ -438,11 +451,12 @@ CREATE TABLE `o_goods_inventory_batch`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `inventory_id` bigint NOT NULL COMMENT '库存id',
   `batch_num` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '批次号',
-  `origin_qty` bigint NOT NULL COMMENT '初始数量',
-  `current_qty` bigint NOT NULL DEFAULT 0 COMMENT '当前数量',
-  `pur_price` double NULL DEFAULT 0 COMMENT '采购价',
-  `pur_id` bigint NOT NULL COMMENT '采购单id',
-  `pur_item_id` bigint NOT NULL COMMENT '采购单itemId',
+  `qty` int NOT NULL COMMENT '操作数量',
+  `origin_qty` int NOT NULL COMMENT '初始数量',
+  `current_qty` int NOT NULL DEFAULT 0 COMMENT '当前数量',
+  `pur_price` double NOT NULL DEFAULT 0 COMMENT '采购价',
+  `pur_id` bigint NOT NULL DEFAULT 0 COMMENT '采购单id',
+  `pur_item_id` bigint NOT NULL DEFAULT 0 COMMENT '采购单itemId',
   `remark` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `sku_id` bigint NOT NULL COMMENT '规格id',
   `goods_id` bigint NOT NULL COMMENT '商品id',
@@ -454,11 +468,13 @@ CREATE TABLE `o_goods_inventory_batch`  (
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '更新人',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品库存批次' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品库存批次' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_inventory_batch
 -- ----------------------------
+INSERT INTO `o_goods_inventory_batch` VALUES (2, 45, '20251008154746', -1, 0, -1, 0, 0, 0, '发货出库250929-351611154071222', 45, 16, 'LSDX0010012W', 0, 0, '2025-10-08 15:47:46', '发货出库', '2025-10-08 15:47:46', NULL);
+INSERT INTO `o_goods_inventory_batch` VALUES (3, 45, '20251008155858', 1, -1, -2, 0, 0, 0, '发货出库250929-351611154071222', 45, 16, 'LSDX0010012W', 0, 0, '2025-10-08 15:58:59', '发货出库', '2025-10-08 15:58:59', NULL);
 
 -- ----------------------------
 -- Table structure for o_goods_inventory_operation
@@ -534,11 +550,15 @@ CREATE TABLE `o_goods_sku`  (
   UNIQUE INDEX `sku_id_unique`(`outer_erp_sku_id` ASC) USING BTREE,
   INDEX `id`(`id` ASC) USING BTREE,
   INDEX `number`(`sku_code` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'OMS商品SKU表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'OMS商品SKU表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_sku
 -- ----------------------------
+INSERT INTO `o_goods_sku` VALUES (45, 16, NULL, NULL, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', NULL, '白光 12W', 'LSDX0010012W', NULL, 427, '白光', 'https://cbu01.alicdn.com/img/ibank/O1CN01ZZTZb01UZhscuHvTj_!!2215604672532-0-cib.jpg', NULL, 428, '12W', NULL, 0, '', NULL, 25.00, 0.00, 0.00, '', 1, 0, 0, NULL, '2025-10-08 02:57:16', NULL);
+INSERT INTO `o_goods_sku` VALUES (46, 16, NULL, NULL, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', NULL, '白光 18W', 'LSDX0010018W', NULL, 427, '白光', 'https://cbu01.alicdn.com/img/ibank/O1CN01bYBxVj1UZhsbltiGt_!!2215604672532-0-cib.jpg', NULL, 429, '18W', NULL, 0, '', NULL, 25.00, 0.00, 0.00, '', 1, 0, 0, NULL, '2025-10-08 02:57:16', NULL);
+INSERT INTO `o_goods_sku` VALUES (47, 16, NULL, NULL, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', NULL, '白光 24W', 'LSDX0010024W', NULL, 427, '白光', 'https://cbu01.alicdn.com/img/ibank/O1CN01RBKirl1UZhsd6pgUY_!!2215604672532-0-cib.jpg', NULL, 430, '24W', NULL, 0, '', NULL, 25.00, 0.00, 0.00, '', 1, 0, 0, NULL, '2025-10-08 02:57:16', NULL);
+INSERT INTO `o_goods_sku` VALUES (48, 16, NULL, NULL, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', NULL, '白光 36W', 'LSDX0010036W', NULL, 427, '白光', 'https://cbu01.alicdn.com/img/ibank/O1CN01opaMlf1UZhseOA2Zj_!!2215604672532-0-cib.jpg', NULL, 431, '36W', NULL, 0, '', NULL, 25.00, 0.00, 0.00, '', 1, 0, 0, NULL, '2025-10-08 02:57:16', NULL);
 
 -- ----------------------------
 -- Table structure for o_goods_sku_attr
@@ -554,11 +574,17 @@ CREATE TABLE `o_goods_sku_attr`  (
   `v` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `img` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_sku_attr
 -- ----------------------------
+INSERT INTO `o_goods_sku_attr` VALUES (1, 16, 'color', '颜色', 114, 427, NULL, NULL);
+INSERT INTO `o_goods_sku_attr` VALUES (2, 16, 'size', '尺码', 115, 428, NULL, NULL);
+INSERT INTO `o_goods_sku_attr` VALUES (3, 16, 'size', '尺码', 115, 429, NULL, NULL);
+INSERT INTO `o_goods_sku_attr` VALUES (4, 16, 'size', '尺码', 115, 430, NULL, NULL);
+INSERT INTO `o_goods_sku_attr` VALUES (5, 16, 'size', '尺码', 115, 431, NULL, NULL);
+INSERT INTO `o_goods_sku_attr` VALUES (6, 16, 'style', '款式', 116, 427, NULL, NULL);
 
 -- ----------------------------
 -- Table structure for o_goods_supplier
@@ -588,11 +614,12 @@ CREATE TABLE `o_goods_supplier`  (
   `createTime` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1975713491747684354 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_goods_supplier
 -- ----------------------------
+INSERT INTO `o_goods_supplier` VALUES (1975713491747684353, '佛山三佛照明', 'SFZM', 0, 0, 0, 0, NULL, '', '', NULL, '', NULL, NULL, NULL, NULL, '', 0, 0, NULL, '2025-10-08 08:02:58');
 
 -- ----------------------------
 -- Table structure for o_logistics_company
@@ -608,12 +635,13 @@ CREATE TABLE `o_logistics_company`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `status` int NULL DEFAULT NULL COMMENT '状态（0禁用1启用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '快递公司表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '快递公司表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_logistics_company
 -- ----------------------------
 INSERT INTO `o_logistics_company` VALUES (1, 100, NULL, NULL, 'aa', '中通快递', NULL, 1);
+INSERT INTO `o_logistics_company` VALUES (3, 300, NULL, NULL, 'JTSD', '极兔快递', NULL, 1);
 
 -- ----------------------------
 -- Table structure for o_order
@@ -662,8 +690,8 @@ CREATE TABLE `o_order`  (
 -- ----------------------------
 -- Records of o_order
 -- ----------------------------
-INSERT INTO `o_order` VALUES (40, '4779070308838830200', 100, 1007, NULL, NULL, NULL, NULL, 1, 2, 11992, 0, 0, 0, 11992, 3816, '李**', '***********', '北**镇东**村***号***', '北京', '北京市', '昌平区', '2025-09-30 15:47:31', 0, 2, 2, '0', NULL, NULL, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货', NULL);
-INSERT INTO `o_order` VALUES (41, '250929-351611154071222', 300, 1009, NULL, '', '', NULL, 1, 11, 29.35, 0, 0, 0, 29.35, 29.35, 'a', 'a', 'a', '北京市', '市辖区', '东城区', '2025-09-29 21:22:48', -1, 0, 0, '0', NULL, NULL, '2025-10-06 17:56:31', '手动确认订单', '2025-10-07 08:32:00', 'admin 操作取消订单', 'aa');
+INSERT INTO `o_order` VALUES (40, '4779070308838830200', 100, 1007, NULL, NULL, NULL, NULL, 1, 1, 11992, 0, 0, 0, 11992, 3816, '李**', '***********', '北**镇东**村***号***', '北京', '北京市', '昌平区', '2025-09-30 15:47:31', 0, 0, 0, '0', NULL, NULL, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货', NULL);
+INSERT INTO `o_order` VALUES (41, '250929-351611154071222', 300, 1009, NULL, '', '', NULL, 1, 2, 29.35, 0, 0, 0, 29.35, 29.35, 'a', 'a', 'a', '北京市', '市辖区', '东城区', '2025-09-29 21:22:48', 0, 2, 2, '0', NULL, NULL, '2025-10-06 17:56:31', '手动确认订单', '2025-10-08 11:42:57', '手动发货', 'aa');
 
 -- ----------------------------
 -- Table structure for o_order_item
@@ -709,13 +737,13 @@ CREATE TABLE `o_order_item`  (
 -- ----------------------------
 -- Records of o_order_item
 -- ----------------------------
-INSERT INTO `o_order_item` VALUES (45, 1007, 100, 40, '4779070308838830200', '4779070308839830200', '5380261056486', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:石墨灰【灯芯绒】;尺寸:94x45x35cm', 'F9-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 2, 2, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
-INSERT INTO `o_order_item` VALUES (46, 1007, 100, 40, '4779070308838830200', '4779070308840830200', '5380261056464', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:焦糖棕【灯芯绒】;尺寸:94x45x35cm', 'F8-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 2, 2, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
-INSERT INTO `o_order_item` VALUES (47, 1007, 100, 40, '4779070308838830200', '4779070308841830200', '5380261056530', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蔷薇粉【灯芯绒】;尺寸:94x45x35cm', 'F7-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 2, 2, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
-INSERT INTO `o_order_item` VALUES (48, 1007, 100, 40, '4779070308838830200', '4779070308842830200', '5380261056508', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:奶茶灰【灯芯绒】;尺寸:94x45x35cm', 'F2-23E-LAB-ZDB-2', 1499, 4497, 0, 0, 3, NULL, 0, 1, NULL, 0, 2, 2, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
-INSERT INTO `o_order_item` VALUES (49, 1007, 100, 40, '4779070308838830200', '4779070308843830200', '5380261056552', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:冰川灰【头层牛皮】;尺寸:94x45x35cm', 'F5-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 2, 2, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
-INSERT INTO `o_order_item` VALUES (50, 1007, 100, 40, '4779070308838830200', '4779070308844830200', '5380261056497', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蜜糖棕【硅胶皮】;尺寸:94x45x35cm', 'F4-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 2, 2, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
-INSERT INTO `o_order_item` VALUES (51, 1009, 300, 41, '250929-351611154071222', '250929-351611154071222-1742164849115', '1742164849115', 0, 0, NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', 'LEDDX001', '12W白光-135mm', 'LEDDX00101', 29.35, 29.35, 0, 0, 1, NULL, 0, 1, 11, -1, 0, 0, '2025-10-06 17:56:31', '手动确认订单', '2025-10-07 08:32:00', 'admin 操作取消订单');
+INSERT INTO `o_order_item` VALUES (45, 1007, 100, 40, '4779070308838830200', '4779070308839830200', '5380261056486', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:石墨灰【灯芯绒】;尺寸:94x45x35cm', 'F9-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 0, 0, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
+INSERT INTO `o_order_item` VALUES (46, 1007, 100, 40, '4779070308838830200', '4779070308840830200', '5380261056464', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:焦糖棕【灯芯绒】;尺寸:94x45x35cm', 'F8-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 0, 0, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
+INSERT INTO `o_order_item` VALUES (47, 1007, 100, 40, '4779070308838830200', '4779070308841830200', '5380261056530', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蔷薇粉【灯芯绒】;尺寸:94x45x35cm', 'F7-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 0, 0, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
+INSERT INTO `o_order_item` VALUES (48, 1007, 100, 40, '4779070308838830200', '4779070308842830200', '5380261056508', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:奶茶灰【灯芯绒】;尺寸:94x45x35cm', 'F2-23E-LAB-ZDB-2', 1499, 4497, 0, 0, 3, NULL, 0, 1, NULL, 0, 0, 0, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
+INSERT INTO `o_order_item` VALUES (49, 1007, 100, 40, '4779070308838830200', '4779070308843830200', '5380261056552', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:冰川灰【头层牛皮】;尺寸:94x45x35cm', 'F5-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 0, 0, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
+INSERT INTO `o_order_item` VALUES (50, 1007, 100, 40, '4779070308838830200', '4779070308844830200', '5380261056497', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蜜糖棕【硅胶皮】;尺寸:94x45x35cm', 'F4-23E-LAB-ZDB-2', 1499, 1499, 0, 0, 1, NULL, 0, 1, NULL, 0, 0, 0, '2025-10-06 17:49:00', '手动确认订单', '2025-10-07 10:49:54', '手动发货');
+INSERT INTO `o_order_item` VALUES (51, 1009, 300, 41, '250929-351611154071222', '250929-351611154071222-1742164849115', '1742164849115', 0, 0, NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', 'LEDDX001', '12W白光-135mm', 'LEDDX00101', 29.35, 29.35, 0, 0, 1, NULL, 0, 1, 11, 0, 2, 2, '2025-10-06 17:56:31', '手动确认订单', '2025-10-08 11:42:57', '手动发货');
 
 -- ----------------------------
 -- Table structure for o_order_ship_list
@@ -743,18 +771,18 @@ CREATE TABLE `o_order_ship_list`  (
   `ship_logistics_company_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '物流公司code',
   `ship_logistics_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '物流单号',
   `ship_status` int NOT NULL COMMENT '发货状态1：待发货，2：已发货，3已推送',
-  `status` int NOT NULL COMMENT '状态0待备货1备货中2备货完成3已发货',
+  `status` int NOT NULL COMMENT '状态0待备货1备货中2备货完成3已出库',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `create_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '创建人',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新人',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货-备货表（取号发货加入备货清单、分配供应商发货加入备货清单）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货-备货表（取号发货加入备货清单、分配供应商发货加入备货清单）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_order_ship_list
 -- ----------------------------
-INSERT INTO `o_order_ship_list` VALUES (3, 1007, 100, 0, 0, '自由仓库发货', 40, '4779070308838830200', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '中通快递', 'aa', 'AAAA', 2, 0, '2025-10-07 10:49:54', '手动发货', NULL, NULL);
+INSERT INTO `o_order_ship_list` VALUES (1, 1009, 300, 0, 0, '仓库发货', 41, '250929-351611154071222', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '', '极兔快递', 'JTSD', 'JT2300994000', 2, 3, '2025-10-08 11:42:57', '手动发货', '2025-10-08 15:58:59', '发货出库');
 
 -- ----------------------------
 -- Table structure for o_order_ship_list_item
@@ -786,17 +814,12 @@ CREATE TABLE `o_order_ship_list_item`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '更新人',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货-备货表（打单加入备货清单）' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货-备货表（打单加入备货清单）' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_order_ship_list_item
 -- ----------------------------
-INSERT INTO `o_order_ship_list_item` VALUES (3, 3, 1007, 100, 0, 0, '自由仓库发货', 40, 45, '4779070308838830200', '5380261056486', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:石墨灰【灯芯绒】;尺寸:94x45x35cm', 'F9-23E-LAB-ZDB-2', 1, 2, '2025-10-07 10:49:54', '手动发货', '2025-10-07 17:45:34', '备货完成');
-INSERT INTO `o_order_ship_list_item` VALUES (4, 3, 1007, 100, 0, 0, '自由仓库发货', 40, 46, '4779070308838830200', '5380261056464', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:焦糖棕【灯芯绒】;尺寸:94x45x35cm', 'F8-23E-LAB-ZDB-2', 1, 2, '2025-10-07 10:49:54', '手动发货', '2025-10-07 17:45:34', '备货完成');
-INSERT INTO `o_order_ship_list_item` VALUES (5, 3, 1007, 100, 0, 0, '自由仓库发货', 40, 47, '4779070308838830200', '5380261056530', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蔷薇粉【灯芯绒】;尺寸:94x45x35cm', 'F7-23E-LAB-ZDB-2', 1, 2, '2025-10-07 10:49:54', '手动发货', '2025-10-07 17:45:34', '备货完成');
-INSERT INTO `o_order_ship_list_item` VALUES (6, 3, 1007, 100, 0, 0, '自由仓库发货', 40, 48, '4779070308838830200', '5380261056508', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:奶茶灰【灯芯绒】;尺寸:94x45x35cm', 'F2-23E-LAB-ZDB-2', 3, 2, '2025-10-07 10:49:54', '手动发货', '2025-10-07 17:45:34', '备货完成');
-INSERT INTO `o_order_ship_list_item` VALUES (7, 3, 1007, 100, 0, 0, '自由仓库发货', 40, 49, '4779070308838830200', '5380261056552', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:冰川灰【头层牛皮】;尺寸:94x45x35cm', 'F5-23E-LAB-ZDB-2', 1, 2, '2025-10-07 10:49:54', '手动发货', '2025-10-07 17:45:34', '备货完成');
-INSERT INTO `o_order_ship_list_item` VALUES (8, 3, 1007, 100, 0, 0, '自由仓库发货', 40, 50, '4779070308838830200', '5380261056497', 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蜜糖棕【硅胶皮】;尺寸:94x45x35cm', 'F4-23E-LAB-ZDB-2', 1, 2, '2025-10-07 10:49:54', '手动发货', '2025-10-07 17:45:34', '备货完成');
+INSERT INTO `o_order_ship_list_item` VALUES (1, 1, 1009, 300, 0, 0, '仓库发货', 41, 51, '250929-351611154071222', '0', 0, 45, NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', 'LEDDX001', '12W白光-135mm', 'LEDDX00101', 1, 3, '2025-10-08 11:42:57', '手动发货', '2025-10-08 15:58:59', '备货完成');
 
 -- ----------------------------
 -- Table structure for o_refund
@@ -904,12 +927,12 @@ CREATE TABLE `o_shipment`  (
   `update_by` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id_index`(`order_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货记录表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_shipment
 -- ----------------------------
-INSERT INTO `o_shipment` VALUES (7, 1007, 100, 40, '4779070308838830200', '2025-09-30 15:47:31', 0, 0, NULL, 1, '中通快递', 'aa', 'AAAA', 0.00, '2025-10-07 10:49:54', NULL, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '2025-10-07 10:49:54', 'admin', NULL, NULL);
+INSERT INTO `o_shipment` VALUES (1, 1009, 300, 41, '250929-351611154071222', '2025-09-29 21:22:48', 0, 0, NULL, 1, '极兔快递', 'JTSD', 'JT2300994000', 0.00, '2025-10-08 11:42:57', NULL, 1, 0, 0, 0, 0, NULL, NULL, NULL, NULL, '2025-10-08 11:42:57', 'admin', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for o_shipment_item
@@ -944,17 +967,12 @@ CREATE TABLE `o_shipment_item`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goodId_index`(`erp_goods_id` ASC) USING BTREE,
   INDEX `order_id`(`order_item_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '发货明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_shipment_item
 -- ----------------------------
-INSERT INTO `o_shipment_item` VALUES (7, 7, 0, 0, NULL, 100, 1007, 40, '4779070308838830200', '2025-09-30 15:47:31', 45, 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:石墨灰【灯芯绒】;尺寸:94x45x35cm', 'F9-23E-LAB-ZDB-2', 1, NULL, 0, '2025-10-07 10:49:54', 'admin', NULL, NULL);
-INSERT INTO `o_shipment_item` VALUES (8, 7, 0, 0, NULL, 100, 1007, 40, '4779070308838830200', '2025-09-30 15:47:31', 46, 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:焦糖棕【灯芯绒】;尺寸:94x45x35cm', 'F8-23E-LAB-ZDB-2', 1, NULL, 0, '2025-10-07 10:49:54', 'admin', NULL, NULL);
-INSERT INTO `o_shipment_item` VALUES (9, 7, 0, 0, NULL, 100, 1007, 40, '4779070308838830200', '2025-09-30 15:47:31', 47, 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蔷薇粉【灯芯绒】;尺寸:94x45x35cm', 'F7-23E-LAB-ZDB-2', 1, NULL, 0, '2025-10-07 10:49:54', 'admin', NULL, NULL);
-INSERT INTO `o_shipment_item` VALUES (10, 7, 0, 0, NULL, 100, 1007, 40, '4779070308838830200', '2025-09-30 15:47:31', 48, 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:奶茶灰【灯芯绒】;尺寸:94x45x35cm', 'F2-23E-LAB-ZDB-2', 3, NULL, 0, '2025-10-07 10:49:54', 'admin', NULL, NULL);
-INSERT INTO `o_shipment_item` VALUES (11, 7, 0, 0, NULL, 100, 1007, 40, '4779070308838830200', '2025-09-30 15:47:31', 49, 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:冰川灰【头层牛皮】;尺寸:94x45x35cm', 'F5-23E-LAB-ZDB-2', 1, NULL, 0, '2025-10-07 10:49:54', 'admin', NULL, NULL);
-INSERT INTO `o_shipment_item` VALUES (12, 7, 0, 0, NULL, 100, 1007, 40, '4779070308838830200', '2025-09-30 15:47:31', 50, 0, 0, '【活动价】曲美lab墩墩沙发现代别墅客厅沙发组合沙发配件', 'https://img.alicdn.com/bao/uploaded/i1/351855490/O1CN01gnsf7b1qQTMCTnI4c_!!351855490.jpg', NULL, '适用人数:组合;颜色分类:蜜糖棕【硅胶皮】;尺寸:94x45x35cm', 'F4-23E-LAB-ZDB-2', 1, NULL, 0, '2025-10-07 10:49:54', 'admin', NULL, NULL);
+INSERT INTO `o_shipment_item` VALUES (1, 1, 0, 0, NULL, 300, 1009, 41, '250929-351611154071222', '2025-09-29 21:22:48', 51, 0, 0, NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', 'LEDDX001', '12W白光-135mm', 'LEDDX00101', 1, NULL, 0, '2025-10-08 11:42:57', 'admin', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for o_shop
@@ -2947,7 +2965,7 @@ INSERT INTO `sys_menu` VALUES (110, '平台开关', 3, 81, 'platform/setting', '
 INSERT INTO `sys_menu` VALUES (112, '商品库SKU明细', 4, 10, 'sku_list', 'goods/spec/index', '', 1, 0, 'C', '1', '0', '', 'tree', 'admin', '2023-12-29 16:35:55', 'admin', '2025-10-01 02:30:40', '');
 INSERT INTO `sys_menu` VALUES (116, '用户管理', 5, 1, 'user', 'system/user/index', '', 1, 0, 'C', '0', '0', '', 'user', 'admin', '2023-12-27 15:00:27', '', '', '用户管理菜单');
 INSERT INTO `sys_menu` VALUES (117, '菜单管理', 5, 1, 'menu', 'system/menu/index', '', 1, 0, 'C', '0', '0', '', 'user', 'admin', '2023-12-27 15:00:27', '', '', '用户管理菜单');
-INSERT INTO `sys_menu` VALUES (2077, '店铺商品管理', 4, 21, 'shop_goods', 'shop/goods/index', NULL, 1, 0, 'C', '0', '0', '', 'shopping', 'admin', '2024-03-28 10:29:59', 'admin', '2025-10-01 02:32:48', '');
+INSERT INTO `sys_menu` VALUES (2077, '店铺商品', 4, 21, 'shop_goods', 'shop/goods/index', NULL, 1, 0, 'C', '0', '0', '', 'shopping', 'admin', '2024-03-28 10:29:59', 'admin', '2025-10-08 03:16:26', '');
 INSERT INTO `sys_menu` VALUES (2078, '添加商品', 4, 99, 'create', 'goods/create', NULL, 1, 0, 'C', '1', '0', '', 'checkbox', 'admin', '2024-03-18 07:59:57', 'admin', '2025-10-01 02:32:19', '');
 INSERT INTO `sys_menu` VALUES (2079, '字典管理', 5, 9, 'dict', 'system/dict/index', NULL, 1, 0, 'C', '0', '0', '', 'dict', 'admin', '2024-03-18 08:43:55', 'admin', '2024-03-18 08:44:08', '');
 INSERT INTO `sys_menu` VALUES (2087, '发货管理', 0, 20, 'ship', NULL, NULL, 1, 0, 'M', '0', '0', '', 'guide', 'admin', '2024-03-30 17:36:10', 'admin', '2024-08-25 15:45:48', '');
@@ -2958,7 +2976,7 @@ INSERT INTO `sys_menu` VALUES (2091, '部门管理', 5, 3, 'dept', 'system/dept/
 INSERT INTO `sys_menu` VALUES (2092, '售后处理记录', 2, 5, 'processing', 'afterSale/index', NULL, 1, 0, 'C', '0', '0', '', 'documentation', 'admin', '2024-04-06 17:27:03', 'admin', '2024-07-28 18:59:41', '');
 INSERT INTO `sys_menu` VALUES (2093, '发货订单商品', 1, 2, 'order_item_list', 'order/item_list', NULL, 1, 0, 'C', '1', '1', '', 'chart', 'admin', '2024-04-06 18:58:06', 'admin', '2025-10-06 03:38:47', '');
 INSERT INTO `sys_menu` VALUES (2094, '打单发货', 2087, 1, 'print', 'shipping/ewaybillPrint/index', NULL, 1, 0, 'C', '0', '0', '', 'edit', 'admin', '2024-07-20 11:04:54', 'admin', '2025-10-01 03:32:45', '');
-INSERT INTO `sys_menu` VALUES (2096, '备货单', 2087, 2, 'stockup', 'shipping/stockup', NULL, 1, 0, 'C', '0', '0', '', 'email', 'admin', '2024-07-20 11:53:24', 'admin', '2025-06-02 09:10:24', '');
+INSERT INTO `sys_menu` VALUES (2096, '备货出库', 2087, 2, 'stockup', 'shipping/stockup/index.vue', NULL, 1, 0, 'C', '0', '0', '', 'email', 'admin', '2024-07-20 11:53:24', 'admin', '2025-10-08 07:59:43', '');
 INSERT INTO `sys_menu` VALUES (2097, '物流跟踪', 2087, 5, 'logistics', 'shipping/stocking/index', NULL, 1, 0, 'C', '0', '1', '', 'list', 'admin', '2024-07-20 11:54:18', 'admin', '2025-05-25 14:32:27', '');
 INSERT INTO `sys_menu` VALUES (2099, '私域订单管理', 1, 10, 'offline_order_list', 'order/private/index', NULL, 1, 0, 'C', '0', '1', '', 'checkbox', 'admin', '2024-07-27 17:33:03', 'admin', '2025-05-24 13:10:53', '');
 INSERT INTO `sys_menu` VALUES (2100, '私域售后管理', 2, 3, 'offline_aftersale', 'refund/private/index', NULL, 1, 0, 'C', '0', '1', '', 'code', 'admin', '2024-07-27 17:33:33', 'admin', '2025-05-25 14:59:03', '');
@@ -2972,7 +2990,7 @@ INSERT INTO `sys_menu` VALUES (2110, '品牌管理', 4, 81, 'brand_list', 'goods
 INSERT INTO `sys_menu` VALUES (2111, '分类规格属性', 4, 101, 'goods_category/attribute', 'goods/category/categoryAttribute', NULL, 1, 0, 'C', '1', '0', '', 'button', 'admin', '2024-08-25 18:49:22', 'admin', '2024-09-07 16:17:01', '');
 INSERT INTO `sys_menu` VALUES (2112, '规格属性值', 4, 102, 'goods_category/attribute_value', 'goods/category/categoryAttributeValue', NULL, 1, 0, 'C', '1', '0', '', 'date', 'admin', '2024-08-25 18:51:55', 'admin', '2024-09-07 16:23:53', '');
 INSERT INTO `sys_menu` VALUES (2114, '仓库仓位设置', 2105, 90, 'warehouse', 'stock/warehouse/index.vue', NULL, 1, 0, 'C', '0', '0', '', 'cascader', 'admin', '2024-09-21 20:07:26', 'admin', '2025-03-24 13:46:52', '');
-INSERT INTO `sys_menu` VALUES (2115, '库存管理', 4, 0, 'goods_inventory', 'stock/goodsInventory/index.vue', NULL, 1, 0, 'C', '0', '0', '', 'chart', 'admin', '2024-09-21 20:43:00', 'admin', '2025-10-01 02:34:13', '');
+INSERT INTO `sys_menu` VALUES (2115, '商品库存', 4, 1, 'goods_stock', 'goods/stock/index.vue', NULL, 1, 0, 'C', '0', '0', '', 'chart', 'admin', '2024-09-21 20:43:00', 'admin', '2025-10-08 03:16:56', '');
 INSERT INTO `sys_menu` VALUES (2116, '商品出库管理', 2105, 20, 'stock_out', 'stock/stockOut/index', NULL, 1, 0, 'C', '0', '0', '', 'guide', 'admin', '2024-09-21 20:44:46', 'admin', '2025-03-24 13:46:42', '');
 INSERT INTO `sys_menu` VALUES (2117, '仓位管理', 2105, 91, 'position', 'stock/warehouse/position', NULL, 1, 0, 'C', '1', '0', '', '404', 'admin', '2024-09-22 11:52:18', 'admin', '2025-03-24 13:47:04', '');
 INSERT INTO `sys_menu` VALUES (2118, '新建商品入库单', 2105, 11, 'stock_in/create', 'stock/stockIn/create.vue', NULL, 1, 0, 'C', '1', '0', '', '404', 'admin', '2024-09-22 14:49:40', 'admin', '2025-03-24 13:35:30', '');
@@ -3140,7 +3158,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-10-07 10:49:37', 'admin', '2023-08-07 19:31:37', '', '2025-10-07 02:49:36', '管理员');
+INSERT INTO `sys_user` VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-10-08 15:19:04', 'admin', '2023-08-07 19:31:37', '', '2025-10-08 07:19:04', '管理员');
 INSERT INTO `sys_user` VALUES (2, NULL, 'openapi', 'openApi接口专用', '00', '2806456181@qq.com', '15818590000', '0', '', '$2a$10$fHkhoqbMiyracAsTzl38H.55bu.M.of1FXk2EK7RQBjfic3tLU0Ue', '0', '0', '127.0.0.1', '2024-06-24 10:23:35', 'admin', '2024-03-17 14:55:22', 'admin', '2024-06-24 10:23:35', NULL);
 INSERT INTO `sys_user` VALUES (101, 101, '15818590119', 'aaa123', '00', '', '', '0', '', '$2a$10$pXcT6cHaObMeKuYd9vZb5uEb8PyUdF2AcqqRN1cBqiA9rV4qYQW7G', '0', '2', '', NULL, 'admin', '2024-08-15 13:45:25', '', NULL, NULL);
 INSERT INTO `sys_user` VALUES (102, 101, '15818590119', '老齐', '00', '', '', '0', '', '$2a$10$ysk.zgJ8wh25c7vOjKyZ8uarM2hkG0S51j8GYdJSo2kZmc3f8HdKe', '0', '0', '', NULL, 'admin', '2024-08-15 13:49:59', 'admin', '2025-02-10 16:26:20', NULL);

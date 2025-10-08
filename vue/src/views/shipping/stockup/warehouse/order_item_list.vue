@@ -78,11 +78,11 @@
         <el-button
           type="success"
           plain
-          icon="el-icon-document-copy"
+          icon="el-icon-printer"
           size="mini"
           :disabled="multiple"
           @click="handleSelection"
-        >备货完成</el-button>
+        >打印备货单</el-button>
       </el-col>
       <el-col :span="1.5">
       <el-button
@@ -210,7 +210,7 @@
       </div>
       <div slot="footer" class="dialog-footer" v-if="isGen">
         <el-button v-print="'#dialogContent'">打印</el-button>
-        <el-button type="primary" @click="submitForm">完成</el-button>
+<!--        <el-button type="primary" @click="submitForm">完成</el-button>-->
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -220,8 +220,8 @@
 <!--        <el-form-item label="ERP商品ID" prop="erpGoodsId" >-->
 <!--          <el-input v-model="form2.erpGoodsId" disabled placeholder="请输入ERP商品ID" />-->
 <!--        </el-form-item>-->
-        <el-form-item label="ERP商品SkuId" prop="erpGoodsSpecId" >
-          <el-input type="number" v-model="form2.erpGoodsSpecId" placeholder="请输入ERP商品SkuId" />
+        <el-form-item label="ERP商品SkuId" prop="erpGoodsSkuId" >
+          <el-input type="number" v-model="form2.erpGoodsSkuId" placeholder="请输入ERP商品SkuId" />
         </el-form-item>
 
       </el-form>
@@ -235,8 +235,7 @@
 </template>
 
 <script>
-import {listShipStockupItemWarehouse, shipStockupComplete} from "@/api/shipping/shipping";
-import {orderItemSpecIdUpdate} from "@/api/order/order";
+import {listShipStockupItemWarehouse, shipOrderItemSkuIdUpdate, shipStockupComplete} from "@/api/shipping/shipping";
 import { listShop } from "@/api/shop/shop";
 import Clipboard from "clipboard";
 export default {
@@ -315,7 +314,7 @@ export default {
         supplierId: [{ required: true, message: "请选择供应商", trigger: "blur" }],
       },
       rules2: {
-        erpGoodsSpecId: [{ required: true, message: "请选择填写ERP商品SkuId", trigger: "blur" }],
+        erpGoodsSkuId: [{ required: true, message: "请选择填写ERP商品SkuId", trigger: "blur" }],
       }
     };
   },
@@ -395,23 +394,23 @@ export default {
       this.multiple = !selection.length
     },
     /** 提交按钮 */
-    submitForm() {
-      console.log("=============备货完成提交===",this.ids)
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if(!this.skuList || this.skuList.length === 0){
-            this.$modal.msgError("请选择备货商品");
-          }
-          this.form.ids = this.ids;
-          shipStockupComplete(this.form).then(response => {
-            this.$modal.msgSuccess("备货完成");
-            this.open = false;
-            this.getList();
-          });
-
-        }
-      });
-    },
+    // submitForm() {
+    //   console.log("=============备货完成提交===",this.ids)
+    //   this.$refs["form"].validate(valid => {
+    //     if (valid) {
+    //       if(!this.skuList || this.skuList.length === 0){
+    //         this.$modal.msgError("请选择备货商品");
+    //       }
+    //       this.form.ids = this.ids;
+    //       shipStockupComplete(this.form).then(response => {
+    //         this.$modal.msgSuccess("备货完成");
+    //         this.open = false;
+    //         this.getList();
+    //       });
+    //
+    //     }
+    //   });
+    // },
     handleStatistics(row){
       this.handleSelection(row,false)
     },
@@ -485,13 +484,13 @@ export default {
     /** 修改商品关联 */
     handleUpdateLink(row){
       this.skuIdUpdateOpen = true
-      this.form2.orderItemId = row.id
+      this.form2.id = row.id
       // this.$modal.msgError("修改商品关联");
     },
     submitSkuIdUpdateForm(){
       this.$refs["form2"].validate(valid => {
         if (valid) {
-          orderItemSpecIdUpdate(this.form2).then(response => {
+          shipOrderItemSkuIdUpdate(this.form2).then(response => {
             this.$modal.msgSuccess("SkuId修改成功");
             this.skuIdUpdateOpen = false;
             this.getList();

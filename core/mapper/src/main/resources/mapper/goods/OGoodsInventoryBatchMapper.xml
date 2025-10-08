@@ -7,8 +7,9 @@
     <resultMap id="BaseResultMap" type="cn.qihangerp.model.entity.OGoodsInventoryBatch">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="batchNum" column="batch_num" jdbcType="VARCHAR"/>
-            <result property="originQty" column="origin_qty" jdbcType="BIGINT"/>
-            <result property="currentQty" column="current_qty" jdbcType="BIGINT"/>
+            <result property="qty" column="qty" jdbcType="INTEGER"/>
+            <result property="originQty" column="origin_qty" jdbcType="INTEGER"/>
+            <result property="currentQty" column="current_qty" jdbcType="INTEGER"/>
             <result property="purPrice" column="pur_price" jdbcType="DOUBLE"/>
             <result property="purId" column="pur_id" jdbcType="BIGINT"/>
             <result property="purItemId" column="pur_item_id" jdbcType="BIGINT"/>
@@ -25,7 +26,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,batch_num,origin_qty,
+        id,batch_num,qty,origin_qty,
         current_qty,pur_price,pur_id,
         pur_item_id,remark,sku_id,
         goods_id,sku_code,warehouse_id,

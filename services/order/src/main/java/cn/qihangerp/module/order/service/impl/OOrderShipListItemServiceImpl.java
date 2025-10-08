@@ -3,23 +3,24 @@ package cn.qihangerp.module.order.service.impl;
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.ResultVo;
+import cn.qihangerp.common.utils.DateUtils;
+import cn.qihangerp.mapper.goods.OGoodsInventoryBatchMapper;
+import cn.qihangerp.mapper.goods.OGoodsInventoryMapper;
 import cn.qihangerp.mapper.goods.OGoodsSkuMapper;
-import cn.qihangerp.model.entity.OGoodsSku;
-import cn.qihangerp.model.entity.OOrderItem;
-import cn.qihangerp.model.entity.OOrderShipList;
+import cn.qihangerp.model.entity.*;
 import cn.qihangerp.module.order.domain.bo.ShipStockUpBo;
 import cn.qihangerp.module.order.domain.bo.ShipStockUpCompleteBo;
 import cn.qihangerp.module.order.mapper.OOrderShipListMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.qihangerp.model.entity.OOrderShipListItem;
 import cn.qihangerp.module.order.service.OOrderShipListItemService;
 import cn.qihangerp.module.order.mapper.OOrderShipListItemMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -37,6 +38,8 @@ public class OOrderShipListItemServiceImpl extends ServiceImpl<OOrderShipListIte
     implements OOrderShipListItemService{
     private final OOrderShipListMapper oOrderShipListMapper;
     private final OGoodsSkuMapper goodsSkuMapper;
+    private final OGoodsInventoryMapper goodsInventoryMapper;
+    private final OGoodsInventoryBatchMapper goodsInventoryBatchMapper;
 
     @Override
     public PageResult<OOrderShipListItem> queryPageList(ShipStockUpBo bo, PageQuery pageQuery) {
@@ -137,25 +140,63 @@ public class OOrderShipListItemServiceImpl extends ServiceImpl<OOrderShipListIte
         // 开始出库
         for (OOrderShipListItem item : oOrderShipListItems) {
             if(item.getSkuId()==null||item.getSkuId()==0){
-                return ResultVo.error("发货单明细没有找到SkuId");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error("======出库错误：发货单明细没有找到SkuId:{}",item.getSkuId());
+                return ResultVo.error("发货单明细没有找到SkuId:"+item.getId());
             }
-        }
-//        int total=0;
-//        // 循环判断状态
-//        for (Long id:bo.getIds()) {
-//            OOrderShipListItem up = this.baseMapper.selectById(id);
-//            if (up != null) {
-//                if (up.getStatus() == 0 || up.getStatus() == 1) {
-//                    OOrderShipListItem update = new OOrderShipListItem();
-//                    update.setId(id);
-//                    update.setStatus(2);//备货完成
-//                    update.setUpdateBy("备货完成");
-//                    update.setUpdateTime(new Date());
-//                    this.baseMapper.updateById(update);
-//                }
-//            }
-//        }
+            // 查询库存
+            List<OGoodsInventory> oGoodsInventories = goodsInventoryMapper.selectList(new LambdaQueryWrapper<OGoodsInventory>().eq(OGoodsInventory::getSkuId, item.getSkuId()));
+            if(oGoodsInventories.isEmpty()){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error("======出库错误：没有找到库存数据:{}",item.getSkuId());
+                return ResultVo.error("没有找到库存数据:"+item.getSkuId());
+            }
+            int stock = oGoodsInventories.stream().mapToInt(oGoodsInventory -> oGoodsInventory.getQuantity()).sum();
+            if(stock<item.getQuantity()){
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                log.error("======出库错误：库存不足:{}",item.getSkuId());
+                return ResultVo.error("库存不足:"+item.getSkuId());
+            }
+            //减库存
+            OGoodsInventory stockUpdate = new OGoodsInventory();
+            stockUpdate.setId(oGoodsInventories.get(0).getId());
+            stockUpdate.setQuantity(oGoodsInventories.get(0).getQuantity()-item.getQuantity());
+            stockUpdate.setUpdateTime(new Date());
+            stockUpdate.setUpdateBy("发货出库");
+            goodsInventoryMapper.updateById(stockUpdate);
+            // 增加库存明细
+            OGoodsInventoryBatch stockBatch = new OGoodsInventoryBatch();
+            stockBatch.setInventoryId(Long.parseLong(stockUpdate.getId()));
+            stockBatch.setBatchNum(DateUtils.parseDateToStr("yyyyMMddHHmmss", new Date()));
+            stockBatch.setQty(item.getQuantity());
+            stockBatch.setOriginQty(oGoodsInventories.get(0).getQuantity());
+            stockBatch.setCurrentQty(stockUpdate.getQuantity());
+            stockBatch.setRemark("发货出库"+item.getOrderNum());
+            stockBatch.setSkuId(oGoodsInventories.get(0).getSkuId());
+            stockBatch.setGoodsId(oGoodsInventories.get(0).getGoodsId());
+            stockBatch.setSkuCode(oGoodsInventories.get(0).getSkuCode());
+            stockBatch.setWarehouseId(0L);
+            stockBatch.setPositionId(0L);
+            stockBatch.setCreateBy("发货出库");
+            stockBatch.setCreateTime(new Date());
+            stockBatch.setUpdateTime(new Date());
+            goodsInventoryBatchMapper.insert(stockBatch);
 
+            // 更新自己
+            OOrderShipListItem update = new OOrderShipListItem();
+            update.setId(item.getId());
+            update.setStatus(3);//备货完成
+            update.setUpdateBy("备货完成");
+            update.setUpdateTime(new Date());
+            this.baseMapper.updateById(update);
+        }
+        // 更新发货订单
+        OOrderShipList shipOrderUpdate = new OOrderShipList();
+        shipOrderUpdate.setId(oOrderShipList.getId());
+        shipOrderUpdate.setStatus(3);
+        shipOrderUpdate.setUpdateTime(new Date());
+        shipOrderUpdate.setUpdateBy("发货出库");
+        oOrderShipListMapper.updateById(shipOrderUpdate);
         return ResultVo.success(oOrderShipList.getId());
     }
 

@@ -70,17 +70,17 @@ public class ShipStockupController  extends BaseController {
     }
 
 
-    @PostMapping("/stock_up_complete")
-    public AjaxResult stock_up_complete(@RequestBody ShipStockUpCompleteBo bo)
-    {
-        int result = orderShipListItemService.stockUpComplete(bo);
-        if(result == -1) return AjaxResult.error("参数错误：orderItemIds为空");
-        if(result == -2) return AjaxResult.error("参数错误：没有要添加的");
-        else if(result == -1001) return AjaxResult.error("存在错误的orderItemId：状态不对不能生成出库单");
-        else if(result == -1002) return AjaxResult.error("存在错误的订单数据：名单明细中没有skuId请修改！");
-        //wmsStockOutEntryService.insertWmsStockOutEntry(wmsStockOutEntry)
-        return toAjax(1);
-    }
+//    @PostMapping("/stock_up_complete")
+//    public AjaxResult stock_up_complete(@RequestBody ShipStockUpCompleteBo bo)
+//    {
+//        int result = orderShipListItemService.stockUpComplete(bo);
+//        if(result == -1) return AjaxResult.error("参数错误：orderItemIds为空");
+//        if(result == -2) return AjaxResult.error("参数错误：没有要添加的");
+//        else if(result == -1001) return AjaxResult.error("存在错误的orderItemId：状态不对不能生成出库单");
+//        else if(result == -1002) return AjaxResult.error("存在错误的订单数据：名单明细中没有skuId请修改！");
+//        //wmsStockOutEntryService.insertWmsStockOutEntry(wmsStockOutEntry)
+//        return toAjax(1);
+//    }
 
     @PostMapping("/stock_up_complete_by_order")
     public AjaxResult stock_up_completeByOrder(@RequestBody ShipStockOutByOrder bo)
