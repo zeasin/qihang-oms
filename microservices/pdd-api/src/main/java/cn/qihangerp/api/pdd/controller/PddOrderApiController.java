@@ -191,7 +191,7 @@ public class PddOrderApiController {
         logs.setDuration(System.currentTimeMillis() - beginTime);
         pullLogsService.save(logs);
 
-        String msg = "成功{startTime:"+startTime.format(df)+",endTime:"+endTime.format(df)+"}总共找到：" + upResult.getTotalRecords() + "条订单，新增：" + insertSuccess + "条，添加错误：" + totalError + "条，更新：" + hasExistOrder + "条";
+        String msg = "成功{startTime:"+startTime.format(df)+",endTime:"+endTime.format(df)+"}总共找到：" + upResult.getData().getOrderList().size() + "条订单，新增：" + insertSuccess + "条，添加错误：" + totalError + "条，更新：" + hasExistOrder + "条";
         log.info("/**************主动更新pdd订单：END：" + msg + "****************/");
         return AjaxResult.success(msg);
     }

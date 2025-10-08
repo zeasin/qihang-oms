@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 08/10/2025 17:03:56
+ Date: 08/10/2025 17:38:49
 */
 
 SET NAMES utf8mb4;
@@ -771,7 +771,7 @@ CREATE TABLE `o_shop`  (
 -- ----------------------------
 INSERT INTO `o_shop` VALUES (1007, '天猫测试', 100, NULL, 9, 1, NULL, 0, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759286858, 1759286723);
 INSERT INTO `o_shop` VALUES (1008, '京东POP测试', 200, NULL, 9, 1, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759287467, 1759287467);
-INSERT INTO `o_shop` VALUES (1009, '爱顾家的小店', 300, NULL, 9, 1, NULL, 0, NULL, NULL, 'b4f1d695397d428b883b4b7c1a2c55925cc36b24', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759287857, 1759287857);
+INSERT INTO `o_shop` VALUES (1009, '爱顾家的小店', 300, NULL, 9, 1, NULL, 0, NULL, NULL, '3fb1c7734d444ff482f4057aee7df4cc545917fa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759287857, 1759287857);
 
 -- ----------------------------
 -- Table structure for o_shop_daily
@@ -892,7 +892,7 @@ CREATE TABLE `o_shop_pull_lasttime`  (
 -- ----------------------------
 INSERT INTO `o_shop_pull_lasttime` VALUES (1, 1007, 'ORDER', '2025-10-01 16:10:02', '2025-10-01 10:56:27', '2025-10-01 16:10:03');
 INSERT INTO `o_shop_pull_lasttime` VALUES (2, 1007, 'GOODS', '2025-10-01 10:50:36', '2025-10-01 10:50:11', '2025-10-01 10:51:00');
-INSERT INTO `o_shop_pull_lasttime` VALUES (3, 1009, 'ORDER', '2025-09-30 08:07:23', '2025-10-01 11:07:23', '2025-10-01 11:23:46');
+INSERT INTO `o_shop_pull_lasttime` VALUES (3, 1009, 'ORDER', '2025-10-08 17:37:51', '2025-10-01 11:07:23', '2025-10-08 17:37:51');
 INSERT INTO `o_shop_pull_lasttime` VALUES (4, 1009, 'GOODS', '2025-10-01 12:56:14', '2025-10-01 11:07:08', '2025-10-01 12:56:16');
 INSERT INTO `o_shop_pull_lasttime` VALUES (5, 1007, 'REFUND', '2025-10-01 11:24:50', '2025-10-01 11:24:04', '2025-10-01 11:24:50');
 
@@ -911,7 +911,7 @@ CREATE TABLE `o_shop_pull_logs`  (
   `pull_time` datetime NULL DEFAULT NULL COMMENT '拉取时间',
   `duration` bigint NULL DEFAULT NULL COMMENT '耗时（毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1973299356768198658 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺更新日志表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1975858165750484995 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺更新日志表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_shop_pull_logs
@@ -939,6 +939,14 @@ INSERT INTO `o_shop_pull_logs` VALUES (1973295260355104769, 1007, 100, 'ORDER', 
 INSERT INTO `o_shop_pull_logs` VALUES (1973295330425147393, 1007, 100, 'ORDER', '主动拉取', '{startTime:2025-10-01T14:53:45,endTime:2025-10-01T15:54:02}', '{insert:0,update:4,fail:0}', '2025-10-01 15:54:03', 660);
 INSERT INTO `o_shop_pull_logs` VALUES (1973299108058533890, 1007, 100, 'ORDER', '主动拉取', '{startTime:2025-10-01T14:54:03,endTime:2025-10-01T16:09:03}', '{insert:4,update:0,fail:0}', '2025-10-01 16:09:03', 705);
 INSERT INTO `o_shop_pull_logs` VALUES (1973299356768198657, 1007, 100, 'ORDER', '主动拉取', '{startTime:2025-10-01T15:09:03,endTime:2025-10-01T16:10:02}', '{insert:4,update:0,fail:0}', '2025-10-01 16:10:02', 1358);
+INSERT INTO `o_shop_pull_logs` VALUES (1975855874687467522, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-09-30T07:07:23,endTime:2025-10-01T07:07:23}', '{insert:0,update:0,fail:0}', '2025-10-08 17:28:45', 214);
+INSERT INTO `o_shop_pull_logs` VALUES (1975855892085440513, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-01T06:07:23,endTime:2025-10-02T06:07:23}', '{insert:2,update:0,fail:0}', '2025-10-08 17:28:49', 303);
+INSERT INTO `o_shop_pull_logs` VALUES (1975856206620491777, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-02T05:07:23,endTime:2025-10-03T05:07:23}', '{insert:0,update:0,fail:0}', '2025-10-08 17:29:23', 40239);
+INSERT INTO `o_shop_pull_logs` VALUES (1975856594367086594, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-04T03:07:23,endTime:2025-10-05T03:07:23}', '{insert:0,update:0,fail:0}', '2025-10-08 17:31:13', 23246);
+INSERT INTO `o_shop_pull_logs` VALUES (1975856682632019969, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-05T02:07:23,endTime:2025-10-06T02:07:23}', '{insert:0,update:0,fail:0}', '2025-10-08 17:31:51', 6388);
+INSERT INTO `o_shop_pull_logs` VALUES (1975856705180598273, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-06T01:07:23,endTime:2025-10-07T01:07:23}', '{insert:1,update:0,fail:0}', '2025-10-08 17:32:03', 285);
+INSERT INTO `o_shop_pull_logs` VALUES (1975858067796709378, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-07T00:07:23,endTime:2025-10-08T00:07:23}', '{insert:1,update:1,fail:0}', '2025-10-08 17:37:27', 777);
+INSERT INTO `o_shop_pull_logs` VALUES (1975858165750484994, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2025-10-07T23:07:23,endTime:2025-10-08T17:37:50.618442500}', '{insert:1,update:0,fail:0}', '2025-10-08 17:37:51', 444);
 
 -- ----------------------------
 -- Table structure for o_shop_region
@@ -1862,13 +1870,19 @@ CREATE TABLE `oms_pdd_order`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `order_sn_index`(`order_sn` ASC) USING BTREE,
   INDEX `shopid_index`(`shop_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1973227308263993347 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '拼多多订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1975858164324421634 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '拼多多订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oms_pdd_order
 -- ----------------------------
 INSERT INTO `oms_pdd_order` VALUES (1973227307811008514, 1009, '250929-004537740820931', 0, 0, 1, 1, 1, 2, 4, 10, 0, 0, 0, 29.35, 0, 29.35, 0, '', NULL, NULL, '', '2025-09-29 18:27:20', '2025-09-29 18:09:45', 'JT5416889180664', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-09-29 18:05:30', '2025-09-29 18:05:32', '2025-09-29 18:05:32', '', '2025-09-30 18:05:32', NULL, 0, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 0, NULL, '2025-10-01 11:23:46', NULL, NULL);
 INSERT INTO `oms_pdd_order` VALUES (1973227308263993346, 1009, '250929-351611154071222', 0, 0, 1, 1, 1, 2, 1, 0, 0, 0, 0, 29.35, 0, 29.35, 0, '', NULL, NULL, '', '2025-09-30 13:57:46', '2025-09-30 13:57:46', 'JT5417062326379', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-09-29 21:22:48', '2025-09-29 21:22:49', '2025-09-29 21:22:50', '', '2025-09-30 21:22:50', NULL, 0, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 1, '2025-10-06 17:56:31', '2025-10-06 09:56:31', NULL, NULL);
+INSERT INTO `oms_pdd_order` VALUES (1975855891292717057, 1009, '251002-085338365560640', 0, 0, 1, 1, 1, 3, 1, 0, 0, 0, 0, 9.9, 0, 9.9, 0, '', NULL, NULL, '', '2025-10-04 19:58:35', '2025-10-02 11:23:00', 'JT5418053493040', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-10-02 03:56:23', '2025-10-02 03:56:25', '2025-10-02 03:56:25', '2025-10-04 19:47:21', '2025-10-02 23:59:59', NULL, 1, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 0, NULL, '2025-10-08 17:28:49', NULL, NULL);
+INSERT INTO `oms_pdd_order` VALUES (1975855891573735426, 1009, '251002-171237742200640', 0, 0, 1, 1, 1, 3, 1, 0, 0, 0, 0, 12.49, 0, 12.49, 0, '', NULL, NULL, '', '2025-10-04 19:56:53', '2025-10-02 11:23:00', 'JT5418053493040', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-10-02 03:56:59', '2025-10-02 03:57:00', '2025-10-02 03:57:00', '2025-10-04 19:46:40', '2025-10-02 23:59:59', NULL, 1, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 0, NULL, '2025-10-08 17:28:49', NULL, NULL);
+INSERT INTO `oms_pdd_order` VALUES (1975856704463372289, 1009, '251006-010779369161362', 0, 0, 1, 1, 1, 2, 1, 0, 0, 0, 0, 33.93, 0, 33.93, 0, '', NULL, NULL, '', '2025-10-06 15:34:19', '2025-10-06 15:34:19', 'JT5418708391327', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-10-06 13:37:06', '2025-10-06 13:37:08', '2025-10-06 13:37:08', '', '2025-10-06 23:59:59', NULL, 1, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 0, NULL, '2025-10-08 17:32:03', NULL, NULL);
+INSERT INTO `oms_pdd_order` VALUES (1975857725197582337, 1009, '251007-217044764362431', 0, 0, 1, 1, 1, 2, 1, 0, 0, 0, 0, 29.35, 0, 29.35, 0, '', NULL, NULL, '', '2025-10-07 13:59:55', '2025-10-07 13:59:55', 'JT5419139774201', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-10-07 08:27:48', '2025-10-07 08:27:50', '2025-10-07 08:27:50', '', '2025-10-07 23:59:59', NULL, 1, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 0, NULL, '2025-10-08 09:37:27', '2025-10-08 17:37:27', NULL);
+INSERT INTO `oms_pdd_order` VALUES (1975858067217895425, 1009, '251007-545768097592317', 0, 0, 1, 1, 1, 1, 4, 10, 0, 0, 0, 39.32, 0, 39.32, 0, '', NULL, NULL, '', '2025-10-07 16:01:12', '', '', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-10-07 16:00:20', '2025-10-07 16:00:21', '2025-10-07 16:00:22', '', '2025-10-08 16:00:22', NULL, 0, 0, 0, 0, 0, 0, NULL, 0, 0, 0, NULL, 0, 0, '', 0, NULL, '2025-10-08 17:37:28', NULL, NULL);
+INSERT INTO `oms_pdd_order` VALUES (1975858164324421633, 1009, '251008-486340062721032', 0, 0, 1, 1, 1, 2, 1, 0, 0, 2.93, 0.5, 55.7, 3.43, 52.27, 0, '', NULL, NULL, '', '2025-10-08 15:09:16', '2025-10-08 15:09:16', 'JT5418763041082', NULL, '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '', 0, '中国', 0, '2025-10-08 12:49:30', '2025-10-08 12:51:33', '2025-10-08 12:51:33', '', '2025-10-08 23:59:59', NULL, 1, 0, 0, 0, 0, 0, NULL, 0, 0, 3, NULL, 0, 0, '', 0, NULL, '2025-10-08 17:37:51', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for oms_pdd_order_item
@@ -1891,13 +1905,19 @@ CREATE TABLE `oms_pdd_order_item`  (
   `o_goods_sku_id` bigint NULL DEFAULT NULL COMMENT '商品skuid(o_goods_sku外键)',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `index_order_sn`(`order_sn` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1973227308326907906 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼多多订单明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1975858164387336195 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼多多订单明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oms_pdd_order_item
 -- ----------------------------
 INSERT INTO `oms_pdd_order_item` VALUES (1973227307873923073, '250929-004537740820931', '754380133868', '1742164849115', NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', '12W白光-135mm', 29.35, 'LEDDX001', 'LEDDX00101', 1, NULL, 0, 0);
 INSERT INTO `oms_pdd_order_item` VALUES (1973227308326907905, '250929-351611154071222', '754380133868', '1742164849115', NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', '12W白光-135mm', 29.35, 'LEDDX001', 'LEDDX00101', 1, NULL, 0, 0);
+INSERT INTO `oms_pdd_order_item` VALUES (1975855891334660098, '251002-085338365560640', '753794079556', '1742373848729', NULL, 'https://img.pddpic.com/mms-material-img/2025-06-02/0d875ad2-529b-43be-b699-96748b4c0bb4.jpeg.a.jpeg', 'E27螺口 3瓦白光 1级能效', 9.9, 'LEDDP001', 'LEDDP00101', 1, NULL, 0, 0);
+INSERT INTO `oms_pdd_order_item` VALUES (1975855891598901250, '251002-171237742200640', '753794079556', '1742373848730', NULL, 'https://img.pddpic.com/mms-material-img/2025-06-02/0d875ad2-529b-43be-b699-96748b4c0bb4.jpeg.a.jpeg', 'E27螺口 5瓦白光 1级能效', 12.49, 'LEDDP001', 'LEDDP00102', 1, NULL, 0, 0);
+INSERT INTO `oms_pdd_order_item` VALUES (1975856704526286850, '251006-010779369161362', '754380133868', '1742164849116', NULL, 'https://img.pddpic.com/mms-material-img/2025-05-29/dfb81deb-a7c1-4028-b6b1-b3f02fb63c72.jpeg.a.jpeg', '18W白光-175mm', 33.93, 'LEDDX001', 'LEDDX00102', 1, NULL, 0, 0);
+INSERT INTO `oms_pdd_order_item` VALUES (1975858066832019457, '251007-217044764362431', '754380133868', '1742164849115', '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', '12W白光-135mm', 29.35, 'LEDDX001', 'LEDDX00101', 1, NULL, 0, 0);
+INSERT INTO `oms_pdd_order_item` VALUES (1975858067280809986, '251007-545768097592317', '754380133868', '1742164849117', '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/mms-material-img/2025-05-29/70732144-21a8-423c-90df-553c3ea4fe36.jpeg.a.jpeg', '24W白光-215mm', 39.32, 'LEDDX001', 'LEDDX00103', 1, NULL, 0, 0);
+INSERT INTO `oms_pdd_order_item` VALUES (1975858164387336194, '251008-486340062721032', '754380133868', '1742164849115', '雷士照明LED光源灯芯正品保障客厅卧室餐厅书房吸顶灯LED灯板替换', 'https://img.pddpic.com/mms-material-img/2025-05-29/a3e7e689-5c30-495c-b5e0-90e38bd352b5.jpeg.a.jpeg', '12W白光-135mm', 29.35, 'LEDDX001', 'LEDDX00101', 2, NULL, 0, 0);
 
 -- ----------------------------
 -- Table structure for oms_pdd_refund
