@@ -183,7 +183,7 @@ public class PddOrderServiceImpl extends ServiceImpl<PddOrderMapper, PddOrder>
                 update.setOrderChangeAmount(order.getOrderChangeAmount());
                 update.setRiskControlStatus(order.getRiskControlStatus());
                 update.setUrgeShippingTime(order.getUrgeShippingTime());
-                update.setAuditStatus(0);
+//                update.setAuditStatus(0);
                 update.setUpdateTime(new Date());
 
                 mapper.updateById(update);
@@ -203,6 +203,7 @@ public class PddOrderServiceImpl extends ServiceImpl<PddOrderMapper, PddOrder>
                 return ResultVo.error(ResultVoEnum.DataExist, "订单已经存在，更新成功");
             } else {
                 // 不存在，新增
+                order.setAuditStatus(0);
                 order.setShopId(shopId);
                 order.setCreateTime(new Date());
                 mapper.insert(order);
