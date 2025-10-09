@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 09/10/2025 08:28:27
+ Date: 09/10/2025 09:17:22
 */
 
 SET NAMES utf8mb4;
@@ -397,7 +397,7 @@ CREATE TABLE `o_logistics_company`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `status` int NULL DEFAULT NULL COMMENT '状态（0禁用1启用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 633 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '快递公司表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 685 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '快递公司表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_logistics_company
@@ -1034,6 +1034,58 @@ INSERT INTO `o_logistics_company` VALUES (629, 400, 0, '1080', 'jingdongkuaiyun'
 INSERT INTO `o_logistics_company` VALUES (630, 400, 0, '1097', 'gansushantong', '兰马同城', NULL, 0);
 INSERT INTO `o_logistics_company` VALUES (631, 400, 0, '1026', 'sfwl', '盛丰物流', NULL, 0);
 INSERT INTO `o_logistics_company` VALUES (632, 400, 0, '897', 'yimidida', '壹米滴答', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (633, 400, 0, '1', 'POST', '中国邮政', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (634, 100, 0, '1', 'POST', '中国邮政', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (635, 100, 0, '-1', 'OTHER', '其他', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (636, 100, 0, '511', 'CYEXP', '长宇', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (637, 100, 0, '512', 'DTW', '大田', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (638, 100, 0, '513', 'YUD', '长发', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (639, 100, 0, '269346156', 'DISTRIBUTOR_13211725', '跨越速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (640, 100, 0, '269583380', 'DISTRIBUTOR_30493846', '平安达腾飞快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (641, 100, 0, '269347246', 'DISTRIBUTOR_13222803', '中通快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (642, 100, 0, '-474798478', 'PKGJWL', '派易国际物流77', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (643, 100, 0, '30721717', 'DISTRIBUTOR_13148625', '菜鸟大件-中铁配', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (644, 100, 0, '30721674', 'DISTRIBUTOR_13159132', '菜鸟大件-日日顺配', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (645, 100, 0, '269571490', 'DISTRIBUTOR_30464910', '丰网速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (646, 100, 0, '269502847', 'DISTRIBUTOR_30292473', '大食品商家自配', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (647, 100, 0, '-474709471', 'WND', 'WnDirect', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (648, 100, 0, '200427', 'GZLT', '飞远配送 ', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (649, 100, 0, '658246117', 'DISTRIBUTOR_1710055', '邮政标准快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (650, 100, 0, '269380569', 'DISTRIBUTOR_13484485', '顺心捷达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (651, 100, 0, '1139', 'YC', '远长', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (652, 100, 0, '1137', 'DFH', '东方汇', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (653, 100, 0, '1237', 'UNIPS', '发网', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (654, 100, 0, '-474829477', 'MGSD', '美国速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (655, 100, 0, '-474783443', 'BHWL', '保宏物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (656, 100, 0, '103', 'ZJS', '宅急送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (657, 100, 0, '505', 'SF', '顺丰速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (658, 100, 0, '100', 'STO', '申通快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (659, 100, 0, '2', 'EMS', 'EMS', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (660, 100, 0, '102', 'YUNDA', '韵达快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (661, 100, 0, '502', 'HTKY', '极兔速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (662, 100, 0, '101', 'YTO', '圆通速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (663, 100, 0, '504', 'TTKDEX', '天天快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (664, 100, 0, '1216', 'QFKD', '全峰快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (665, 100, 0, '1207', 'UC', '优速快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (666, 100, 0, '658178186', 'DBKD', '德邦快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (667, 100, 0, '500', 'ZTO', '中通快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (668, 100, 0, '200143', 'GTO', '国通快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (669, 100, 0, '1204', 'FAST', '快捷快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (670, 100, 0, '201174', 'SURE', '速尔快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (671, 100, 0, '106', 'FEDEX', '联邦快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (672, 100, 0, '108', 'SHQ', '华强物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (673, 100, 0, '1259', 'UAPEX', '全一快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (674, 100, 0, '1191', 'HOAU', '天地华宇', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (675, 100, 0, '105', 'BEST', '百世物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (676, 100, 0, '1195', 'LB', '龙邦速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (677, 100, 0, '1186', 'XB', '新邦物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (678, 100, 0, '3', 'EYB', '邮政电商标快EYB', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (679, 100, 0, '202855', 'XFWL', '信丰物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (680, 100, 0, '200734', 'POSTB', '邮政快递包裹', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (681, 100, 0, '107', 'DBL', '德邦物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (682, 100, 0, '1214', 'LTS', '联昊通', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (683, 100, 0, '200740', 'ESB', 'E速宝', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (684, 100, 0, '105031', 'BESTQJT', '百世快运', NULL, 0);
 
 -- ----------------------------
 -- Table structure for o_order
@@ -1387,13 +1439,14 @@ CREATE TABLE `o_shop`  (
   `modify_on` bigint NOT NULL COMMENT '更新时间',
   `create_on` bigint NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1011 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1012 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '店铺表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_shop
 -- ----------------------------
 INSERT INTO `o_shop` VALUES (1009, '爱顾家的小店', 300, NULL, 9, 1, NULL, 0, NULL, NULL, '3fb1c7734d444ff482f4057aee7df4cc545917fa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759287857, 1759287857);
 INSERT INTO `o_shop` VALUES (1010, '抖店测试', 400, NULL, 9, 1, NULL, 4463798, NULL, NULL, 'qoc461fha31h7zl69zjws9900002noae-11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759965958, 1759965958);
+INSERT INTO `o_shop` VALUES (1011, '淘宝测试', 100, NULL, 9, 1, NULL, 11, NULL, NULL, 'aa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759972091, 1759972091);
 
 -- ----------------------------
 -- Table structure for o_shop_daily
@@ -3591,7 +3644,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-10-09 07:24:50', 'admin', '2023-08-07 19:31:37', '', '2025-10-08 23:24:50', '管理员');
+INSERT INTO `sys_user` VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-10-09 09:07:20', 'admin', '2023-08-07 19:31:37', '', '2025-10-09 01:07:20', '管理员');
 INSERT INTO `sys_user` VALUES (2, NULL, 'openapi', 'openApi接口专用', '00', '2806456181@qq.com', '15818590000', '0', '', '$2a$10$fHkhoqbMiyracAsTzl38H.55bu.M.of1FXk2EK7RQBjfic3tLU0Ue', '0', '0', '127.0.0.1', '2024-06-24 10:23:35', 'admin', '2024-03-17 14:55:22', 'admin', '2024-06-24 10:23:35', NULL);
 INSERT INTO `sys_user` VALUES (101, 101, '15818590119', 'aaa123', '00', '', '', '0', '', '$2a$10$pXcT6cHaObMeKuYd9vZb5uEb8PyUdF2AcqqRN1cBqiA9rV4qYQW7G', '0', '2', '', NULL, 'admin', '2024-08-15 13:45:25', '', NULL, NULL);
 INSERT INTO `sys_user` VALUES (102, 101, '15818590119', '老齐', '00', '', '', '0', '', '$2a$10$ysk.zgJ8wh25c7vOjKyZ8uarM2hkG0S51j8GYdJSo2kZmc3f8HdKe', '0', '0', '', NULL, 'admin', '2024-08-15 13:49:59', 'admin', '2025-02-10 16:26:20', NULL);

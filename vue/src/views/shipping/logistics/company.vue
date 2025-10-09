@@ -170,9 +170,10 @@ import {
 } from "@/api/shipping/logistics";
 import {MessageBox} from "element-ui";
 import {isRelogin} from "@/utils/request";
-import {pullLogisticsTao,pullLogisticsJd} from "@/api/tao/shop_api";
-import {pullLogisticsPdd} from "@/api/pdd/logistics";
+import {pullLogisticsJd} from "@/api/tao/shop_api";
+import {pullLogisticsPdd} from "@/api/tao/logistics";
 import {pullLogisticsDou} from "@/api/dou/logistics";
+import {pullLogisticsTao} from "@/api/tao/logistics";
 
 export default {
   name: "Shop",
@@ -272,6 +273,11 @@ export default {
           })
         }else if(this.queryParams.type ===400){
           pullLogisticsDou({}).then(resp=>{
+            if(resp.code===200) this.$modal.msgSuccess("拉取成功")
+            else this.$modal.msgError(resp.msg)
+          })
+        }else if(this.queryParams.type ===100){
+          pullLogisticsTao({}).then(resp=>{
             if(resp.code===200) this.$modal.msgSuccess("拉取成功")
             else this.$modal.msgError(resp.msg)
           })
