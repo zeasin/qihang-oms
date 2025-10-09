@@ -59,9 +59,15 @@
 
     <el-table v-loading="loading" :data="dataList" >
 <!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="id" align="center" prop="id" />
+<!--      <el-table-column label="id" align="center" prop="id" />-->
+      <el-table-column label="平台Id" align="center" prop="logisticsId" />
       <el-table-column label="快递公司" align="center" prop="name" />
        <el-table-column label="编码" align="center" prop="code" />
+      <el-table-column label="平台" align="center" prop="type" >
+        <template slot-scope="scope">
+          <el-tag >{{typeList.find(x=>x.id === scope.row.platformId)?typeList.find(x=>x.id === scope.row.platformId).name:''}}</el-tag>
+        </template>
+      </el-table-column>
        <el-table-column label="备注" align="center" prop="remark" />
        <el-table-column label="状态" align="center" prop="status" >
          <template slot-scope="scope">
@@ -166,6 +172,7 @@ import {MessageBox} from "element-ui";
 import {isRelogin} from "@/utils/request";
 import {pullLogisticsTao,pullLogisticsJd} from "@/api/tao/shop_api";
 import {pullLogisticsPdd} from "@/api/pdd/logistics";
+import {pullLogisticsDou} from "@/api/dou/logistics";
 
 export default {
   name: "Shop",
@@ -260,7 +267,13 @@ export default {
         console.log('=====拉取快递公司=====', this.queryParams.type)
         if(this.queryParams.type===300){
           pullLogisticsPdd({}).then(resp=>{
-            this.$modal.msgError(resp.msg)
+            if(resp.code===200) this.$modal.msgSuccess("拉取成功")
+            else this.$modal.msgError(resp.msg)
+          })
+        }else if(this.queryParams.type ===400){
+          pullLogisticsDou({}).then(resp=>{
+            if(resp.code===200) this.$modal.msgSuccess("拉取成功")
+            else this.$modal.msgError(resp.msg)
           })
         }
         // if (this.queryParams.type === 100) {

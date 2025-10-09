@@ -104,13 +104,13 @@ public class DouOrderApiController {
         Long endTimestamp = endTime.toEpochSecond(ZoneOffset.ofHours(8));
 
         String pullParams = "{startTime:"+startTime+",endTime:"+endTime+"}";
-        ApiResultVo<Token> token = DouTokenApiHelper.getToken(appKey, appSecret,checkResult.getData().getSellerId());
-
-        if(token.getCode()==0) {
-            accessToken = token.getData().getAccessToken();
-        }else{
-            return AjaxResult.error(token.getMsg());
-        }
+//        ApiResultVo<Token> token = DouTokenApiHelper.getToken(appKey, appSecret,checkResult.getData().getSellerId());
+//
+//        if(token.getCode()==0) {
+//            accessToken = token.getData().getAccessToken();
+//        }else{
+//            return AjaxResult.error(token.getMsg());
+//        }
         //第一次获取
 //        ApiResultVo<DouOrderResponse> resultVo = OrderApiHelper.pullOrderList(appKey,appSecret,douShopId,startTime, endTime);
         ApiResultVo<Order> resultVo = DouOrderApiHelper.pullOrderList(startTimestamp, endTimestamp, 0, 20, appKey, appSecret, accessToken);

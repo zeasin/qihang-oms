@@ -22,6 +22,7 @@ public enum ResultVoEnum {
     HasAssociatedData("存在关联数据", 1501),//存在关联数据
     Exist("已存在相同的数据", 1502),//已存在相同的数据
     SystemException("系统异常", 1505),//系统异常
+    API_FAIL("API失败", 2001),
     Fail("失败", 1001);
 
     private String name;

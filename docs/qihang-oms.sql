@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 09/10/2025 07:36:49
+ Date: 09/10/2025 08:28:27
 */
 
 SET NAMES utf8mb4;
@@ -397,7 +397,7 @@ CREATE TABLE `o_logistics_company`  (
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
   `status` int NULL DEFAULT NULL COMMENT '状态（0禁用1启用）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 453 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '快递公司表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 633 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '快递公司表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of o_logistics_company
@@ -854,6 +854,186 @@ INSERT INTO `o_logistics_company` VALUES (449, 300, 0, '562', 'WENHUI', '文辉�
 INSERT INTO `o_logistics_company` VALUES (450, 300, 0, '563', 'JHJY', '傑航集運', NULL, 0);
 INSERT INTO `o_logistics_company` VALUES (451, 300, 0, '564', 'WGWL', '沃格物流', NULL, 0);
 INSERT INTO `o_logistics_company` VALUES (452, 300, 0, '565', 'XJMWL', '馨家梦物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (453, 400, 0, '1098', 'xiaoshidayun', '小时达测试物流商', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (454, 400, 0, '1100', 'debangkuaiyun', '德邦快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (455, 400, 0, '1115', 'beijinggede', '歌德', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (456, 400, 0, '1116', 'shanghaijintong', '同达快送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (457, 400, 0, '37', 'huangmajia', '黄马甲', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (458, 400, 0, '846', 'zhongtongkuaiyun', '中通快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (459, 400, 0, '1113', 'qianniuhua', '牵牛花-腾讯云', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (460, 400, 0, '1157', 'fujianouyang', '强华同城配送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (461, 400, 0, '30', 'jd', '京东物流(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (462, 400, 0, '1025', 'savor', '海信物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (463, 400, 0, '1070', 'guangzhoubenxin', '菜加壹', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (464, 400, 0, '1117', 'shenzhenlinxun', '邻寻', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (465, 400, 0, '1144', 'ganzhoushenghao', '盛浩物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (466, 400, 0, '1165', 'shanghailehu', '乐虎物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (467, 400, 0, '1031', 'linshiwuliu', '林氏物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (468, 400, 0, '1069', 'zhongqingtingcai', '听菜到家', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (469, 400, 0, '1024', 'sxjdfreight', '顺心捷达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (470, 400, 0, '15', 'zhongtong', '中通快递(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (471, 400, 0, '1094', 'guangdongjingguang', '鲸广直运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (472, 400, 0, '1112', 'szclyc', '车联天下', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (473, 400, 0, '1156', 'tiandishunchi', '天地顺驰', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (474, 400, 0, '440', 'zhimakaimen', '芝麻开门', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (475, 400, 0, '31', 'wanxiangwuliu', '万象物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (476, 400, 0, '1088', 'henanjiubian', '酒便利', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (477, 400, 0, '1110', 'hangzhoucainiao', '菜鸟大件', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (478, 400, 0, '1138', 'ganzhoudashu', '大树物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (479, 400, 0, '1059', 'shenzhendinghai', '花果鲜', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (480, 400, 0, '1066', 'chengdouruoxi', '京西菜市', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (481, 400, 0, '1101', 'shenzhenshihai', '海王星辰', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (482, 400, 0, '1131', 'boyol', '贝业物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (483, 400, 0, '1133', 'huajiwang', '花集通同城物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (484, 400, 0, '1164', 'fushanshizhan', '展程物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (485, 400, 0, '1173', 'shanghaiwoge', '上海沃格供应链管理有限公司', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (486, 400, 0, '7', 'yuantong', '圆通快递(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (487, 400, 0, '1086', 'shanghaixiake', '同达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (488, 400, 0, '1104', 'shenzhenshixing', '幸福西饼', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (489, 400, 0, '1107', 'huanshengdianzi', '肯德基自在厨房', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (490, 400, 0, '1119', 'zhejiangcainiao', '菜鸟裹裹商家寄', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (491, 400, 0, '1125', 'zhejiangzhongyou', '邮政小时达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (492, 400, 0, '1175', 'zhejiangbenniao01', '笨鸟速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (493, 400, 0, '610', 'zhongtiewuliu', '中铁飞豹', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (494, 400, 0, '968', 'stosolution', '申通国际', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (495, 400, 0, '999', 'hongbeixin', '红背心', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (496, 400, 0, '1043', 'udalogistic', '韵达国际', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (497, 400, 0, '1045', 'zhihuashi', '芝华仕物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (498, 400, 0, '1049', 'chuanhua', '传化物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (499, 400, 0, '1072', 'guangzhouzhixianzx', '诚食生鲜', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (500, 400, 0, '716', 'subida', '速必达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (501, 400, 0, '597', 'zhongtongguoji', '中通国际', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (502, 400, 0, '1082', 'yilongex', '亿隆速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (503, 400, 0, '1084', 'smwfloor', '湘粤华通', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (504, 400, 0, '1111', 'guangdongdeshang', '德尚', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (505, 400, 0, '1145', 'fushanshisheng', '胜中物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (506, 400, 0, '1160', 'ganzhouhanma', '翰玛物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (507, 400, 0, '518', 'tiandihuayu', '天地华宇', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (508, 400, 0, '1063', 'guangzhoubenxi', '菜加壹（废弃）', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (509, 400, 0, '1054', 'beijingmeiri', '小时达测试', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (510, 400, 0, '1056', 'zhongqingcailao', '菜老包', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (511, 400, 0, '1057', 'jiangsuchuangji', '果多美', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (512, 400, 0, '1128', 'tzky', '铁中快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (513, 400, 0, '1130', 'sichuanzhongbang', '众邦客物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (514, 400, 0, '1167', 'ganzhoushinan08', '鑫鸿峰物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (515, 400, 0, '641', 'rrs', '日日顺物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (516, 400, 0, '32', 'annengwuliu', '安能物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (517, 400, 0, '1062', 'beijingdaguan', '达冠', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (518, 400, 0, '1140', 'hongxinwuliu', '洪鑫物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (519, 400, 0, '1141', 'youyuanwuliu', '友源物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (520, 400, 0, '1151', 'tianjinhaihe', '海河奶站', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (521, 400, 0, '1162', 'ganzhoumuxing', '木行物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (522, 400, 0, '637', 'baishiwuliu', '百世快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (523, 400, 0, '1050', 'lyh', '联运汇', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (524, 400, 0, '317', 'ndwl', '南方传媒物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (525, 400, 0, '1038', 'zilegongmao', '紫乐工贸', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (526, 400, 0, '1071', 'mingchuangyoupinmcyp', '名创优品', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (527, 400, 0, '1099', 'fujianpupu', '朴朴', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (528, 400, 0, '1109', 'yzdsbk', '邮政电商标快', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (529, 400, 0, '1170', 'fujianzhixin', '至信物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (530, 400, 0, '17', 'ems', 'EMS(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (531, 400, 0, '8', 'shentong', '申通快递(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (532, 400, 0, '1095', 'beijingtengfu', '牵牛花-阿里云', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (533, 400, 0, '1139', 'chengdoujike', '吉客道信息', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (534, 400, 0, '1159', 'wuxiankeneng', '宠嗒嗒', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (535, 400, 0, '1033', 'fengwang', '丰网速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (536, 400, 0, '1052', 'ztocc', '中通冷链', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (537, 400, 0, '1030', 'gujiajiaju', '顾家家居', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (538, 400, 0, '1034', 'yuantongguoji', '圆通国际', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (539, 400, 0, '1065', 'dajiangwangluo', '达达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (540, 400, 0, '1171', 'gdkjk56', '快捷快物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (541, 400, 0, '19', 'youzhengguonei', '邮政快递包裹', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (542, 400, 0, '1029', 'yijiuyijiu', '壹玖壹玖', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (543, 400, 0, '1079', 'jingdongdajian', '京东大件', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (544, 400, 0, '1090', 'suyoda', '速邮达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (545, 400, 0, '1102', 'zhongqingzhuandan', '到哪儿了', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (546, 400, 0, '1123', 'youxuankonggu', '优选', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (547, 400, 0, '1127', 'jiangxifuhu', '福虎物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (548, 400, 0, '1142', 'ganzhouyuewu', '粤无忧物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (549, 400, 0, '397', 'kuayue', '跨越速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (550, 400, 0, '1044', 'meiriyouxian', '每日优鲜', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (551, 400, 0, '1137', 'ganzhouxiaoma', '小蚂蚁物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (552, 400, 0, '1143', 'jiangxijiuwu', '川鸽物流(九五至臻)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (553, 400, 0, '1152', 'tcxfx', '正鑫小飞侠', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (554, 400, 0, '1163', 'fushanshijin', '晋良物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (555, 400, 0, '1042', 'shanhuodidi', '闪货极速达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (556, 400, 0, '1073', 'xianyouyi', '萝卜青菜', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (557, 400, 0, '1074', 'guangdongmeiyimy', '美宜佳', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (558, 400, 0, '1083', 'shanghaixintian', '信天翁小时达', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (559, 400, 0, '1096', 'yueluwuliu', '跃陆物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (560, 400, 0, '1105', 'xiaomitongxun', '小米物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (561, 400, 0, '1129', 'kunmingyunxuan', '云选供应链', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (562, 400, 0, '1039', 'xintianweng', '信天翁同城速配', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (563, 400, 0, '1068', 'shanghaijinmi', '侠刻送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (564, 400, 0, '563', 'suteng', '速腾快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (565, 400, 0, '1040', 'shunfengguoji', '顺丰国际', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (566, 400, 0, '1106', 'bishengyouxuan', '必胜客必胜优选', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (567, 400, 0, '1146', 'pushengwuliu', '璞笙物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (568, 400, 0, '1169', 'fushanshiwen', '文辉物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (569, 400, 0, '517', 'jinguangsudikuaijian', '京广速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (570, 400, 0, '1089', 'qingdaoriri', '日日顺家居服务', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (571, 400, 0, '1036', 'nongfushanquan', '农夫山泉物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (572, 400, 0, '12', 'shunfeng', '顺丰速运(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (573, 400, 0, '1148', 'jilinjishi', '吉时达物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (574, 400, 0, '11', 'youshuwuliu', '优速', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (575, 400, 0, '243', 'suer', '速尔快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (576, 400, 0, '1132', 'gujiawuliu', '顾家物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (577, 400, 0, '1155', 'yingchang', '赢畅物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (578, 400, 0, '1174', 'jitianxiajiang', '吉天下快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (579, 400, 0, '1061', 'duodianshenzhen', '多点配送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (580, 400, 0, '1067', 'shanghaiyibai', '叮咚买菜', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (581, 400, 0, '1047', 'XMTC', '寻梦同城', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (582, 400, 0, '1053', 'shunfengchengpei', '顺丰城配', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (583, 400, 0, '1064', 'shenzhenshishun', '顺丰同城', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (584, 400, 0, '1076', 'shanghaiganlin', '菜公社', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (585, 400, 0, '1122', 'beijingmaiya', '麦芽田', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (586, 400, 0, '1135', 'chubangwuliu', '楚邦物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (587, 400, 0, '10', 'jiayiwuliu', '佳怡物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (588, 400, 0, '177', 'amusorder', 'Amazon Logistics', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (589, 400, 0, '861', 'annto', '安得物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (590, 400, 0, '1085', 'dingdangkuaiyao', '叮当快药', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (591, 400, 0, '1153', 'rjtcsd', '全信速同城', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (592, 400, 0, '1158', 'jinmengwuliu', '晋蒙物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (593, 400, 0, '21', 'zhaijisong', '宅急送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (594, 400, 0, '327', 'jiayunmeiwuliu', '加运美', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (595, 400, 0, '1060', 'beijingbenlai', '本来鲜', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (596, 400, 0, '1075', 'xianjiuru', '鲜菜园', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (597, 400, 0, '1136', 'zhongji', '中汲物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (598, 400, 0, '13', 'debangwuliu', '德邦快递(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (599, 400, 0, '1022', 'zhongyouex', '众邮快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (600, 400, 0, '952', 'yundakuaiyun', '韵达快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (601, 400, 0, '1051', 'xlair', '快弟来了', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (602, 400, 0, '1114', 'zhongqingxindong', '心动快送', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (603, 400, 0, '1134', 'runhongwuliu', '润宏物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (604, 400, 0, '1161', 'ganzhoushilong', '龙鑫物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (605, 400, 0, '191', 'jiuyescm', '九曳供应链', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (606, 400, 0, '565', 'pingandatengfei', '平安达腾飞快递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (607, 400, 0, '1077', 'ganzhouanju', '具语', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (608, 400, 0, '1149', 'fushanshishun', '乐峰物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (609, 400, 0, '1166', 'ganzhouhengxin', '恒新物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (610, 400, 0, '1058', 'baiguoyuanind', '百果园', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (611, 400, 0, '9', 'yunda', '韵达快递(常用)', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (612, 400, 0, '1037', 'shanxijianhua', '山西建华', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (613, 400, 0, '1168', 'ganzhoushinan05', '大正物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (614, 400, 0, '1172', 'ganzhoushinan', '捷诚物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (615, 400, 0, '1017', 'danniao', '菜鸟速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (616, 400, 0, '1021', 'jtexpress', '极兔速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (617, 400, 0, '1048', 'NZSY', '哪吒速运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (618, 400, 0, '1124', 'beijinghuiyi', '惠宜选', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (619, 400, 0, '1154', 'chengdoumoshi', '莫仕物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (620, 400, 0, '202', 'suning', '苏宁物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (621, 400, 0, '1032', 'taijin', '泰进物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (622, 400, 0, '1035', 'shunfengkuaiyun', '顺丰快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (623, 400, 0, '1091', 'fushanshilu', '禄昌物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (624, 400, 0, '1092', 'guangxijiaojiu', '酒小二', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (625, 400, 0, '1103', 'jiangsujingchun', '京东酒世界', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (626, 400, 0, '1121', 'sooeasy', '水趣到家', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (627, 400, 0, '475', 'xlobo', '贝海国际速递', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (628, 400, 0, '244', 'shenghuiwuliu', '盛辉物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (629, 400, 0, '1080', 'jingdongkuaiyun', '京东快运', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (630, 400, 0, '1097', 'gansushantong', '兰马同城', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (631, 400, 0, '1026', 'sfwl', '盛丰物流', NULL, 0);
+INSERT INTO `o_logistics_company` VALUES (632, 400, 0, '897', 'yimidida', '壹米滴答', NULL, 0);
 
 -- ----------------------------
 -- Table structure for o_order
@@ -1213,7 +1393,7 @@ CREATE TABLE `o_shop`  (
 -- Records of o_shop
 -- ----------------------------
 INSERT INTO `o_shop` VALUES (1009, '爱顾家的小店', 300, NULL, 9, 1, NULL, 0, NULL, NULL, '3fb1c7734d444ff482f4057aee7df4cc545917fa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759287857, 1759287857);
-INSERT INTO `o_shop` VALUES (1010, '抖店测试', 400, NULL, 9, 1, NULL, 4463798, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759965958, 1759965958);
+INSERT INTO `o_shop` VALUES (1010, '抖店测试', 400, NULL, 9, 1, NULL, 4463798, NULL, NULL, 'qoc461fha31h7zl69zjws9900002noae-11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 1759965958, 1759965958);
 
 -- ----------------------------
 -- Table structure for o_shop_daily

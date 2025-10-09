@@ -37,11 +37,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * 淘系订单更新
+ *
  */
 @AllArgsConstructor
 @RestController
-@RequestMapping("/refund")
+@RequestMapping("/dou/refund")
 public class DouRefundApiController {
     private static Logger log = LoggerFactory.getLogger(DouRefundApiController.class);
 
