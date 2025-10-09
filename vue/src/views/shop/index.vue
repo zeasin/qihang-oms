@@ -149,7 +149,12 @@
         <el-form-item label="卖家Id" prop="sellerId">
           <el-input v-model="form.sellerId" placeholder="请输入卖家Id名" />
         </el-form-item>
-
+        <el-form-item label="appKey" prop="appKey" v-if="form.type===500">
+          <el-input v-model="form.appKey" placeholder="请输入appKey" />
+        </el-form-item>
+        <el-form-item label="appSecret" prop="appSecret" v-if="form.type===500">
+          <el-input v-model="form.appSecret" placeholder="请输入appSecret" />
+        </el-form-item>
         <el-form-item label="描述" prop="remark">
           <el-input type="textarea" v-model="form.remark" placeholder="请输入描述" />
         </el-form-item>

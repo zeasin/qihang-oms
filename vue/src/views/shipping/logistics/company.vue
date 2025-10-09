@@ -174,6 +174,7 @@ import {pullLogisticsJd} from "@/api/tao/shop_api";
 import {pullLogisticsPdd} from "@/api/tao/logistics";
 import {pullLogisticsDou} from "@/api/dou/logistics";
 import {pullLogisticsTao} from "@/api/tao/logistics";
+import {pullLogisticsWei} from "@/api/wei/logistics";
 
 export default {
   name: "Shop",
@@ -278,6 +279,11 @@ export default {
           })
         }else if(this.queryParams.type ===100){
           pullLogisticsTao({}).then(resp=>{
+            if(resp.code===200) this.$modal.msgSuccess("拉取成功")
+            else this.$modal.msgError(resp.msg)
+          })
+        }else if(this.queryParams.type===500){
+          pullLogisticsWei({}).then(resp=>{
             if(resp.code===200) this.$modal.msgSuccess("拉取成功")
             else this.$modal.msgError(resp.msg)
           })

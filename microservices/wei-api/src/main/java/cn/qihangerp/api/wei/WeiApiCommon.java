@@ -39,9 +39,9 @@ public class WeiApiCommon {
         if(!StringUtils.hasText(shop.getAppSecret())) {
             return ResultVo.error(HttpStatus.PARAMS_ERROR, "店铺参数配置错误，没有找到AppSercet");
         }
-        if(!StringUtils.hasText(shop.getApiRequestUrl())) {
-            return ResultVo.error(HttpStatus.PARAMS_ERROR, "店铺参数配置错误，没有找到ApiRequestUrl");
-        }
+//        if(!StringUtils.hasText(shop.getApiRequestUrl())) {
+//            return ResultVo.error(HttpStatus.PARAMS_ERROR, "店铺参数配置错误，没有找到ApiRequestUrl");
+//        }
 
         ShopApiParams params = new ShopApiParams();
         params.setAppKey(shop.getAppKey());
