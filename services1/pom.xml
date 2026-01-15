@@ -16,7 +16,7 @@
     <url>http://maven.apache.org</url>
 
     <modules>
-        <module>shop</module>
+<!--        <module>shop</module>-->
 <!--        <module>goods</module>-->
 <!--        <module>order</module>-->
         <module>sys</module>

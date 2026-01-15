@@ -179,11 +179,11 @@
             <artifactId>sys</artifactId>
             <version>1.10.6</version>
         </dependency>
-        <dependency>
-            <groupId>cn.qihangerp.service</groupId>
-            <artifactId>shop</artifactId>
-            <version>1.10.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.qihangerp.service</groupId>-->
+<!--            <artifactId>shop</artifactId>-->
+<!--            <version>1.10.6</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
