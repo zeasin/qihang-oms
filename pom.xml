@@ -14,7 +14,7 @@
     <module>api</module>
     <module>model</module>
     <module>mapper</module>
-    <module>services</module>
+    <module>services1</module>
 <!--    <module>microservices</module>-->
   </modules>
 

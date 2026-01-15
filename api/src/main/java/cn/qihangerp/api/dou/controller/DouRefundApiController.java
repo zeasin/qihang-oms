@@ -11,8 +11,8 @@ import cn.qihangerp.common.mq.MqType;
 import cn.qihangerp.common.mq.MqUtils;
 import cn.qihangerp.model.entity.OShopPullLasttime;
 import cn.qihangerp.model.entity.OShopPullLogs;
-import cn.qihangerp.module.open.dou.domain.DouRefund;
-import cn.qihangerp.module.open.dou.service.DouRefundService;
+import cn.qihangerp.model.entity.DouRefund;
+import cn.qihangerp.module.goods.service.DouRefundService;
 import cn.qihangerp.module.service.OShopPullLasttimeService;
 import cn.qihangerp.module.service.OShopPullLogsService;
 

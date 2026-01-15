@@ -154,11 +154,11 @@
 <!--            <artifactId>pdd-api</artifactId>-->
 <!--            <version>1.0.6</version>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>cn.qihangerp.service</groupId>
-            <artifactId>dou</artifactId>
-            <version>1.10.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.qihangerp.service</groupId>-->
+<!--            <artifactId>dou</artifactId>-->
+<!--            <version>1.10.6</version>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>cn.qihangerp.microservices</groupId>-->
 <!--            <artifactId>dou-api</artifactId>-->
