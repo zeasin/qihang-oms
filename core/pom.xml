@@ -17,7 +17,7 @@
     <modules>
         <module>security</module>
         <module>common</module>
-        <module>model</module>
+<!--        <module>model</module>-->
         <module>mapper</module>
     </modules>
     <properties>
