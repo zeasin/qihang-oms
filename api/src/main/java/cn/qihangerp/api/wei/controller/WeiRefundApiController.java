@@ -6,8 +6,8 @@ import cn.qihangerp.api.wei.WeiApiCommon;
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.common.enums.HttpStatus;
-import cn.qihangerp.module.open.wei.domain.OmsWeiRefund;
-import cn.qihangerp.module.open.wei.service.OmsWeiRefundService;
+import cn.qihangerp.model.entity.OmsWeiRefund;
+import cn.qihangerp.module.service.OmsWeiRefundService;
 
 import cn.qihangerp.open.common.ApiResultVo;
 

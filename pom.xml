@@ -15,7 +15,7 @@
     <module>model</module>
     <module>mapper</module>
     <module>service</module>
-    <module>services1</module>
+<!--    <module>services1</module>-->
 <!--    <module>microservices</module>-->
   </modules>
 

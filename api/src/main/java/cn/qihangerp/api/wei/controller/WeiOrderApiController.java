@@ -7,9 +7,9 @@ import cn.qihangerp.api.wei.WeiApiCommon;
 import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.common.enums.HttpStatus;
-import cn.qihangerp.module.open.wei.domain.OmsWeiOrder;
-import cn.qihangerp.module.open.wei.domain.OmsWeiOrderItem;
-import cn.qihangerp.module.open.wei.service.OmsWeiOrderService;
+import cn.qihangerp.model.entity.OmsWeiOrder;
+import cn.qihangerp.model.entity.OmsWeiOrderItem;
+import cn.qihangerp.module.service.OmsWeiOrderService;
 
 import cn.qihangerp.open.common.ApiResultVo;
 
