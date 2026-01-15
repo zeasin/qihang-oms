@@ -12,8 +12,8 @@ import cn.qihangerp.common.mq.MqUtils;
 import cn.qihangerp.common.utils.DateUtils;
 import cn.qihangerp.model.entity.OShopPullLasttime;
 import cn.qihangerp.model.entity.OShopPullLogs;
-import cn.qihangerp.module.open.jd.domain.JdRefund;
-import cn.qihangerp.module.open.jd.service.JdRefundService;
+import cn.qihangerp.model.entity.JdRefund;
+import cn.qihangerp.module.service.JdRefundService;
 import cn.qihangerp.module.service.OShopPullLasttimeService;
 import cn.qihangerp.module.service.OShopPullLogsService;
 

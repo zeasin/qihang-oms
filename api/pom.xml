@@ -134,11 +134,11 @@
 <!--            <artifactId>tao-api</artifactId>-->
 <!--            <version>1.0.6</version>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>cn.qihangerp.service</groupId>
-            <artifactId>jd</artifactId>
-            <version>1.10.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.qihangerp.service</groupId>-->
+<!--            <artifactId>jd</artifactId>-->
+<!--            <version>1.10.6</version>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>cn.qihangerp.microservices</groupId>-->
 <!--            <artifactId>jd-api</artifactId>-->
