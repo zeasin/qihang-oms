@@ -18,7 +18,7 @@
     <modules>
         <module>shop</module>
 <!--        <module>goods</module>-->
-        <module>order</module>
+<!--        <module>order</module>-->
         <module>sys</module>
 <!--        <module>dou</module>-->
 <!--        <module>jd</module>-->

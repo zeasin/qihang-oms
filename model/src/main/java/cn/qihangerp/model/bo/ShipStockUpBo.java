@@ -8,4 +8,5 @@ public class ShipStockUpBo {
     private String outSkuId;
     private Long shopId;
     private Integer status;
+    private Long shipSupplierId;
 }
