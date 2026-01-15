@@ -184,8 +184,8 @@ public class OOrder implements Serializable {
     @TableField(exist = false)
     private List<OOrderItem> itemList;
 
-    @TableField(exist = false)
-    private List<OrderItemListVo> itemVoList;
+//    @TableField(exist = false)
+//    private List<OrderItemListVo> itemVoList;
 
     @TableField(exist = false)
     private List<OrderDiscountVo> discounts;

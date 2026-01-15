@@ -118,8 +118,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
         // 查询子订单
         if(pages.getRecords()!=null){
             for (OOrder order:pages.getRecords()) {
-//                order.setItemList(orderItemMapper.selectList(new LambdaQueryWrapper<OOrderItem>().eq(OOrderItem::getOrderId, order.getId())));
-                order.setItemVoList(orderItemMapper.selectOrderItemListByOrderId(Long.parseLong(order.getId())));
+                order.setItemList(orderItemMapper.selectList(new LambdaQueryWrapper<OOrderItem>().eq(OOrderItem::getOrderId, order.getId())));
+//                order.setItemVoList(orderItemMapper.selectOrderItemListByOrderId(Long.parseLong(order.getId())));
             }
         }
 
@@ -168,9 +168,9 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
     public OOrder queryDetailById(Long id) {
         OOrder oOrder = orderMapper.selectById(id);
         if(oOrder!=null) {
-//           oOrder.setItemList(orderItemMapper.selectList(new LambdaQueryWrapper<OOrderItem>().eq(OOrderItem::getOrderId, oOrder.getId())));
+           oOrder.setItemList(orderItemMapper.selectList(new LambdaQueryWrapper<OOrderItem>().eq(OOrderItem::getOrderId, oOrder.getId())));
 
-            oOrder.setItemVoList(orderItemMapper.selectOrderItemListByOrderId(id));
+//            oOrder.setItemVoList(orderItemMapper.selectOrderItemListByOrderId(id));
              //获取优惠信息
             if(oOrder.getShopType()==EnumShopType.TAO.getIndex()){
                 oOrder.setDiscounts(orderMapper.getTaoOrderDiscount(oOrder.getOrderNum()));
