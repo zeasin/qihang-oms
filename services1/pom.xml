@@ -23,7 +23,7 @@
 <!--        <module>dou</module>-->
         <module>jd</module>
         <module>pdd</module>
-        <module>tao</module>
+<!--        <module>tao</module>-->
         <module>wei</module>
     </modules>
     <properties>
