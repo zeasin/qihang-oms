@@ -98,11 +98,11 @@
             <artifactId>security</artifactId>
             <version>1.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>cn.qihangerp.microservices</groupId>-->
-<!--            <artifactId>sys-api</artifactId>-->
-<!--            <version>1.0.6</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.qihangerp.model</groupId>
+            <artifactId>model</artifactId>
+            <version>2.1.16</version>
+        </dependency>
         <dependency>
             <groupId>cn.qihangerp.service</groupId>
             <artifactId>service</artifactId>
@@ -174,11 +174,11 @@
 <!--            <artifactId>wei-api</artifactId>-->
 <!--            <version>1.0.6</version>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>cn.qihangerp.service</groupId>
-            <artifactId>sys</artifactId>
-            <version>1.10.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.qihangerp.service</groupId>-->
+<!--            <artifactId>sys</artifactId>-->
+<!--            <version>1.10.6</version>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>cn.qihangerp.service</groupId>-->
 <!--            <artifactId>shop</artifactId>-->
