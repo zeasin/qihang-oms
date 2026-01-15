@@ -12,8 +12,8 @@ import cn.qihangerp.common.mq.MqType;
 import cn.qihangerp.common.mq.MqUtils;
 import cn.qihangerp.model.entity.OShopPullLasttime;
 import cn.qihangerp.model.entity.OShopPullLogs;
-import cn.qihangerp.module.open.pdd.domain.PddRefund;
-import cn.qihangerp.module.open.pdd.service.PddRefundService;
+import cn.qihangerp.model.entity.PddRefund;
+import cn.qihangerp.module.service.PddRefundService;
 import cn.qihangerp.module.service.OShopPullLasttimeService;
 import cn.qihangerp.module.service.OShopPullLogsService;
 

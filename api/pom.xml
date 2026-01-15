@@ -144,11 +144,11 @@
 <!--            <artifactId>jd-api</artifactId>-->
 <!--            <version>1.0.6</version>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>cn.qihangerp.service</groupId>
-            <artifactId>pdd</artifactId>
-            <version>1.10.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>cn.qihangerp.service</groupId>-->
+<!--            <artifactId>pdd</artifactId>-->
+<!--            <version>1.10.6</version>-->
+<!--        </dependency>-->
 <!--        <dependency>-->
 <!--            <groupId>cn.qihangerp.microservices</groupId>-->
 <!--            <artifactId>pdd-api</artifactId>-->
