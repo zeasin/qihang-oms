@@ -12,7 +12,7 @@ import cn.qihangerp.model.bo.DouOrderConfirmBo;
 import cn.qihangerp.model.entity.DouOrder;
 import cn.qihangerp.model.bo.DouOrderBo;
 import cn.qihangerp.model.bo.DouOrderPushBo;
-import cn.qihangerp.module.goods.service.DouOrderService;
+import cn.qihangerp.module.service.DouOrderService;
 import cn.qihangerp.security.common.BaseController;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.AllArgsConstructor;

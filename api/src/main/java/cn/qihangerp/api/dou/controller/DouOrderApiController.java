@@ -13,7 +13,7 @@ import cn.qihangerp.model.entity.OShopPullLasttime;
 import cn.qihangerp.model.entity.OShopPullLogs;
 import cn.qihangerp.model.entity.DouOrder;
 import cn.qihangerp.model.entity.DouOrderItem;
-import cn.qihangerp.module.goods.service.DouOrderService;
+import cn.qihangerp.module.service.DouOrderService;
 import cn.qihangerp.module.service.OShopPullLasttimeService;
 import cn.qihangerp.module.service.OShopPullLogsService;
 import cn.qihangerp.open.common.ApiResultVo;
