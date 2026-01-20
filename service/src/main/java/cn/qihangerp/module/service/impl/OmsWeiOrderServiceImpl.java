@@ -120,6 +120,7 @@ public class OmsWeiOrderServiceImpl extends ServiceImpl<OmsWeiOrderMapper, OmsWe
                 // 不存在，新增
 
                 order.setShopId(shopId);
+                order.setAuditStatus(0);
                 mapper.insert(order);
                 // 添加item
                 for (OmsWeiOrderItem item : order.getItems()) {

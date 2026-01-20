@@ -171,6 +171,8 @@
           <el-tag v-if="scope.row.status === 20 " size="small">待发货</el-tag>
           <el-tag v-if="scope.row.status === 30 " size="small">待收货</el-tag>
           <el-tag v-if="scope.row.status === 100 " size="small">完成</el-tag>
+          <el-tag v-if="scope.row.status === 200 " size="small">全部商品售后之后，订单取消</el-tag>
+          <el-tag v-if="scope.row.status === 250 " size="small">未付款用户主动取消或超时未付款订单自动取消</el-tag>
           <br/>
           <el-tag style="margin-top: 5px" type="warning" v-if="scope.row.auditStatus === 0 " size="small">待确认</el-tag>
         </template>
