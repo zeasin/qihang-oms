@@ -122,7 +122,7 @@ public class DouOrderApiController {
             logs.setPullTime(currDateTime);
             logs.setDuration(System.currentTimeMillis() - currTimeMillis);
             pullLogsService.save(logs);
-            return AjaxResult.error("接口拉取错误："+resultVo.getMsg());
+            return AjaxResult.error(resultVo.getCode(),resultVo.getMsg());
         }
 
 
