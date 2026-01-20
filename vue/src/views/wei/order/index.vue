@@ -349,7 +349,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         shopId: null,
-        tid: null,
+        orderId: null,
+        orderCreateTime: null,
         status: null
       },
       isAudit:false,
@@ -451,15 +452,19 @@ export default {
       this.multiple = !selection.length
     },
     handlePull() {
-      if(this.queryParams.shopId){
+      if (this.queryParams.shopId) {
         this.pullLoading = true
-        pullOrder({shopId:this.queryParams.shopId}).then(response => {
-          console.log('拉取订单接口返回=====',response)
+        pullOrder({shopId: this.queryParams.shopId,orderDate:this.queryParams.orderCreateTime}).then(response => {
+          console.log('拉取订单接口返回=====', response)
+          this.pullLoading = false
+          if (response.code === 200) {
             this.$modal.msgSuccess(JSON.stringify(response));
-            this.pullLoading = false
             this.getList()
+          } else {
+            this.$modal.msgError(response.msg);
+          }
         })
-      }else{
+      } else {
         this.$modal.msgSuccess("请先选择店铺");
       }
 
