@@ -155,6 +155,9 @@
         <el-form-item label="appSecret" prop="appSecret" v-if="form.type===500">
           <el-input v-model="form.appSecret" placeholder="请输入appSecret" />
         </el-form-item>
+        <el-form-item label="Token" prop="accessToken">
+          <el-input type="textarea" v-model="form.accessToken" placeholder="请输入AccessToken" />
+        </el-form-item>
         <el-form-item label="描述" prop="remark">
           <el-input type="textarea" v-model="form.remark" placeholder="请输入描述" />
         </el-form-item>
@@ -263,8 +266,18 @@ export default {
   created() {
     listPlatform().then(res => {
       this.typeList = res.rows;
+      this.getList();
     })
-    this.getList();
+
+  },
+  mounted() {
+    if(this.$route.query.type){
+      // listPlatform({status:0}).then(res => {
+      //   this.typeList = res.rows;
+      this.queryParams.type = parseInt(this.$route.query.type)
+      this.getList()
+      // })
+    }
   },
   methods: {
     /** 查询店铺列表 */
