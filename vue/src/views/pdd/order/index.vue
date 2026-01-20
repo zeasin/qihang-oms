@@ -469,8 +469,7 @@ export default {
       }
       this.pullLoading = true
       pullOrder({
-        shopId: this.queryParams.shopId, updType: 0, startTime: this.queryParams.startTime,
-        endTime: this.queryParams.startTime
+        shopId: this.queryParams.shopId, updType: 0, orderDate: this.queryParams.startTime
       }).then(response => {
         console.log('拉取PDD订单接口返回=====', response)
         if (response.code === 1506) {
