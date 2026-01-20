@@ -39,10 +39,11 @@
       </el-table-column>
       <el-table-column label="平台" align="center" prop="shopType" >
         <template slot-scope="scope">
-          <el-tag size="small" v-if="scope.row.shopType === 1">天猫</el-tag>
-          <el-tag size="small" v-if="scope.row.shopType === 2">京东</el-tag>
-          <el-tag size="small" v-if="scope.row.shopType === 3">抖店</el-tag>
-          <el-tag size="small" v-if="scope.row.shopType === 4">拼多多</el-tag>
+          <el-tag size="small" v-if="scope.row.shopType === 100">天猫</el-tag>
+          <el-tag size="small" v-if="scope.row.shopType === 200">京东POP</el-tag>
+          <el-tag size="small" v-if="scope.row.shopType === 400">抖店</el-tag>
+          <el-tag size="small" v-if="scope.row.shopType === 500">微信小店</el-tag>
+          <el-tag size="small" v-if="scope.row.shopType === 300">拼多多</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="类型" align="center" prop="pullType" >
