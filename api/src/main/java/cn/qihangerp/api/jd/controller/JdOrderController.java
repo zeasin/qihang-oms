@@ -29,15 +29,5 @@ public class JdOrderController extends BaseController {
 
         return getDataTable(result);
     }
-    @PostMapping("/push_oms")
-    @ResponseBody
-    public AjaxResult pushOms(@RequestBody JdOrderPushBo bo) {
-        // TODO:需要优化消息格式
-        if(bo!=null && bo.getIds()!=null) {
-            for(String id: bo.getIds()) {
-                mqUtils.sendApiMessage(MqMessage.build(EnumShopType.JD, MqType.ORDER_MESSAGE, id));
-            }
-        }
-        return success();
-    }
+
 }

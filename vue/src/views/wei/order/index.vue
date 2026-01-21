@@ -54,16 +54,7 @@
           @click="handlePull"
         >API拉取订单</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-refresh"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handlePushOms"-->
-<!--        >重新推送选中订单到订单库</el-button>-->
-<!--      </el-col>-->
+
 
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -324,7 +315,7 @@
 <script>
 
 import { listShop } from "@/api/shop/shop";
-import {listOrder,getOrder,pushOms,pullOrder,pullOrderDetail,confirmOrder} from "@/api/wei/order";
+import {listOrder,getOrder,pullOrder,pullOrderDetail,confirmOrder} from "@/api/wei/order";
 import Clipboard from "clipboard";
 import {pcaTextArr} from "element-china-area-data";
 export default {
@@ -362,6 +353,8 @@ export default {
       pcaTextArr,
       // 表单参数
       form: {
+        id:null,
+        provinces:null
       },
       rules: {
         userName: [{ required: true, message: "收件人姓名不能为空", trigger: "blur" }],
@@ -492,15 +485,7 @@ export default {
         this.isAudit = false
       });
     },
-    handlePushOms(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否批量重新推送订单？').then(function() {
-        return pushOms({ids:ids});
-      }).then(() => {
-        // this.getList();
-        this.$modal.msgSuccess("推送成功");
-      }).catch(() => {});
-    },
+
     handleConfirm(row) {
       this.reset();
       const id = row.id || this.ids

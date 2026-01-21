@@ -39,17 +39,7 @@ public class WeiOrderController extends BaseController {
         return success(orderService.queryDetailById(id));
     }
 
-    @PostMapping("/push_oms")
-    @ResponseBody
-    public AjaxResult pushOms(@RequestBody WeiOrderPushBo bo) {
-        // TODO:需要优化消息格式
-        if(bo!=null && bo.getIds()!=null) {
-            for(String id: bo.getIds()) {
-                mqUtils.sendApiMessage(MqMessage.build(EnumShopType.WEI, MqType.ORDER_MESSAGE, id));
-            }
-        }
-        return success();
-    }
+
     @PostMapping("/confirmOrder")
     public AjaxResult confirmOrder(@RequestBody WeiOrderConfirmBo bo) {
         log.info("=========确认订单======={}", JSONObject.toJSONString(bo));

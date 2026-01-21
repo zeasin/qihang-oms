@@ -55,16 +55,7 @@
           @click="handlePull"
         >API拉取订单</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-refresh"
-          size="mini"
-          :disabled="multiple"
-          @click="handlePushOms"
-        >重新推送选中订单到订单库</el-button>
-      </el-col>
+
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -200,7 +191,7 @@
 </template>
 
 <script>
-import {listOrder, pullOrder, getOrder, pushOms, pullOrderDetail} from "@/api/jd/order";
+import {listOrder, pullOrder, getOrder, pullOrderDetail} from "@/api/jd/order";
 import { listShop } from "@/api/shop/shop";
 import {MessageBox} from "element-ui";
 import {isRelogin} from "@/utils/request";
@@ -325,15 +316,7 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    handlePushOms(row) {
-      const ids = row.orderId || this.ids;
-      this.$modal.confirm('是否手动推送到OMS？').then(function() {
-        return pushOms({ids:ids});
-      }).then(() => {
-        // this.getList();
-        this.$modal.msgSuccess("推送成功");
-      }).catch(() => {});
-    },
+
     handlePull(){
       if(this.queryParams.shopId){
         this.pullLoading = true

@@ -113,21 +113,6 @@ public class OfflineOrderController extends BaseController {
         else return AjaxResult.error(result.getMsg());
 
     }
-    /**
-     * 手动推送到系统
-     * @param bo
-     * @return
-     */
-    @PostMapping("/push_oms")
-    @ResponseBody
-    public AjaxResult pushOms(@RequestBody OfflineOrderPushBo bo) {
-        // TODO:需要优化消息格式
-        if(bo!=null && bo.getIds()!=null) {
-            for(String id: bo.getIds()) {
-                mqUtils.sendApiMessage(MqMessage.build(EnumShopType.OFFLINE, MqType.ORDER_MESSAGE, id));
-            }
-        }
-        return success();
-    }
+
 }
 

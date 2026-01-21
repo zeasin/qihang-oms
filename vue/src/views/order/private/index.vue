@@ -84,16 +84,7 @@
           @click="handleAdd"
         >手动创建订单</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-refresh"
-          size="mini"
-          :disabled="multiple"
-          @click="handlePushOms"
-        >重新推送选中订单到订单库</el-button>
-      </el-col>
+
 <!--      <el-col :span="1.5">-->
 <!--        <el-button-->
 <!--          type="warning"-->
@@ -258,8 +249,8 @@
               size="mini"
               type="success"
               icon="el-icon-share"
-              @click="handleShip(scope.row)"
-            >订单发货</el-button>
+              @click="handleConfirm(scope.row)"
+            >确认订单</el-button>
           </div>
         </template>
       </el-table-column>
@@ -521,19 +512,23 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    handlePushOms(row) {
-      const ids = row.orderNum || this.ids;
-      this.$modal.confirm('是否手动推送到系统？').then(function() {
-         pushOms({ids:ids}).then(resp=>{
-           this.getList()
-         });
-      }).then(() => {
-        // this.getList();
-        this.$modal.msgSuccess("推送成功");
-      }).catch(() => {});
-    },
+
     reset(){
 
+    },
+    handleConfirm(row) {
+      this.reset();
+      const id = row.id || this.ids
+      getOrder(id).then(response => {
+        this.form = response.data;
+        this.form.provinces = []
+        this.form.provinces.push(response.data.provinceName)
+        this.form.provinces.push(response.data.cityName)
+        this.form.provinces.push(response.data.townName)
+        this.detailOpen = true;
+        this.detailTitle = "确认订单";
+        this.isAudit = true
+      });
     },
     /** 详情按钮操作 */
     handleDetail(row) {

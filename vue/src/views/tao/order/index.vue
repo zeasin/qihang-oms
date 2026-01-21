@@ -70,16 +70,7 @@
 <!--          @click="handlePullDetailByTid"-->
 <!--        >API拉取单个订单</el-button>-->
 <!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-top-right"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handlePushOms"-->
-<!--        >重新推送选中订单到订单库</el-button>-->
-<!--      </el-col>-->
+
 <!--      <el-col :span="1.5">-->
 <!--        <el-button-->
 <!--          type="danger"-->
@@ -328,7 +319,7 @@
 </template>
 
 <script>
-import {listOrder, pullOrder, getOrder, pushOms, pullOrderDetail,confirmOrder} from "@/api/tao/order";
+import {listOrder, pullOrder, getOrder, pullOrderDetail,confirmOrder} from "@/api/tao/order";
 import { listShop } from "@/api/shop/shop";
 import {MessageBox} from "element-ui";
 import {isRelogin} from "../../../utils/request";
@@ -537,15 +528,7 @@ export default {
         }
       });
     },
-    handlePushOms(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否手动推送到系统？').then(function() {
-        return pushOms({ids:ids});
-      }).then(() => {
-        // this.getList();
-        this.$modal.msgSuccess("推送成功");
-      }).catch(() => {});
-    },
+
     handleConfirm(row) {
       this.reset();
       const id = row.id || this.ids

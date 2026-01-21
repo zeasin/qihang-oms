@@ -1,7 +1,6 @@
 package cn.qihangerp.mapper;
 
 
-import cn.qihangerp.model.entity.OfflineGoodsSku;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

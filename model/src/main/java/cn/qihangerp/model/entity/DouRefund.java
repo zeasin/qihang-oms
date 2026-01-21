@@ -1,5 +1,7 @@
 package cn.qihangerp.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -16,6 +18,7 @@ public class DouRefund implements Serializable {
     /**
      * 售后订单id，自增
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

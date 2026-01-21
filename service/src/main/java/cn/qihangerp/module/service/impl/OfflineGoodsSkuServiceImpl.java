@@ -2,7 +2,6 @@ package cn.qihangerp.module.service.impl;
 
 import cn.qihangerp.mapper.goods.OGoodsSkuMapper;
 import cn.qihangerp.model.entity.OGoodsSku;
-import cn.qihangerp.model.entity.OfflineGoodsSku;
 import cn.qihangerp.mapper.OfflineGoodsSkuMapper;
 import cn.qihangerp.module.service.OfflineGoodsSkuService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

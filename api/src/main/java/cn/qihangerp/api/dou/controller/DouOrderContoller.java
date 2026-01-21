@@ -40,22 +40,7 @@ public class DouOrderContoller extends BaseController {
         return success(orderService.queryDetailById(id));
     }
 
-    /**
-     * 手动推送到系统
-     * @param bo
-     * @return
-     */
-    @PostMapping("/push_oms")
-    @ResponseBody
-    public AjaxResult pushOms(@RequestBody DouOrderPushBo bo) {
-        // TODO:需要优化消息格式
-        if(bo!=null && bo.getIds()!=null) {
-            for(String id: bo.getIds()) {
-                mqUtils.sendApiMessage(MqMessage.build(EnumShopType.DOU, MqType.ORDER_MESSAGE, id));
-            }
-        }
-        return success();
-    }
+
     @PostMapping("/confirmOrder")
     public AjaxResult confirmOrder(@RequestBody DouOrderConfirmBo bo) {
         log.info("=========确认订单======={}", JSONObject.toJSONString(bo));

@@ -1,5 +1,6 @@
 package cn.qihangerp.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -17,7 +18,7 @@ public class DouGoodsSku implements Serializable {
     /**
      * 商品sku_id;抖店系统生成。
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private String id;
 
     /**
