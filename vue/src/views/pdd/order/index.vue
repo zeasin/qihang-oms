@@ -180,6 +180,7 @@
           <el-button style="padding-right: 6px;padding-left: 6px"
             :loading="pullLoading"
             size="mini"
+                     type="text"
             icon="el-icon-refresh"
             @click="handlePullUpdate(scope.row)"
           >更新订单</el-button>
@@ -446,18 +447,6 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    handlePullDetailByTid(){
-      if(this.queryParams.shopId && this.queryParams.orderSn) {
-        this.pullLoading = true
-        pullOrderDetail({shopId:this.queryParams.shopId,orderId:this.queryParams.orderSn}).then(response => {
-          console.log('拉取淘宝订单接口返回=====',response)
-          this.$modal.msgSuccess(JSON.stringify(response));
-          this.pullLoading = false
-        })
-      }else{
-        this.$modal.msgSuccess("请先输入订单号并且选择店铺");
-      }
-    },
     handlePull() {
       if (!this.queryParams.shopId) {
         this.$modal.msgError("请先选择店铺");
@@ -503,11 +492,15 @@ export default {
     handlePullUpdate(row) {
       // 接口拉取订单并更新
       this.pullLoading = true
-      pullOrderDetail({shopId:row.shopId,orderId:row.orderSn}).then(response => {
-          console.log('拉取pdd订单详情接口返回=====',response)
-        this.$modal.msgSuccess(JSON.stringify(response));
+      pullOrderDetail({shopId: row.shopId, orderId: row.orderSn}).then(response => {
+        console.log('拉取pdd订单详情接口返回=====', response)
         this.pullLoading = false
-        this.getList()
+        if (response.code === 200) {
+          this.$modal.msgSuccess(JSON.stringify(response));
+          this.getList()
+        } else {
+          this.$modal.msgError(response.msg);
+        }
       })
     },
     handleDetail(row) {
