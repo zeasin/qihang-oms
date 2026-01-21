@@ -23,11 +23,12 @@
             <result property="refreshToken" column="refresh_token" jdbcType="VARCHAR"/>
             <result property="refreshTokenTimeout" column="refresh_token_timeout" jdbcType="BIGINT"/>
             <result property="apiRequestUrl" column="api_request_url" jdbcType="VARCHAR"/>
+            <result property="apiStatus" column="api_status" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,name,type,
-        url,sort,status,
+        url,sort,status,api_status,
         modify_on,remark,seller_id,
         app_key,app_secret,access_token,
         expires_in,access_token_begin,refresh_token,

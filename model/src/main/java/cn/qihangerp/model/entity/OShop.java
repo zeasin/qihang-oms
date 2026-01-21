@@ -42,6 +42,10 @@ public class OShop implements Serializable {
      * 状态（1正常2已删除）
      */
     private Integer status;
+    /**
+     * 自动任务状态0关闭1开启
+     */
+    private Integer apiStatus;
 
     /**
      * 更新时间

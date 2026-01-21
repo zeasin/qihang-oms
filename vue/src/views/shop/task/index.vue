@@ -22,15 +22,15 @@
 
     <el-table v-loading="loading" :data="noticeList">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" width="100" />
-      <el-table-column label="任务名称" align="center" prop="taskName"  />
+      <el-table-column label="序号" align="center" prop="id" width="60" />
+      <el-table-column label="任务名称" align="left" prop="taskName" width="180"/>
       <el-table-column label="表达式（-表示不运行）" align="center" prop="cron" />
       <el-table-column label="执行函数" align="center" prop="method" />
 
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="100">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -163,7 +163,7 @@ export default {
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 50,
         noticeTitle: undefined,
         createBy: undefined,
         status: undefined
