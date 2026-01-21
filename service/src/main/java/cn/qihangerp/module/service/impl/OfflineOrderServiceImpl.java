@@ -1,12 +1,12 @@
 package cn.qihangerp.module.service.impl;
 
+import cn.qihangerp.common.ResultVo;
+import cn.qihangerp.mapper.*;
+import cn.qihangerp.model.bo.OfflineOrderConfirmBo;
 import cn.qihangerp.model.bo.OfflineOrderCreateBo;
 import cn.qihangerp.model.bo.OfflineOrderCreateItemBo;
 import cn.qihangerp.model.bo.OfflineOrderShipBo;
-import cn.qihangerp.model.entity.OfflineOrder;
-import cn.qihangerp.model.entity.OfflineOrderItem;
-import cn.qihangerp.mapper.OfflineOrderItemMapper;
-import cn.qihangerp.mapper.OfflineOrderMapper;
+import cn.qihangerp.model.entity.*;
 import cn.qihangerp.module.service.OfflineOrderService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -39,6 +39,9 @@ import java.util.regex.Pattern;
 @Service
 public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, OfflineOrder>
     implements OfflineOrderService {
+    private final OOrderMapper oOrderMapper;
+    private final OOrderItemMapper oOrderItemMapper;
+    private final OShopMapper shopMapper;
     private final OfflineOrderMapper orderMapper;
     private final OfflineOrderItemMapper orderItemMapper;
     private final MqUtils mqUtils;
@@ -109,7 +112,9 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
     @Override
     public Long insertOfflineOrder(OfflineOrderCreateBo bo, String createBy)
     {
-        List<OfflineOrder> oOrders = orderMapper.selectList(new LambdaQueryWrapper<OfflineOrder>().eq(OfflineOrder::getOrderNum, bo.getOrderNum()));
+        List<OfflineOrder> oOrders = orderMapper.selectList(new LambdaQueryWrapper<OfflineOrder>()
+                .eq(OfflineOrder::getOrderNum, bo.getOrderNum())
+                .eq(OfflineOrder::getShopId,bo.getShopId()));
 
         if (oOrders!=null&& oOrders.size()>0) return -1L;// 订单号已存在
 //        erpOrder.setCreateTime(DateUtils.getNowDate());
@@ -124,16 +129,17 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
             }
         }
 
-//        OShop shop = shopMapper.selectById(bo.getShopId());
-//        Integer shopType = 0;
-//        if(shop!=null){
-//            shopType = shop.getType();
-//        }else return -4;
+        OShop shop = shopMapper.selectById(bo.getShopId());
+        Integer shopType = 0;
+        if(shop!=null){
+            shopType = shop.getType();
+        }else return -4L;
 
         // 开始组合订单信息
         OfflineOrder order = new OfflineOrder();
         order.setOrderNum(bo.getOrderNum());
         order.setShopId(bo.getShopId());
+        order.setShopType(shopType);
         order.setBuyerMemo(bo.getBuyerMemo());
         order.setRemark(bo.getRemark());
         order.setRefundStatus(1);
@@ -154,7 +160,7 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
         order.setCreateTime(new Date());
         order.setShipType(0);
         order.setCreateBy(createBy);
-        order.setOmsPushStatus(0);
+        order.setAuditStatus(0);
         orderMapper.insert(order);
 
 //        List<OOrderItem> itemList = new ArrayList<OOrderItem>();
@@ -183,7 +189,7 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
             orderItem.setRefundCount(0);
             orderItem.setRefundStatus(1);
             orderItem.setOrderStatus(order.getOrderStatus());
-            orderItem.setHasPushErp(0);
+            orderItem.setShipStatus(0);
             orderItem.setCreateTime(new Date());
             orderItem.setCreateBy(createBy);
             orderItemMapper.insert(orderItem);
@@ -191,6 +197,98 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
         }
 
         return Long.parseLong(order.getId());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResultVo<Long> confirmOrder(OfflineOrderConfirmBo orderConfirmBo) {
+        OfflineOrder offlineOrder = orderMapper.selectById(orderConfirmBo.getId());
+        if(offlineOrder==null) return ResultVo.error("订单数据不存在");
+        if(offlineOrder.getAuditStatus()!=0) return ResultVo.error("已经确认过了！");
+        List<OfflineOrderItem> offlineOrderItems = orderItemMapper.selectList(new LambdaQueryWrapper<OfflineOrderItem>()
+                .eq(OfflineOrderItem::getOrderId, offlineOrder.getId())
+                .eq(OfflineOrderItem::getShipStatus, 0));
+        if(offlineOrderItems==null || offlineOrderItems.isEmpty()){
+            return ResultVo.error("找不到订单item");
+        }
+        OOrder erpOrder = oOrderMapper.selectOne(new LambdaQueryWrapper<OOrder>().eq(OOrder::getOrderNum,offlineOrder.getOrderNum()));
+        if(erpOrder!=null) {
+            // 已经确认过了，更新自己
+            OfflineOrder orderUpdate = new OfflineOrder();
+            orderUpdate.setId(offlineOrder.getId());
+            orderUpdate.setAuditStatus(1);
+            orderUpdate.setAuditTime(new Date());
+            orderMapper.updateById(orderUpdate);
+
+            return ResultVo.error("已经确认过了");
+        }
+        // 开始确认
+        OOrder order = new OOrder();
+        order.setOrderNum(offlineOrder.getOrderNum());
+        order.setShopType(offlineOrder.getShopType());
+        order.setShopId(offlineOrder.getShopId());
+        order.setShipType(0);
+        order.setBuyerMemo(offlineOrder.getBuyerMemo());
+        order.setSellerMemo(offlineOrder.getSellerMemo());
+        order.setRefundStatus(offlineOrder.getRefundStatus());
+        order.setOrderStatus(offlineOrder.getOrderStatus());
+        order.setGoodsAmount(offlineOrder.getGoodsAmount());
+        order.setPostFee(offlineOrder.getPostFee());
+        order.setSellerDiscount(offlineOrder.getSellerDiscount());
+        order.setPlatformDiscount(offlineOrder.getPlatformDiscount());
+        order.setAmount(offlineOrder.getAmount());
+        order.setPayment(offlineOrder.getPayment());
+        order.setReceiverName(orderConfirmBo.getReceiver());
+        order.setReceiverMobile(orderConfirmBo.getMobile());
+        order.setAddress(orderConfirmBo.getAddress());
+        order.setProvince(orderConfirmBo.getProvince());
+        order.setCity(orderConfirmBo.getCity());
+        order.setTown(orderConfirmBo.getTown());
+        order.setOrderTime(offlineOrder.getOrderTime());
+        order.setShipper(-1);
+        order.setShipStatus(0);
+        order.setCreateTime(new Date());
+        order.setCreateBy("手动确认订单");
+        oOrderMapper.insert(order);
+        //插入item
+        for (var item : offlineOrderItems) {
+            OOrderItem oOrderItem = new OOrderItem();
+            oOrderItem.setOrderId(order.getId());
+            oOrderItem.setOrderNum(item.getOrderNum());
+            oOrderItem.setSubOrderNum(item.getSubOrderNum());
+            oOrderItem.setShopType(order.getShopType());
+            oOrderItem.setShopId(order.getShopId());
+            oOrderItem.setSkuId(item.getSkuId());
+            oOrderItem.setGoodsId(item.getGoodsId());
+            oOrderItem.setGoodsSkuId(item.getGoodsSkuId());
+            oOrderItem.setGoodsTitle(item.getGoodsTitle());
+            oOrderItem.setGoodsImg(item.getGoodsImg());
+            oOrderItem.setGoodsNum(item.getGoodsNum());
+            oOrderItem.setGoodsSpec(item.getGoodsSpec());
+            oOrderItem.setSkuNum(item.getSkuNum());
+            oOrderItem.setGoodsPrice(item.getGoodsPrice());
+            oOrderItem.setItemAmount(item.getItemAmount());
+            oOrderItem.setDiscountAmount(0.0);
+            oOrderItem.setPayment(item.getPayment());
+            oOrderItem.setQuantity(item.getQuantity());
+            oOrderItem.setRefundCount(item.getRefundCount());
+            oOrderItem.setRefundStatus(item.getRefundStatus());
+            oOrderItem.setShipper(-1);
+            oOrderItem.setShipType(order.getShipType());
+            oOrderItem.setShipStatus(0);
+            oOrderItem.setCreateTime(new Date());
+            oOrderItem.setCreateBy("手动确认订单");
+            oOrderItemMapper.insert(oOrderItem);
+        }
+
+        // 已经确认过了，更新自己
+        OfflineOrder douOrderUpdate = new OfflineOrder();
+        douOrderUpdate.setId(offlineOrder.getId());
+        douOrderUpdate.setAuditStatus(1);
+        douOrderUpdate.setAuditTime(new Date());
+        orderMapper.updateById(douOrderUpdate);
+        return ResultVo.success();
+
     }
 
     @Transactional

@@ -25,7 +25,7 @@
             <result property="refundCount" column="refund_count" jdbcType="INTEGER"/>
             <result property="refundStatus" column="refund_status" jdbcType="INTEGER"/>
             <result property="orderStatus" column="order_status" jdbcType="INTEGER"/>
-            <result property="hasPushErp" column="has_push_erp" jdbcType="INTEGER"/>
+            <result property="shipStatus" column="ship_status" jdbcType="INTEGER"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -39,7 +39,7 @@
         goods_num,goods_spec,sku_num,
         goods_price,item_amount,payment,
         quantity,remark,refund_count,
-        refund_status,order_status,has_push_erp,
+        refund_status,order_status,ship_status,
         create_time,create_by,update_time,
         update_by
     </sql>

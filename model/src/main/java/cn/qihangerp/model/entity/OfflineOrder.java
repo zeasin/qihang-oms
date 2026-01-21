@@ -28,6 +28,7 @@ public class OfflineOrder implements Serializable {
      * 店铺ID
      */
     private Long shopId;
+    private Integer shopType;
 
     /**
      * 订单备注
@@ -173,8 +174,18 @@ public class OfflineOrder implements Serializable {
      * 更新人
      */
     private String updateBy;
-    private Integer omsPushStatus;
-    @TableField(exist = false)
+
+    /**
+     * 0待确认，1已确认2已拦截-9未拉取
+     */
+    private Integer auditStatus;
+
+    /**
+     * 审核时间
+     */
+    private Date auditTime;
+
+
     private List<OfflineOrderItem> itemList;
     private static final long serialVersionUID = 1L;
 }

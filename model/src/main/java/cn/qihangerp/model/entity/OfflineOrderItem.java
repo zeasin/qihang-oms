@@ -111,9 +111,9 @@ public class OfflineOrderItem implements Serializable {
     private Integer orderStatus;
 
     /**
-     * 是否推送到ERP
+     * 发货状态0未发货1已发货
      */
-    private Integer hasPushErp;
+    private Integer shipStatus;
 
     /**
      * 创建时间

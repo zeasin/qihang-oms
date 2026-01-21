@@ -8,6 +8,7 @@
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="orderNum" column="order_num" jdbcType="VARCHAR"/>
             <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
+            <result property="shopType" column="shop_type" jdbcType="BIGINT"/>
             <result property="remark" column="remark" jdbcType="VARCHAR"/>
             <result property="buyerMemo" column="buyer_memo" jdbcType="VARCHAR"/>
             <result property="sellerMemo" column="seller_memo" jdbcType="VARCHAR"/>
@@ -37,11 +38,12 @@
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
-            <result property="omsPushStatus" column="oms_push_status" jdbcType="INTEGER"/>
+            <result property="auditStatus" column="audit_status" jdbcType="INTEGER"/>
+            <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,order_num,shop_id,
+        id,order_num,shop_id,shop_type,
         remark,buyer_memo,seller_memo,
         tag,refund_status,order_status,
         goods_amount,post_fee,amount,
@@ -51,6 +53,6 @@
         order_time,ship_type,shipping_time,
         shipping_number,shipping_company,shipping_man,
         shipping_cost,create_time,create_by,
-        update_time,update_by,oms_push_status
+        update_time,update_by,audit_status,audit_time
     </sql>
 </mapper>

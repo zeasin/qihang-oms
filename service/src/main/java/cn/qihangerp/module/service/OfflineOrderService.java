@@ -2,6 +2,8 @@ package cn.qihangerp.module.service;
 
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
+import cn.qihangerp.common.ResultVo;
+import cn.qihangerp.model.bo.OfflineOrderConfirmBo;
 import cn.qihangerp.model.bo.OfflineOrderCreateBo;
 import cn.qihangerp.model.bo.OfflineOrderShipBo;
 import cn.qihangerp.model.entity.OfflineOrder;
@@ -25,5 +27,12 @@ public interface OfflineOrderService extends IService<OfflineOrder> {
      * @return
      */
     Long insertOfflineOrder(OfflineOrderCreateBo bo, String createBy);
+
+    /**
+     * 确认订单
+     * @param orderConfirmBo
+     * @return
+     */
+    ResultVo<Long> confirmOrder(OfflineOrderConfirmBo orderConfirmBo);
     int orderLogistics(OfflineOrderShipBo bo, String operator);
 }
