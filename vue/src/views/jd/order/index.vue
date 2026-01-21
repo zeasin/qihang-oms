@@ -154,9 +154,15 @@
 <!--      <el-table-column label="收件人" align="center" prop="fullname" />-->
 <!--      <el-table-column label="手机号" align="center" prop="mobile" />-->
       <el-table-column label="商家备注" align="center" prop="venderRemark" />
-      <el-table-column label="状态" align="center" prop="orderStateRemark" >
+      <el-table-column label="订单状态" align="center" prop="orderStateRemark" >
         <template slot-scope="scope">
           <el-tag size="small" >{{scope.row.orderStateRemark}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="确认状态" align="center" prop="auditStatus" >
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.auditStatus === 0" style="margin-bottom: 6px;">待确认</el-tag>
+          <el-tag v-if="scope.row.auditStatus === 1" style="margin-bottom: 6px;">已确认</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="下单时间" align="center" prop="orderStartTime" />
