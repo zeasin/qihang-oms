@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 21/01/2026 14:27:09
+ Date: 21/01/2026 14:38:09
 */
 
 SET NAMES utf8mb4;
@@ -3130,7 +3130,7 @@ CREATE TABLE `o_shop_pull_lasttime` (
 BEGIN;
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (1, 1007, 'ORDER', '2025-10-01 16:10:02', '2025-10-01 10:56:27', '2025-10-01 16:10:03');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (2, 1007, 'GOODS', '2025-10-01 10:50:36', '2025-10-01 10:50:11', '2025-10-01 10:51:00');
-INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (3, 1009, 'ORDER', '2026-01-21 14:27:00', '2025-10-01 11:07:23', '2026-01-21 14:27:00');
+INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (3, 1009, 'ORDER', '2026-01-21 14:38:00', '2025-10-01 11:07:23', '2026-01-21 14:38:00');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (4, 1009, 'GOODS', '2025-10-01 12:56:14', '2025-10-01 11:07:08', '2025-10-01 12:56:16');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (5, 1007, 'REFUND', '2025-10-01 11:24:50', '2025-10-01 11:24:04', '2025-10-01 11:24:50');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (6, 1010, 'ORDER', '2025-10-09 07:36:05', '2025-10-09 07:36:09', NULL);
@@ -3151,7 +3151,7 @@ CREATE TABLE `o_shop_pull_logs` (
   `pull_time` datetime DEFAULT NULL COMMENT '拉取时间',
   `duration` bigint DEFAULT NULL COMMENT '耗时（毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2013860387866251267 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='店铺更新日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=2013860387866251278 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='店铺更新日志表';
 
 -- ----------------------------
 -- Records of o_shop_pull_logs
@@ -3510,6 +3510,17 @@ INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013859605754384385, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:21,endTime:2026-01-21T14:22:00.023392}', '{insert:0,update:0,fail:0}', '2026-01-21 14:22:00', 352);
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251265, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:22,endTime:2026-01-21T14:25:04.827409}', '{insert:0,update:0,fail:0}', '2026-01-21 14:25:03', 3508);
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251266, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:25:05,endTime:2026-01-21T14:27:00.083947}', '{insert:0,update:0,fail:0}', '2026-01-21 14:27:00', 508);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251267, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:27,endTime:2026-01-21T14:28:03.751545}', '{insert:0,update:0,fail:0}', '2026-01-21 14:28:03', 3027);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251268, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:28:04,endTime:2026-01-21T14:29:02.802435}', '{insert:0,update:0,fail:0}', '2026-01-21 14:29:03', 1583);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251269, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:29:03,endTime:2026-01-21T14:30:06.369590}', '{insert:0,update:0,fail:0}', '2026-01-21 14:30:05', 2180);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251270, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:30:06,endTime:2026-01-21T14:31:03.812884}', '{insert:0,update:0,fail:0}', '2026-01-21 14:31:03', 2449);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251271, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:31:04,endTime:2026-01-21T14:32:02.430597}', '{insert:0,update:0,fail:0}', '2026-01-21 14:32:02', 2080);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251272, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:32:02,endTime:2026-01-21T14:33:01.496401}', '{insert:0,update:0,fail:0}', '2026-01-21 14:33:01', 1724);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251273, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:33:01,endTime:2026-01-21T14:34:02.504188}', '{insert:0,update:0,fail:0}', '2026-01-21 14:34:02', 1396);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251274, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:34:03,endTime:2026-01-21T14:35:01.162234}', '{insert:0,update:0,fail:0}', '2026-01-21 14:35:01', 586);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251275, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:35:01,endTime:2026-01-21T14:36:00.882625}', '{insert:0,update:0,fail:0}', '2026-01-21 14:36:01', 576);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251276, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:36:01,endTime:2026-01-21T14:37:00.769229}', '{insert:0,update:0,fail:0}', '2026-01-21 14:37:01', 337);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251277, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:37:01,endTime:2026-01-21T14:38:00.090312}', '{insert:0,update:0,fail:0}', '2026-01-21 14:38:00', 311);
 COMMIT;
 
 -- ----------------------------
@@ -3579,13 +3590,13 @@ CREATE TABLE `offline_order` (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `order_sn_index` (`order_num`) USING BTREE,
   KEY `shopid_index` (`shop_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2013814248479580163 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='线下渠道订单表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='线下渠道订单表';
 
 -- ----------------------------
 -- Records of offline_order
 -- ----------------------------
 BEGIN;
-INSERT INTO `offline_order` (`id`, `order_num`, `shop_id`, `shop_type`, `remark`, `buyer_memo`, `seller_memo`, `tag`, `refund_status`, `order_status`, `goods_amount`, `post_fee`, `amount`, `seller_discount`, `platform_discount`, `payment`, `receiver_name`, `receiver_mobile`, `address`, `province`, `city`, `town`, `order_time`, `ship_type`, `shipping_time`, `shipping_number`, `shipping_company`, `shipping_man`, `shipping_cost`, `create_time`, `create_by`, `update_time`, `update_by`, `audit_status`, `audit_time`) VALUES (2013814248479580162, '1768965697739165', 1009, 300, NULL, NULL, NULL, NULL, 1, 1, 29.43, 0, 29.43, 0, 0, 29.43, 'a', 'a', 'aa', '河北省', '秦皇岛市', '北戴河区', '2026-01-21 11:21:46', 0, NULL, NULL, NULL, NULL, NULL, '2026-01-21 11:21:46', 'admin', NULL, NULL, 0, NULL);
+INSERT INTO `offline_order` (`id`, `order_num`, `shop_id`, `shop_type`, `remark`, `buyer_memo`, `seller_memo`, `tag`, `refund_status`, `order_status`, `goods_amount`, `post_fee`, `amount`, `seller_discount`, `platform_discount`, `payment`, `receiver_name`, `receiver_mobile`, `address`, `province`, `city`, `town`, `order_time`, `ship_type`, `shipping_time`, `shipping_number`, `shipping_company`, `shipping_man`, `shipping_cost`, `create_time`, `create_by`, `update_time`, `update_by`, `audit_status`, `audit_time`) VALUES (1, '1768965697739165', 1009, 300, NULL, NULL, NULL, NULL, 1, 1, 29.43, 0, 29.43, 0, 0, 29.43, 'a', 'a', 'aa', '河北省', '秦皇岛市', '北戴河区', '2026-01-21 11:21:46', 0, NULL, NULL, NULL, NULL, NULL, '2026-01-21 11:21:46', 'admin', NULL, NULL, 0, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -3621,13 +3632,13 @@ CREATE TABLE `offline_order_item` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `goodId_index` (`goods_id`) USING BTREE,
   KEY `order_id` (`order_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2013814248500551683 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='渠道订单明细表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='渠道订单明细表';
 
 -- ----------------------------
 -- Records of offline_order_item
 -- ----------------------------
 BEGIN;
-INSERT INTO `offline_order_item` (`id`, `order_id`, `order_num`, `sub_order_num`, `sku_id`, `goods_id`, `goods_sku_id`, `goods_title`, `goods_img`, `goods_num`, `goods_spec`, `sku_num`, `goods_price`, `item_amount`, `payment`, `quantity`, `remark`, `refund_count`, `refund_status`, `order_status`, `ship_status`, `create_time`, `create_by`, `update_time`, `update_by`) VALUES (2013814248500551682, 2013814248479580162, '1768965697739165', '1768965697739165', '46', 0, 46, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', 'https://cbu01.alicdn.com/img/ibank/O1CN01bYBxVj1UZhsbltiGt_!!2215604672532-0-cib.jpg', NULL, '白光 18W', 'LSDX0010018W', 29.43, 29.43, 29.43, 1, NULL, 0, 1, 1, 0, '2026-01-21 11:21:46', 'admin', NULL, NULL);
+INSERT INTO `offline_order_item` (`id`, `order_id`, `order_num`, `sub_order_num`, `sku_id`, `goods_id`, `goods_sku_id`, `goods_title`, `goods_img`, `goods_num`, `goods_spec`, `sku_num`, `goods_price`, `item_amount`, `payment`, `quantity`, `remark`, `refund_count`, `refund_status`, `order_status`, `ship_status`, `create_time`, `create_by`, `update_time`, `update_by`) VALUES (1, 1, '1768965697739165', '1768965697739165', '46', 0, 46, '雷士照明led吸顶灯管灯芯改造灯板圆形灯盘节能灯泡替换光源模组', 'https://cbu01.alicdn.com/img/ibank/O1CN01bYBxVj1UZhsbltiGt_!!2215604672532-0-cib.jpg', NULL, '白光 18W', 'LSDX0010018W', 29.43, 29.43, 29.43, 1, NULL, 0, 1, 1, 0, '2026-01-21 11:21:46', 'admin', NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -5950,7 +5961,7 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2026-01-21 13:02:48', 'admin', '2023-08-07 19:31:37', '', '2026-01-21 05:02:47', '管理员');
+INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, NULL, 'admin', '启航老齐A', '00', '280645618@qq.com', '18123879144', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2026-01-21 14:30:49', 'admin', '2023-08-07 19:31:37', '', '2026-01-21 06:30:48', '管理员');
 INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, NULL, 'openapi', 'openApi接口专用', '00', '2806456181@qq.com', '15818590000', '0', '', '$2a$10$fHkhoqbMiyracAsTzl38H.55bu.M.of1FXk2EK7RQBjfic3tLU0Ue', '0', '0', '127.0.0.1', '2024-06-24 10:23:35', 'admin', '2024-03-17 14:55:22', 'admin', '2024-06-24 10:23:35', NULL);
 INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (101, 101, '15818590119', 'aaa123', '00', '', '', '0', '', '$2a$10$pXcT6cHaObMeKuYd9vZb5uEb8PyUdF2AcqqRN1cBqiA9rV4qYQW7G', '0', '2', '', NULL, 'admin', '2024-08-15 13:45:25', '', NULL, NULL);
 INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (102, 101, '15818590119', '老齐', '00', '', '', '0', '', '$2a$10$ysk.zgJ8wh25c7vOjKyZ8uarM2hkG0S51j8GYdJSo2kZmc3f8HdKe', '0', '0', '', NULL, 'admin', '2024-08-15 13:49:59', 'admin', '2025-02-10 16:26:20', NULL);
