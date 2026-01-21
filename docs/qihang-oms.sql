@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 21/01/2026 14:22:39
+ Date: 21/01/2026 14:27:09
 */
 
 SET NAMES utf8mb4;
@@ -3130,7 +3130,7 @@ CREATE TABLE `o_shop_pull_lasttime` (
 BEGIN;
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (1, 1007, 'ORDER', '2025-10-01 16:10:02', '2025-10-01 10:56:27', '2025-10-01 16:10:03');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (2, 1007, 'GOODS', '2025-10-01 10:50:36', '2025-10-01 10:50:11', '2025-10-01 10:51:00');
-INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (3, 1009, 'ORDER', '2026-01-21 14:22:00', '2025-10-01 11:07:23', '2026-01-21 14:22:00');
+INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (3, 1009, 'ORDER', '2026-01-21 14:27:00', '2025-10-01 11:07:23', '2026-01-21 14:27:00');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (4, 1009, 'GOODS', '2025-10-01 12:56:14', '2025-10-01 11:07:08', '2025-10-01 12:56:16');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (5, 1007, 'REFUND', '2025-10-01 11:24:50', '2025-10-01 11:24:04', '2025-10-01 11:24:50');
 INSERT INTO `o_shop_pull_lasttime` (`id`, `shop_id`, `pull_type`, `lasttime`, `create_time`, `update_time`) VALUES (6, 1010, 'ORDER', '2025-10-09 07:36:05', '2025-10-09 07:36:09', NULL);
@@ -3151,7 +3151,7 @@ CREATE TABLE `o_shop_pull_logs` (
   `pull_time` datetime DEFAULT NULL COMMENT '拉取时间',
   `duration` bigint DEFAULT NULL COMMENT '耗时（毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2013859605754384386 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='店铺更新日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=2013860387866251267 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='店铺更新日志表';
 
 -- ----------------------------
 -- Records of o_shop_pull_logs
@@ -3508,6 +3508,8 @@ INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013859101540323329, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:19,endTime:2026-01-21T14:20:00.015206}', '{insert:0,update:0,fail:0}', '2026-01-21 14:20:00', 145);
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013859353047568386, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:20,endTime:2026-01-21T14:21:00.013287}', '{insert:0,update:0,fail:0}', '2026-01-21 14:21:00', 109);
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013859605754384385, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:21,endTime:2026-01-21T14:22:00.023392}', '{insert:0,update:0,fail:0}', '2026-01-21 14:22:00', 352);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251265, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:22,endTime:2026-01-21T14:25:04.827409}', '{insert:0,update:0,fail:0}', '2026-01-21 14:25:03', 3508);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866251266, 1009, 300, 'ORDER', '主动拉取订单', '{startTime:2026-01-21T13:25:05,endTime:2026-01-21T14:27:00.083947}', '{insert:0,update:0,fail:0}', '2026-01-21 14:27:00', 508);
 COMMIT;
 
 -- ----------------------------
@@ -3532,46 +3534,6 @@ CREATE TABLE `o_shop_region` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `o_shop_region` (`id`, `name`, `exchange_rate`, `num`, `status`, `create_time`, `create_by`, `update_time`, `update_by`) VALUES (1, '中国', 1, '86', 0, '2025-02-10 10:42:54', 'system', '2025-02-10 10:42:57', NULL);
-COMMIT;
-
--- ----------------------------
--- Table structure for offline_goods_sku
--- ----------------------------
-DROP TABLE IF EXISTS `offline_goods_sku`;
-CREATE TABLE `offline_goods_sku` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键sku id',
-  `o_goods_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品id(o_goods外键)',
-  `o_goods_sku_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品skuid(o_goods_sku外键)',
-  `shop_id` bigint DEFAULT NULL COMMENT '店铺id',
-  `goods_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品名',
-  `sku_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '规格名',
-  `sku_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '规格编码',
-  `sku_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '第三方平台skuId',
-  `color_id` bigint DEFAULT '0' COMMENT '颜色id',
-  `color_value` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '颜色值',
-  `color_image` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '颜色图片',
-  `size_id` bigint DEFAULT '0' COMMENT '尺码id',
-  `size_value` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '尺码值(材质)',
-  `style_id` bigint DEFAULT '0' COMMENT '款式id',
-  `style_value` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '款式值',
-  `bar_code` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '库存条形码',
-  `sale_price` decimal(8,2) DEFAULT '0.00' COMMENT '售价',
-  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '备注',
-  `status` tinyint(1) DEFAULT '1' COMMENT '状态',
-  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-  `create_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '创建人',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '更新人',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `sku_id_unique` (`o_goods_sku_id`) USING BTREE,
-  KEY `id` (`id`) USING BTREE,
-  KEY `number` (`sku_code`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='OMS商品SKU表';
-
--- ----------------------------
--- Records of offline_goods_sku
--- ----------------------------
-BEGIN;
 COMMIT;
 
 -- ----------------------------
