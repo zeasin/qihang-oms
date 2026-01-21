@@ -17,7 +17,13 @@
             :label="item.name"
             :value="item.id">
             <span style="float: left">{{ item.name }}</span>
-
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 500">微信小店</span>
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 200">京东POP</span>
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 280">京东自营</span>
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 100">淘宝天猫</span>
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 300">拼多多</span>
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 400">抖店</span>
+           <span style="float: right; color: #8492a6; font-size: 13px"  v-if="item.type === 999">其他</span>
           </el-option>
         </el-select>
       </el-form-item>
@@ -239,24 +245,24 @@
           <!--           <el-tag v-if="scope.row.refundStatus === 4">退款成功</el-tag>-->
         </template>
       </el-table-column>
-<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-view"-->
-<!--            @click="handleDetail(scope.row)"-->
-<!--          >详情</el-button>-->
-<!--&lt;!&ndash;          <div>&ndash;&gt;-->
-<!--&lt;!&ndash;            <el-button&ndash;&gt;-->
-<!--&lt;!&ndash;              size="mini"&ndash;&gt;-->
-<!--&lt;!&ndash;              type="success"&ndash;&gt;-->
-<!--&lt;!&ndash;              icon="el-icon-share"&ndash;&gt;-->
-<!--&lt;!&ndash;              @click="handleShip(scope.row)"&ndash;&gt;-->
-<!--&lt;!&ndash;            >订单发货</el-button>&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-view"
+            @click="handleDetail(scope.row)"
+          >详情</el-button>
+          <div>
+            <el-button style="padding-left: 6px;padding-right: 6px;" plain
+              size="mini"
+              type="success"
+              icon="el-icon-share"
+              @click="handleShip(scope.row)"
+            >订单发货</el-button>
+          </div>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
@@ -395,7 +401,7 @@
 
 <script>
 import {listOrder, getOrder, delOrder, addOrder, updateOrder, pushOms} from "@/api/offline/order";
-// import { listShop } from "@/api/offline/shop";
+
 import { listShop } from "@/api/shop/shop";
 import Clipboard from "clipboard";
 
@@ -449,7 +455,7 @@ export default {
     };
   },
   created() {
-    listShop({type: 999}).then(response => {
+    listShop({status: 1}).then(response => {
       this.shopList = response.rows;
       if (this.shopList && this.shopList.length > 0) {
         this.queryParams.shopId = this.shopList[0].id

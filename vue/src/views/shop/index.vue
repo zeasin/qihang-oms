@@ -17,6 +17,7 @@
             :label="item.name"
             :value="item.id">
           </el-option>
+          <el-option label="其他" value="999"></el-option>
         </el-select>
       </el-form-item>
 
@@ -64,7 +65,8 @@
       <el-table-column label="店铺名" align="center" prop="name" />
       <el-table-column label="平台" align="center" prop="type" >
         <template slot-scope="scope">
-          <el-tag >{{typeList.find(x=>x.id === scope.row.type)?typeList.find(x=>x.id === scope.row.type).name:''}}</el-tag>
+          <el-tag v-if="scope.row.type==999">其他</el-tag>
+          <el-tag v-else>{{typeList.find(x=>x.id === scope.row.type)?typeList.find(x=>x.id === scope.row.type).name:''}}</el-tag>
         </template>
       </el-table-column>
        <el-table-column label="店铺ID" align="center" prop="sellerId" />
@@ -144,6 +146,7 @@
               :label="item.name"
               :value="item.id">
             </el-option>
+            <el-option label="其他" value="999"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="卖家Id" prop="sellerId">
