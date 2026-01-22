@@ -145,7 +145,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="收件人信息" align="center" prop="userName" >
+      <el-table-column label="收件人信息" align="left" prop="userName" >
         <template slot-scope="scope">
           <span>{{scope.row.userName}}</span><br />
           <span> {{scope.row.provinceName}} {{scope.row.cityName}} {{scope.row.countyName}}
@@ -164,13 +164,12 @@
           <el-tag v-if="scope.row.status === 100 " size="small">完成</el-tag>
           <el-tag v-if="scope.row.status === 200 " size="small">全部商品售后之后，订单取消</el-tag>
           <el-tag v-if="scope.row.status === 250 " size="small">未付款用户主动取消或超时未付款订单自动取消</el-tag>
-          <br/>
-          <el-tag style="margin-top: 5px" type="warning" v-if="scope.row.auditStatus === 0 " size="small">待确认</el-tag>
+
         </template>
       </el-table-column>
       <el-table-column label="确认状态" align="center" prop="auditStatus" >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.auditStatus === 0" style="margin-bottom: 6px;">待确认</el-tag>
+          <el-tag v-if="scope.row.auditStatus === 0" type="warning"  style="margin-bottom: 6px;">待确认</el-tag>
           <el-tag v-if="scope.row.auditStatus === 1" style="margin-bottom: 6px;">已确认</el-tag>
         </template>
       </el-table-column>
@@ -452,23 +451,25 @@ export default {
       this.multiple = !selection.length
     },
     handlePull() {
-      if (this.queryParams.shopId) {
-        this.pullLoading = true
-        pullOrder({shopId: this.queryParams.shopId,orderDate:this.queryParams.orderCreateTime}).then(response => {
-          console.log('拉取订单接口返回=====', response)
-          this.pullLoading = false
-          if (response.code === 200) {
-            this.$modal.msgSuccess(JSON.stringify(response));
-            this.getList()
-          } else {
-            this.$modal.msgError(response.msg);
-          }
-        })
-      } else {
-        this.$modal.msgSuccess("请先选择店铺");
+      if (!this.queryParams.shopId) {
+        this.$modal.msgError("请先选择店铺");
+        return
       }
-
-      // this.$modal.msgSuccess("请先配置API");
+      if (!this.queryParams.startTime) {
+        this.$modal.msgError("请选择下单时间")
+        return
+      }
+      this.pullLoading = true
+      pullOrder({ shopId: this.queryParams.shopId, orderDate: this.queryParams.orderCreateTime }).then(response => {
+        console.log('拉取订单接口返回=====', response)
+        this.pullLoading = false
+        if (response.code === 200) {
+          this.$modal.msgSuccess(JSON.stringify(response));
+          this.getList()
+        } else {
+          this.$modal.msgError(response.msg);
+        }
+      })
     },
     handlePullUpdate(row) {
       // 接口拉取订单并更新

@@ -162,7 +162,7 @@
       </el-table-column>
       <el-table-column label="确认状态" align="center" prop="auditStatus" >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.auditStatus === 0" style="margin-bottom: 6px;">待确认</el-tag>
+          <el-tag v-if="scope.row.auditStatus === 0" type="warning" style="margin-bottom: 6px;">待确认</el-tag>
           <el-tag v-if="scope.row.auditStatus === 1" style="margin-bottom: 6px;">已确认</el-tag>
         </template>
       </el-table-column>

@@ -176,7 +176,7 @@
       </el-table-column>
       <el-table-column label="确认状态" align="center" prop="auditStatus" >
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.auditStatus === 0" style="margin-bottom: 6px;">待确认</el-tag>
+          <el-tag v-if="scope.row.auditStatus === 0" type="warning" style="margin-bottom: 6px;">待确认</el-tag>
           <el-tag v-if="scope.row.auditStatus === 1" style="margin-bottom: 6px;">已确认</el-tag>
         </template>
       </el-table-column>
@@ -471,9 +471,16 @@ export default {
       }
     },
     handlePull() {
-      if(this.queryParams.shopId){
+      if (!this.queryParams.shopId) {
+        this.$modal.msgError("请先选择店铺");
+        return
+      }
+      if (!this.queryParams.startTime) {
+        this.$modal.msgError("请选择下单时间")
+        return
+      }
         this.pullLoading = true
-        pullOrder({shopId:this.queryParams.shopId,updType:0}).then(response => {
+        pullOrder({shopId:this.queryParams.shopId,updType:0,orderDate: this.queryParams.startTime}).then(response => {
           console.log('拉取淘宝订单接口返回=====',response)
           if(response.code === 1401) {
               MessageBox.confirm('Token已过期，需要重新授权！请前往店铺列表重新获取授权！', '系统提示', { confirmButtonText: '前往授权', cancelButtonText: '取消', type: 'warning' }).then(() => {
@@ -495,9 +502,7 @@ export default {
           }
           this.pullLoading = false
         })
-      }else{
-        this.$modal.msgSuccess("请先选择店铺");
-      }
+
 
       // this.$modal.msgSuccess("请先配置API");
     },

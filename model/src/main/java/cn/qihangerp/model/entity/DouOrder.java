@@ -41,7 +41,7 @@ public class DouOrder implements Serializable {
     /**
      * 订单状态1 待确认/待支付（订单创建完毕）105 已支付 2 备货中 101 部分发货 3 已发货（全部发货）4 已取消5 已完成（已收货）
      */
-    private Long orderStatus;
+    private Integer orderStatus;
 
     /**
      * 订单状态描述
@@ -203,7 +203,7 @@ public class DouOrder implements Serializable {
     /**
      * 主流程状态，1 待确认/待支付（订单创建完毕）103 部分支付105 已支付2 备货中101 部分发货3 已发货（全部发货）4 已取消5 已完成（已收货）21 发货前退款完结22 发货后退款完结39 收货后退款完结
      */
-    private Long mainStatus;
+    private Integer mainStatus;
 
     /**
      * 主流程状态描述
