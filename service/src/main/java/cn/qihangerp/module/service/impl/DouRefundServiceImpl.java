@@ -7,6 +7,7 @@ import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.mapper.DouOrderItemMapper;
 import cn.qihangerp.mapper.DouRefundMapper;
+import cn.qihangerp.model.entity.DouOrder;
 import cn.qihangerp.model.entity.DouOrderItem;
 import cn.qihangerp.model.entity.DouRefund;
 import cn.qihangerp.model.bo.DouRefundBo;
@@ -18,8 +19,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @author TW
@@ -32,14 +38,37 @@ public class DouRefundServiceImpl extends ServiceImpl<DouRefundMapper, DouRefund
     implements DouRefundService {
     private final DouRefundMapper mapper;
     private final DouOrderItemMapper orderItemMapper;
+    private final String DATE_PATTERN =
+            "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
+    private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
 
     @Override
     public PageResult<DouRefund> queryPageList(DouRefundBo bo, PageQuery pageQuery) {
+        Long startTimestamp = null;
+        Long endTimestamp = null;
+        if(StringUtils.hasText(bo.getCreateTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getCreateTime());
+            boolean b = matcher.find();
+            if(!b){
+                bo.setCreateTime("");
+            }
+        }
+        if(StringUtils.hasText(bo.getCreateTime())) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime startTime = LocalDateTime.parse(bo.getCreateTime() +" 00:00:00", formatter);
+            LocalDateTime endTime = LocalDateTime.parse(bo.getCreateTime()+" 23:59:59", formatter);
+
+            startTimestamp = startTime.toEpochSecond(ZoneOffset.ofHours(8));
+            endTimestamp = endTime.toEpochSecond(ZoneOffset.ofHours(8));
+        }
+
         LambdaQueryWrapper<DouRefund> queryWrapper = new LambdaQueryWrapper<DouRefund>()
                 .eq(bo.getShopId()!=null,DouRefund::getShopId,bo.getShopId())
                 .eq(StringUtils.hasText(bo.getAftersaleId()),DouRefund::getAftersaleId,bo.getAftersaleId())
                 .eq(StringUtils.hasText(bo.getOrderId()),DouRefund::getRelatedId,bo.getOrderId())
                 .eq(StringUtils.hasText(bo.getAftersaleType()),DouRefund::getAftersaleType,bo.getAftersaleType())
+                .ge(StringUtils.hasText(bo.getCreateTime()), DouRefund::getApplyTime, startTimestamp)
+                .le(StringUtils.hasText(bo.getCreateTime()),DouRefund::getApplyTime,endTimestamp)
                 ;
 
         Page<DouRefund> page = mapper.selectPage(pageQuery.build(), queryWrapper);
@@ -59,8 +88,7 @@ public class DouRefundServiceImpl extends ServiceImpl<DouRefundMapper, DouRefund
                 update.setOGoodsId(douOrderItems.get(0).getOGoodsId());
                 update.setOGoodsSkuId(douOrderItems.get(0).getOGoodsSkuId());
             }
-
-
+            update.setApplyTime(refund.getApplyTime());
             update.setAftersaleOrderType(refund.getAftersaleOrderType());
             update.setAftersaleType(refund.getAftersaleType());
             update.setAftersaleStatus(refund.getAftersaleStatus());

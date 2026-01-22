@@ -57,6 +57,8 @@
             <result property="oGoodsId" column="o_goods_id" jdbcType="VARCHAR"/>
             <result property="oGoodsSkuId" column="o_goods_sku_id" jdbcType="VARCHAR"/>
             <result property="pullLastTime" column="pull_last_time" jdbcType="TIMESTAMP"/>
+        <result property="auditStatus" column="audit_status" jdbcType="INTEGER"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -75,7 +77,6 @@
         exchange_sku_info,exchange_logistics_company_name,remark,
         got_pkg,is_agree_refuse_sign,order_logistics,
         aftersale_tags,aftersale_sub_type,auto_audit_bits,
-        text_part,related_order_info,pull_time,
-        pull_last_time
+        text_part,related_order_info,pull_time,pull_last_time,audit_status,audit_time
     </sql>
 </mapper>

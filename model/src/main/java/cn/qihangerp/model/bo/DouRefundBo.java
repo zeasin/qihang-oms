@@ -8,4 +8,5 @@ public class DouRefundBo {
     private String aftersaleId;
     private String orderId;
     private String aftersaleType;
+    private String createTime;
 }
