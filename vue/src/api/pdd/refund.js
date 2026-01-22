@@ -17,11 +17,3 @@ export function pullRefund(data) {
     data: data
   })
 }
-
-export function pushOms(data) {
-  return request({
-    url: '/pdd/refund/push_oms',
-    method: 'post',
-    data: data
-  })
-}

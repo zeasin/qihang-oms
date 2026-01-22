@@ -8,4 +8,5 @@ public class PddRefundBo {
     private String refundId;
     private String orderSn;
     private String afterSalesType;
+    private String updateTime;
 }

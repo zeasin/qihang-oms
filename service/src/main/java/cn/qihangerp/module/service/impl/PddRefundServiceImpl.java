@@ -6,6 +6,7 @@ import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.model.entity.PddGoodsSku;
+import cn.qihangerp.model.entity.PddOrder;
 import cn.qihangerp.model.entity.PddRefund;
 import cn.qihangerp.model.bo.PddRefundBo;
 import cn.qihangerp.mapper.PddGoodsSkuMapper;
@@ -20,6 +21,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @author TW
@@ -32,13 +35,26 @@ public class PddRefundServiceImpl extends ServiceImpl<PddRefundMapper, PddRefund
     implements PddRefundService {
     private final PddRefundMapper mapper;
     private final PddGoodsSkuMapper goodsSkuMapper;
+    private final String DATE_PATTERN =
+            "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
+    private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
     @Override
     public PageResult<PddRefund> queryPageList(PddRefundBo bo, PageQuery pageQuery) {
+        if(StringUtils.hasText(bo.getUpdateTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getUpdateTime());
+            boolean b = matcher.find();
+            if(!b){
+                bo.setUpdateTime("");
+            }
+        }
+
         LambdaQueryWrapper<PddRefund> queryWrapper = new LambdaQueryWrapper<PddRefund>()
                 .eq(bo.getShopId()!=null,PddRefund::getShopId,bo.getShopId())
                 .eq(StringUtils.hasText(bo.getRefundId()),PddRefund::getId,bo.getRefundId())
                 .eq(StringUtils.hasText(bo.getOrderSn()),PddRefund::getOrderSn,bo.getOrderSn())
                 .eq(StringUtils.hasText(bo.getAfterSalesType()),PddRefund::getAfterSalesType,bo.getAfterSalesType())
+                .ge(StringUtils.hasText(bo.getUpdateTime()), PddRefund::getUpdatedTime,bo.getUpdateTime()+" 00:00:00")
+                .le(StringUtils.hasText(bo.getUpdateTime()),PddRefund::getUpdatedTime,bo.getUpdateTime()+" 23:59:59")
                 ;
 
         Page<PddRefund> page = mapper.selectPage(pageQuery.build(), queryWrapper);

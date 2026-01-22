@@ -89,12 +89,12 @@ public class PddRefund implements Serializable {
     /**
      * 订单金额（元）
      */
-    private String orderAmount;
+    private Double orderAmount;
 
     /**
      * 退款金额（元）
      */
-    private String refundAmount;
+    private Double refundAmount;
 
     /**
      * 同意退款操作人角色0:"默认",1:"用户",2:"商家",3:"平台",4:"系统",5:"团长",6:"司机",7:"代理人"
@@ -124,7 +124,7 @@ public class PddRefund implements Serializable {
     /**
      * 数量
      */
-    private String goodsNumber;
+    private Integer goodsNumber;
 
     /**
      * 退货物流公司名称
@@ -168,6 +168,8 @@ public class PddRefund implements Serializable {
 
     private String oGoodsId;
     private String oGoodsSkuId;
+    private Integer auditStatus;
+    private Date auditTime;
 
     private static final long serialVersionUID = 1L;
 }
