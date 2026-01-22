@@ -84,8 +84,9 @@
       </el-table-column>
       <el-table-column label="订单号" align="center" prop="orderSn" width="220"/>
       <el-table-column label="商品" prop="goodsName" ></el-table-column>
-      <el-table-column label="退款金额" prop="refundAmount" :formatter="amountFormatter" width="80"></el-table-column>
-      <el-table-column label="订单金额" prop="orderAmount" :formatter="amountFormatter" width="80"></el-table-column>
+      <el-table-column label="退款金额" prop="refundAmount" :formatter="amountFormatter" width="100"></el-table-column>
+      <el-table-column label="订单金额" prop="orderAmount" :formatter="amountFormatter" width="100"></el-table-column>
+      <el-table-column label="售后数量" prop="goodsNumber"  width="80"></el-table-column>
 
       <el-table-column label="售后原因" prop="afterSaleReason" ></el-table-column>
 
@@ -111,7 +112,7 @@
           <span>{{ parseTime(scope.row.updatedTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100">
         <template slot-scope="scope">
           <el-button
           v-if="scope.row.auditStatus === 0 "

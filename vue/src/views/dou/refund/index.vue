@@ -91,18 +91,18 @@
       </el-table-column>
       <el-table-column label="订单号" align="center" prop="relatedId" />
       <el-table-column label="商品" prop="orderProductName" ></el-table-column>
-      <el-table-column label="退款金额" prop="refundAmount" >
+      <el-table-column label="退款金额" prop="refundAmount" width="100">
           <template slot-scope="scope">
             <span>{{ amountFormatter(null,null,scope.row.refundAmount/100,0) }}</span>
           </template>
       </el-table-column>
-      <el-table-column label="订单金额" prop="orderPayAmount" >
+      <el-table-column label="订单金额" prop="orderPayAmount"  width="100">
         <template slot-scope="scope">
           <span>{{ amountFormatter(null,null,scope.row.orderPayAmount/100,0) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="售后数量" prop="aftersaleNum" ></el-table-column>
+      <el-table-column label="售后数量" prop="aftersaleNum"  width="80"></el-table-column>
 
 
       <el-table-column label="退款状态" align="center" prop="refundStatus" >
@@ -120,25 +120,19 @@
           <span>{{ parseTime(scope.row.applyTime) }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-button-->
-<!--          v-if="scope.row.auditStatus === 0 && scope.row.afterSalesType === 1 "-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-edit"-->
-<!--            @click="handleConfirm(scope.row)"-->
-<!--            v-hasPermi="['tao:taoRefund:edit']"-->
-<!--          >退货确认</el-button>-->
-<!--          &lt;!&ndash; <el-button-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-delete"-->
-<!--            @click="handleDelete(scope.row)"-->
-<!--            v-hasPermi="['tao:taoRefund:remove']"-->
-<!--          >删除</el-button> &ndash;&gt;-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100">
+        <template slot-scope="scope">
+          <el-button
+          v-if="scope.row.auditStatus === 0 "
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleConfirm(scope.row)"
+            v-hasPermi="['tao:taoRefund:edit']"
+          >售后处理</el-button>
+
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination
