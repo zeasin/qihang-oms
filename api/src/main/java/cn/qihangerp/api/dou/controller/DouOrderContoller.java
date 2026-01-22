@@ -28,7 +28,7 @@ public class DouOrderContoller extends BaseController {
     private final DouOrderService orderService;
     private final MqUtils mqUtils;
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public TableDataInfo goodsList(DouOrderBo bo, PageQuery pageQuery) {
+    public TableDataInfo orderList(DouOrderBo bo, PageQuery pageQuery) {
         PageResult<DouOrder> result = orderService.queryPageList(bo, pageQuery);
 
         return getDataTable(result);

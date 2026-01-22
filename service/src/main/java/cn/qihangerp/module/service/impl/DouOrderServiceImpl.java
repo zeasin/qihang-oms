@@ -26,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -52,31 +55,38 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
     private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
     @Override
     public PageResult<DouOrder> queryPageList(DouOrderBo bo, PageQuery pageQuery) {
-        long startTimeStamp = 0;
-        long endTimeStamp = 0;
-        if(StringUtils.hasText(bo.getStartTime())){
-            Matcher matcher = DATE_FORMAT.matcher(bo.getStartTime());
-            boolean b = matcher.find();
-            if(b){
-                bo.setStartTime(bo.getStartTime()+" 00:00:00");
-                startTimeStamp = DateUtils.dateTimeStrToTimeStamp(null,bo.getStartTime());
-            }
-        }
+
+
         if(StringUtils.hasText(bo.getEndTime())){
             Matcher matcher = DATE_FORMAT.matcher(bo.getEndTime());
             boolean b = matcher.find();
             if(b){
                 bo.setEndTime(bo.getEndTime()+" 23:59:59");
-                endTimeStamp = DateUtils.dateTimeStrToTimeStamp(null,bo.getEndTime());
+            }
+        }else{
+            bo.setEndTime(bo.getStartTime()+" 23:59:59");
+        }
+        if(StringUtils.hasText(bo.getStartTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getStartTime());
+            boolean b = matcher.find();
+            if(b){
+                bo.setStartTime(bo.getStartTime()+" 00:00:00");
             }
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime =  LocalDateTime.parse(bo.getStartTime(), formatter);
+        LocalDateTime  endTime =  LocalDateTime.parse(bo.getEndTime(), formatter);
+
+        Long startTimestamp = startTime.toEpochSecond(ZoneOffset.ofHours(8));
+        Long endTimestamp = endTime.toEpochSecond(ZoneOffset.ofHours(8));
 
         LambdaQueryWrapper<DouOrder> queryWrapper = new LambdaQueryWrapper<DouOrder>()
                 .eq(bo.getShopId()!=null,DouOrder::getShopId,bo.getShopId())
                 .eq(StringUtils.hasText(bo.getOrderId()),DouOrder::getOrderId,bo.getOrderId())
                 .eq(StringUtils.hasText(bo.getOrderStatus()),DouOrder::getOrderStatus,bo.getOrderStatus())
-                .ge(StringUtils.hasText(bo.getStartTime()),DouOrder::getCreateTime, startTimeStamp)
-                .le(StringUtils.hasText(bo.getEndTime()),DouOrder::getCreateTime,endTimeStamp)
+                .ge(StringUtils.hasText(bo.getStartTime()),DouOrder::getCreateTime, startTimestamp)
+                .le(StringUtils.hasText(bo.getEndTime()),DouOrder::getCreateTime,endTimestamp)
                 ;
         pageQuery.setOrderByColumn("create_time");
         pageQuery.setIsAsc("desc");
