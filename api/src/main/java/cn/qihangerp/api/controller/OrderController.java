@@ -67,6 +67,8 @@ public class OrderController extends BaseController
     @PostMapping("/manualShipment")
     public AjaxResult manualShipment(@RequestBody OrderShipRequest shipBo)
     {
+        if(StringUtils.isEmpty(shipBo.getShippingCompany())) return AjaxResult.error("请选择发货快递公司");
+        if(StringUtils.isEmpty(shipBo.getShippingNumber())) return AjaxResult.error("请选择发货快递单号");
         var result = orderService.manualShipmentOrder(shipBo,getUsername());
         if(result.getCode() == 0) return AjaxResult.success();
         else return AjaxResult.error(result.getMsg());
@@ -80,9 +82,12 @@ public class OrderController extends BaseController
     @PostMapping("/allocateShipmentOrder")
     public AjaxResult allocateShipmentOrder(@RequestBody OrderAllocateShipRequest shipBo)
     {
+        log.info("======分配供应商发货：{}",JSONObject.toJSONString(shipBo));
+        if(shipBo.getSupplierId()==null||shipBo.getSupplierId()==0) return AjaxResult.error("请选择供应商");
         var result = orderService.allocateShipmentOrder(shipBo,getUsername());
         if(result.getCode() == 0) return AjaxResult.success();
         else return AjaxResult.error(result.getMsg());
+//        return AjaxResult.success();
     }
 
     /**

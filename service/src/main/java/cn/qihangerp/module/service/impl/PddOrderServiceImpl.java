@@ -276,7 +276,7 @@ public class PddOrderServiceImpl extends ServiceImpl<PddOrderMapper, PddOrder>
         order.setCity(confirmBo.getCity());
         order.setTown(confirmBo.getTown());
         order.setOrderTime(StringUtils.hasText(pddOrder.getCreatedTime())? DateUtils.dateTime("yyyy-MM-dd HH:mm:ss",pddOrder.getCreatedTime()):new Date());
-        order.setShipper(-1);
+        order.setShipper(-1L);
         order.setShipStatus(0);
         order.setCreateTime(new Date());
         order.setCreateBy("手动确认订单");
@@ -305,7 +305,7 @@ public class PddOrderServiceImpl extends ServiceImpl<PddOrderMapper, PddOrder>
 
             oOrderItem.setRefundCount(0);
             oOrderItem.setRefundStatus(1);
-            oOrderItem.setShipper(-1);
+            oOrderItem.setShipper(-1L);
             oOrderItem.setShipType(order.getShipType());
             oOrderItem.setShipStatus(0);
             oOrderItem.setCreateTime(new Date());

@@ -355,7 +355,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
             orderItemUpdate.setId( orderItem.getId());
             orderItemUpdate.setUpdateBy("手动发货");
             orderItemUpdate.setUpdateTime(new Date());
-            orderItemUpdate.setShipper(0);
+            orderItemUpdate.setShipper(0L);
+            orderItemUpdate.setShipType(0);
             orderItemUpdate.setShipStatus(2);//发货状态 0 待发货 1 已分配供应商发货 2全部发货
             orderItemUpdate.setShipType(2);//发货方式1电子面单发货2手动发货
             orderItemMapper.updateById(orderItemUpdate);
@@ -365,7 +366,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
         // 更新状态、发货方式
         OOrder update = new OOrder();
         update.setId(erpOrder.getId());
-        update.setShipper(0);
+        update.setShipper(0L);
+        update.setShipType(0);
         update.setShipStatus(2);//发货状态 0 待发货 1 已分配供应商发货 2全部发货
         update.setOrderStatus(2);
         update.setShipType(2);//发货方式1电子面单发货2手动发货
@@ -387,6 +389,7 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
     public ResultVo<Integer> allocateShipmentOrder(OrderAllocateShipRequest shipBo, String createBy) {
         if (org.springframework.util.StringUtils.isEmpty(shipBo.getId()) || shipBo.getId().equals("0"))
             return ResultVo.error(ResultVoEnum.ParamsError, "缺少参数：id");
+        if(shipBo.getSupplierId()==null||shipBo.getSupplierId()==0) return ResultVo.error("缺少参数：supplierId");
 
         OOrder erpOrder = orderMapper.selectById(shipBo.getId());
         if (erpOrder == null) {
@@ -405,39 +408,42 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
         long skuIdZeroCount = oOrderItems.stream().filter(x -> x.getGoodsSkuId() == 0).count();
         if(skuIdZeroCount>0) return ResultVo.error("订单 item 数据中有skuId错误的数据，请补充！");
 
+        OGoodsSupplier oGoodsSupplier = supplierMapper.selectById(shipBo.getSupplierId());
+        if(oGoodsSupplier==null) return ResultVo.error("供应商不存在");
+
         // 按 订单明细找出同供应商 分组
-        Map<Long,List<OOrderItem>> supplierOrderItemList = new TreeMap<>();
-        Map<Long, OGoodsSupplier> supplierList = new TreeMap<>();
-        for(OOrderItem orderItem:oOrderItems){
-            OGoodsSku erpGoodsSku = goodsSkuMapper.selectById(orderItem.getGoodsSkuId());
-            if(erpGoodsSku==null) {
-                return ResultVo.error("订单明细找不到商品sku信息");
-            }
-            OGoods erpGoods = goodsMapper.selectById(erpGoodsSku.getGoodsId());
-            if(erpGoods==null){
-                return ResultVo.error("订单明细找不到商品信息");
-            }
-            OGoodsSupplier erpSupplier = supplierMapper.selectById(erpGoods.getSupplierId());
-            if(erpSupplier==null){
-                return ResultVo.error("订单明细商品找不到供应商信息");
-            }
-            // 组合供应商
-            boolean isExist = supplierOrderItemList.containsKey(erpSupplier.getId());
-            if(isExist){
-                supplierOrderItemList.get(erpSupplier.getId()).add(orderItem);
-            }else{
-                List<OOrderItem> orderItemList = new ArrayList<>();
-                orderItemList.add(orderItem);
-                supplierOrderItemList.put(Long.parseLong(erpSupplier.getId()),orderItemList);
-            }
-            supplierList.put(Long.parseLong(erpSupplier.getId()),erpSupplier);
-        }
+//        Map<Long,List<OOrderItem>> supplierOrderItemList = new TreeMap<>();
+//        Map<Long, OGoodsSupplier> supplierList = new TreeMap<>();
+//        for(OOrderItem orderItem:oOrderItems){
+//            OGoodsSku erpGoodsSku = goodsSkuMapper.selectById(orderItem.getGoodsSkuId());
+//            if(erpGoodsSku==null) {
+//                return ResultVo.error("订单明细找不到商品sku信息");
+//            }
+//            OGoods erpGoods = goodsMapper.selectById(erpGoodsSku.getGoodsId());
+//            if(erpGoods==null){
+//                return ResultVo.error("订单明细找不到商品信息");
+//            }
+//            OGoodsSupplier erpSupplier = supplierMapper.selectById(erpGoods.getSupplierId());
+//            if(erpSupplier==null){
+//                return ResultVo.error("订单明细商品找不到供应商信息");
+//            }
+//            // 组合供应商
+//            boolean isExist = supplierOrderItemList.containsKey(erpSupplier.getId());
+//            if(isExist){
+//                supplierOrderItemList.get(erpSupplier.getId()).add(orderItem);
+//            }else{
+//                List<OOrderItem> orderItemList = new ArrayList<>();
+//                orderItemList.add(orderItem);
+//                supplierOrderItemList.put(Long.parseLong(erpSupplier.getId()),orderItemList);
+//            }
+//            supplierList.put(Long.parseLong(erpSupplier.getId()),erpSupplier);
+//        }
 
         // 开始组装分配数据
         // 遍历 Map
-        for (Map.Entry<Long, List<OOrderItem>> entry : supplierOrderItemList.entrySet()) {
-            Long supplierId = entry.getKey();  // 获取键（Long）
-            List<OOrderItem> orderItemList = entry.getValue();  // 获取值（List<ErpOrderItem>）
+//        for (Map.Entry<Long, List<OOrderItem>> entry : supplierOrderItemList.entrySet()) {
+//            Long supplierId = entry.getKey();  // 获取键（Long）
+//            List<OOrderItem> orderItemList = entry.getValue();  // 获取值（List<ErpOrderItem>）
 
             // 添加分配发货
 //            ErpShipment erpShipment = new ErpShipment();
@@ -474,8 +480,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
             shipList.setShopId(erpOrder.getShopId());
             shipList.setShopType(erpOrder.getShopType());
             shipList.setShipper(1);
-            shipList.setShipSupplierId(supplierId);
-            shipList.setShipSupplier(supplierList.get(supplierId)!=null?supplierList.get(supplierId).getName():"");
+            shipList.setShipSupplierId(shipBo.getSupplierId());
+            shipList.setShipSupplier(oGoodsSupplier.getName());
             shipList.setOrderId(Long.parseLong(erpOrder.getId()));
             shipList.setOrderNum(erpOrder.getOrderNum());
             shipList.setStatus(0);
@@ -498,7 +504,7 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
             orderShipListMapper.insert(shipList);
 
             // 遍历 List<ErpOrderItem>
-            for (OOrderItem item : orderItemList) {
+            for (OOrderItem item : oOrderItems) {
                 // 打印 List 中的每个 ErpOrderItem 对象
 //                ErpShipmentItem erpShipmentItem = new ErpShipmentItem();
 //                erpShipmentItem.setSupplierId(erpShipment.getSupplierId());
@@ -556,12 +562,12 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
                 orderItemUpdate.setUpdateBy("分配供应商发货");
                 orderItemUpdate.setUpdateTime(new Date());
                 orderItemUpdate.setShipStatus(1);//发货状态 0 待发货 1 已分配供应商发货 2全部发货
-                orderItemUpdate.setShipper(2);//发货方式 0 自己发货1联合发货2供应商发货
+                orderItemUpdate.setShipper(shipBo.getSupplierId());//发货人
+                orderItemUpdate.setShipType(2);//发货方式 0 自己发货1联合发货2供应商发货
                 orderItemMapper.updateById(orderItemUpdate);
             }
-        }
+//        }
 
-//        return ResultVo.error("还没有想好怎么实现！");
 
 //
 //        for(ErpOrderItem orderItem:oOrderItems){
@@ -595,7 +601,8 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
         OOrder update = new OOrder();
         update.setId(erpOrder.getId());
         update.setShipStatus(1);//发货状态 0 待发货 1 已分配供应商发货 2全部发货
-        update.setShipper(2);//发发货方式 0 自己发货1联合发货2供应商发货
+        update.setShipper(shipBo.getSupplierId());//发货人
+        update.setShipType(2);//发货方式 0 自己发货1联合发货2供应商发货
         update.setUpdateTime(new Date());
         update.setUpdateBy("分配供应商发货");
         orderMapper.updateById(update);

@@ -245,7 +245,7 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
         order.setCity(orderConfirmBo.getCity());
         order.setTown(orderConfirmBo.getTown());
         order.setOrderTime(offlineOrder.getOrderTime());
-        order.setShipper(-1);
+        order.setShipper(-1L);
         order.setShipStatus(0);
         order.setCreateTime(new Date());
         order.setCreateBy("手动确认订单");
@@ -273,7 +273,7 @@ public class OfflineOrderServiceImpl extends ServiceImpl<OfflineOrderMapper, Off
             oOrderItem.setQuantity(item.getQuantity());
             oOrderItem.setRefundCount(item.getRefundCount());
             oOrderItem.setRefundStatus(item.getRefundStatus());
-            oOrderItem.setShipper(-1);
+            oOrderItem.setShipper(-1L);
             oOrderItem.setShipType(order.getShipType());
             oOrderItem.setShipStatus(0);
             oOrderItem.setCreateTime(new Date());

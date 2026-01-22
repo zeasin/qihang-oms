@@ -206,7 +206,7 @@ public class OmsWeiOrderServiceImpl extends ServiceImpl<OmsWeiOrderMapper, OmsWe
         order.setCity(confirmBo.getCity());
         order.setTown(confirmBo.getTown());
         order.setOrderTime(pddOrder.getCreateTime()!=null?new Date(pddOrder.getCreateTime()*1000):new Date());
-        order.setShipper(-1);
+        order.setShipper(-1L);
         order.setShipStatus(0);
         order.setCreateTime(new Date());
         order.setCreateBy("手动确认订单");
@@ -235,7 +235,7 @@ public class OmsWeiOrderServiceImpl extends ServiceImpl<OmsWeiOrderMapper, OmsWe
 
             oOrderItem.setRefundCount(0);
             oOrderItem.setRefundStatus(1);
-            oOrderItem.setShipper(-1);
+            oOrderItem.setShipper(-1L);
             oOrderItem.setShipType(order.getShipType());
             oOrderItem.setShipStatus(0);
             oOrderItem.setCreateTime(new Date());
