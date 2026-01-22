@@ -55,8 +55,8 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
     private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
     @Override
     public PageResult<DouOrder> queryPageList(DouOrderBo bo, PageQuery pageQuery) {
-
-
+        Long startTimestamp = null;
+        Long endTimestamp = null;
         if(StringUtils.hasText(bo.getEndTime())){
             Matcher matcher = DATE_FORMAT.matcher(bo.getEndTime());
             boolean b = matcher.find();
@@ -73,14 +73,14 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
                 bo.setStartTime(bo.getStartTime()+" 00:00:00");
             }
         }
+        if(StringUtils.hasText(bo.getStartTime())) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime startTime = LocalDateTime.parse(bo.getStartTime(), formatter);
+            LocalDateTime endTime = LocalDateTime.parse(bo.getEndTime(), formatter);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime startTime =  LocalDateTime.parse(bo.getStartTime(), formatter);
-        LocalDateTime  endTime =  LocalDateTime.parse(bo.getEndTime(), formatter);
-
-        Long startTimestamp = startTime.toEpochSecond(ZoneOffset.ofHours(8));
-        Long endTimestamp = endTime.toEpochSecond(ZoneOffset.ofHours(8));
-
+            startTimestamp = startTime.toEpochSecond(ZoneOffset.ofHours(8));
+            endTimestamp = endTime.toEpochSecond(ZoneOffset.ofHours(8));
+        }
         LambdaQueryWrapper<DouOrder> queryWrapper = new LambdaQueryWrapper<DouOrder>()
                 .eq(bo.getShopId()!=null,DouOrder::getShopId,bo.getShopId())
                 .eq(StringUtils.hasText(bo.getOrderId()),DouOrder::getOrderId,bo.getOrderId())
