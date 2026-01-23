@@ -1,5 +1,6 @@
 package cn.qihangerp.api.controller;
 
+import cn.qihangerp.common.AjaxResult;
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.TableDataInfo;
@@ -7,9 +8,9 @@ import cn.qihangerp.model.entity.OAfterSale;
 import cn.qihangerp.module.service.OAfterSaleService;
 import cn.qihangerp.security.common.BaseController;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @AllArgsConstructor
 @RestController
@@ -35,6 +36,18 @@ public class AfterSaleController extends BaseController {
 //        bo.setType(80);
         PageResult<OAfterSale> result = afterSaleService.queryPageList(bo, pageQuery);
         return getDataTable(result);
+    }
+
+    @PostMapping("/addHandle")
+    public AjaxResult addHandle(@RequestBody OAfterSale addBo)
+    {
+//        addBo.setType(80);
+//        addBo.setCreateTime(new Date());
+//        addBo.setCreateBy("手动添加");
+//        addBo.setStatus(1);
+//        var result = afterSaleService.save(addBo);
+//        return toAjax(result);
+        return AjaxResult.error("暂未实现");
     }
 
 //    @PostMapping("/shipAgain")

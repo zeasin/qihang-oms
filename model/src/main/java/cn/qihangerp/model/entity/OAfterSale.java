@@ -34,6 +34,7 @@ public class OAfterSale implements Serializable {
      */
     private Integer shopType;
     private Integer hasGoodsSend;
+    private Integer hasGoodsReturn;
 
     /**
      * 退款id（o_refund表主键）

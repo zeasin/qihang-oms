@@ -10,6 +10,7 @@
             <result property="shopId" column="shop_id" jdbcType="BIGINT"/>
             <result property="shopType" column="shop_type" jdbcType="INTEGER"/>
             <result property="hasGoodsSend" column="has_goods_send" jdbcType="INTEGER"/>
+            <result property="hasGoodsReturn" column="has_goods_return" jdbcType="INTEGER"/>
             <result property="refundId" column="refund_id" jdbcType="BIGINT"/>
             <result property="refundNum" column="refund_num" jdbcType="VARCHAR"/>
             <result property="orderNum" column="order_num" jdbcType="VARCHAR"/>
@@ -54,7 +55,7 @@
         return_info,return_logistics_code,return_logistics_company,
         receiver_name,receiver_tel,receiver_province,
         receiver_city,receiver_town,receiver_address,
-        reissue_logistics_code,reissue_logistics_company,status,has_goods_send,
+        reissue_logistics_code,reissue_logistics_company,status,has_goods_send,has_goods_return,
         remark,create_time,create_by,
         update_time,update_by
     </sql>

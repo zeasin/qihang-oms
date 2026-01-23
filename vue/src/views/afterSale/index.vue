@@ -246,7 +246,7 @@
 </template>
 
 <script>
-import {list, addShipAgain, shipAgainComplete} from "@/api/refund/after_sale";
+import {list, addHandle} from "@/api/refund/after_sale";
 import {listShop} from "@/api/shop/shop";
 
 export default {
@@ -346,7 +346,7 @@ export default {
     handleAdd(){
       this.reset()
       this.open=true
-      this.title="手动添加补发信息"
+      this.title="手动添加售后处理"
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -361,8 +361,8 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          addShipAgain(this.form).then(response => {
-            this.$modal.msgSuccess("补发成功");
+          addHandle(this.form).then(response => {
+            this.$modal.msgSuccess("售后处理成功");
             this.open = false;
             this.getList();
           });
