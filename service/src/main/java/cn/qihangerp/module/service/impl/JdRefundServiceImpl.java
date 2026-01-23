@@ -11,6 +11,7 @@ import cn.qihangerp.mapper.JdOrderItemMapper;
 import cn.qihangerp.mapper.JdOrderMapper;
 import cn.qihangerp.mapper.JdRefundMapper;
 import cn.qihangerp.mapper.JdGoodsSkuMapper;
+import cn.qihangerp.model.entity.TaoRefund;
 import cn.qihangerp.module.service.JdRefundService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,6 +24,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @author qilip
@@ -37,13 +40,26 @@ public class JdRefundServiceImpl extends ServiceImpl<JdRefundMapper, JdRefund>
     private final JdOrderMapper orderMapper;
     private final JdOrderItemMapper orderItemMapper;
     private final JdGoodsSkuMapper goodsSkuMapper;
+    private final String DATE_PATTERN =
+            "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
+    private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
+
     @Override
     public PageResult<JdRefund> queryPageList(JdAfterBo bo, PageQuery pageQuery) {
+        if(StringUtils.hasText(bo.getCreateTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getCreateTime());
+            boolean b = matcher.find();
+            if(!b){
+                bo.setCreateTime("");
+            }
+        }
         LambdaQueryWrapper<JdRefund> queryWrapper = new LambdaQueryWrapper<JdRefund>()
                 .eq(bo.getShopId()!=null, JdRefund::getShopId,bo.getShopId())
                 .eq(bo.getCustomerExpect()!=null, JdRefund::getCustomerExpect,bo.getCustomerExpect())
                 .eq(bo.getOrderId()!=null, JdRefund::getOrderId,bo.getOrderId())
                 .eq(StringUtils.hasText(bo.getServiceId()), JdRefund::getServiceId,bo.getServiceId())
+                .ge(StringUtils.hasText(bo.getCreateTime()), JdRefund::getApplyTime,bo.getCreateTime()+" 00:00:00")
+                .le(StringUtils.hasText(bo.getCreateTime()),JdRefund::getApplyTime,bo.getCreateTime()+" 23:59:59")
                 ;
 
         Page<JdRefund> page = mapper.selectPage(pageQuery.build(), queryWrapper);
