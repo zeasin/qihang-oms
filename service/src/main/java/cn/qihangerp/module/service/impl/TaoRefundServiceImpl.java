@@ -6,6 +6,7 @@ import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.mapper.TaoGoodsSkuMapper;
 import cn.qihangerp.mapper.TaoRefundMapper;
 import cn.qihangerp.model.entity.TaoGoodsSku;
+import cn.qihangerp.model.entity.TaoOrder;
 import cn.qihangerp.model.entity.TaoRefund;
 import cn.qihangerp.model.bo.TaoRefundBo;
 import cn.qihangerp.module.service.TaoRefundService;
@@ -18,6 +19,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @author TW
@@ -30,14 +33,26 @@ public class TaoRefundServiceImpl extends ServiceImpl<TaoRefundMapper, TaoRefund
     implements TaoRefundService {
     private final TaoGoodsSkuMapper goodsSkuMapper;
     private final TaoRefundMapper mapper;
-
+    private final String DATE_PATTERN =
+            "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
+    private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
     @Override
     public PageResult<TaoRefund> queryPageList(TaoRefundBo bo, PageQuery pageQuery) {
+        if(StringUtils.hasText(bo.getUpdateTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getUpdateTime());
+            boolean b = matcher.find();
+            if(!b){
+                bo.setUpdateTime("");
+            }
+        }
+
         LambdaQueryWrapper<TaoRefund> queryWrapper = new LambdaQueryWrapper<TaoRefund>()
                 .eq(bo.getShopId()!=null,TaoRefund::getShopId,bo.getShopId())
                 .eq(StringUtils.hasText(bo.getRefundId()),TaoRefund::getRefundId,bo.getRefundId())
                 .eq(StringUtils.hasText(bo.getTid()),TaoRefund::getTid,bo.getTid())
                 .eq(StringUtils.hasText(bo.getDisputeType()),TaoRefund::getDisputeType,bo.getDisputeType())
+                .ge(StringUtils.hasText(bo.getUpdateTime()), TaoRefund::getCreated,bo.getUpdateTime()+" 00:00:00")
+                .le(StringUtils.hasText(bo.getUpdateTime()),TaoRefund::getCreated,bo.getUpdateTime()+" 23:59:59")
                 ;
 
         Page<TaoRefund> page = mapper.selectPage(pageQuery.build(), queryWrapper);

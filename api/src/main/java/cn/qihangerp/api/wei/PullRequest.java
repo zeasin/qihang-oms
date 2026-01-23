@@ -8,4 +8,5 @@ public class PullRequest {
     private Long orderId;//订单编号
     private Integer pullType;
     private String orderDate;//下单日期
+    private String createTime;
 }

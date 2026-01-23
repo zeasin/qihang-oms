@@ -52,6 +52,8 @@
             <result property="oGoodsId" column="o_goods_id" jdbcType="BIGINT"/>
             <result property="oGoodsSkuId" column="o_goods_sku_id" jdbcType="BIGINT"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="auditStatus" column="audit_status" jdbcType="INTEGER"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -69,6 +71,6 @@
         send_time,end_time,title,
         sku,buyer_open_uid,buyer_nick,
         combine_item_info,create_time,create_by,
-        update_by,update_time
+        update_by,update_time,audit_status,audit_time
     </sql>
 </mapper>

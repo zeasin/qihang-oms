@@ -75,7 +75,7 @@ public class PddRefundApiController {
             Matcher matcher = DATE_FORMAT.matcher(req.getUpdateTime());
             boolean b = matcher.find();
             if (!b) {
-                return AjaxResult.error("下单日期格式错误");
+                return AjaxResult.error("更新日期格式错误");
             }
         }
 

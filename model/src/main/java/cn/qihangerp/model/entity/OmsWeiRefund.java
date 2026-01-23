@@ -176,5 +176,8 @@ USER_WAIT_HANDLE_MERCHANT_AFTER_SALE	待用户处理商家代发起的售后申�
      */
     private Long oGoodsSkuId;
 
+    private Integer auditStatus;
+    private Date auditTime;
+
     private static final long serialVersionUID = 1L;
 }

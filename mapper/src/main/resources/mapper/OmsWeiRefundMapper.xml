@@ -34,6 +34,8 @@
             <result property="pullTime" column="pull_time" jdbcType="TIMESTAMP"/>
             <result property="oGoodsId" column="o_goods_id" jdbcType="BIGINT"/>
             <result property="oGoodsSkuId" column="o_goods_sku_id" jdbcType="BIGINT"/>
+        <result property="auditStatus" column="audit_status" jdbcType="INTEGER"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -46,6 +48,6 @@
         reason,reason_text,type,
         order_id,details,complaint_id,
         refund_resp,pull_status,pull_time,
-        o_goods_id,o_goods_sku_id
+        o_goods_id,o_goods_sku_id,audit_status,audit_time
     </sql>
 </mapper>

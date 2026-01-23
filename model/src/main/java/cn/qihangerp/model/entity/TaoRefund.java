@@ -244,7 +244,8 @@ public class TaoRefund implements Serializable {
     private Date updateTime;
     private String oGoodsId;
     private String oGoodsSkuId;
-
+    private Integer auditStatus;
+    private Date auditTime;
     private static final long serialVersionUID = 1L;
 
 

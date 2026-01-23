@@ -8,4 +8,5 @@ public class TaoRefundBo {
     private String refundId;
     private String tid;
     private String disputeType;
+    private String updateTime;
 }

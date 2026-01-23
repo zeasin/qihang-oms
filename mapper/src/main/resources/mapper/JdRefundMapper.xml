@@ -65,6 +65,8 @@
             <result property="approveNotes" column="approve_notes" jdbcType="VARCHAR"/>
             <result property="questionDesc" column="question_desc" jdbcType="VARCHAR"/>
             <result property="skuCount" column="sku_count" jdbcType="INTEGER"/>
+        <result property="auditStatus" column="audit_status" jdbcType="INTEGER"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -86,6 +88,6 @@
         refund_check_remark,refund_reason,refund_system_id,
         create_time,create_by,update_by,
         update_time,o_goods_id,o_goods_sku_id,
-        sku_list,sku_count
+        sku_list,sku_count,audit_status,audit_time
     </sql>
 </mapper>

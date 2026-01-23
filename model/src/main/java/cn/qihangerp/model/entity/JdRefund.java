@@ -296,6 +296,7 @@ public class JdRefund implements Serializable {
     private Date refundCompleteTime;
     private String approveNotes;
     private String questionDesc;
-
+    private Integer auditStatus;
+    private Date auditTime;
     private static final long serialVersionUID = 1L;
 }
