@@ -51,33 +51,10 @@ public class RefundController extends BaseController
 
 
     /**
-     * 推送退款到ERP
-     * @param ids
+     *
+     * @param bo
      * @return
      */
-    @PostMapping("/pushErp/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
-//        for (Long id:ids) {
-//            ORefund ORefund = refundService.selectById(id);
-//            if(ORefund!=null) {
-//
-//                ResultVo resultVo = erpPushHelper.pushRefundSingle(ORefund);
-//                ORefund pushUpdate = new ORefund();
-//                pushUpdate.setErpPushStatus(resultVo.getCode()== 0 ? 200:resultVo.getCode());
-//                pushUpdate.setErpPushResult(resultVo.getMsg());
-//                pushUpdate.setErpPushTime(new Date());
-//                pushUpdate.setUpdateBy("手动推送到ERP");
-//                pushUpdate.setUpdateTime(new Date());
-//                pushUpdate.setId(id.toString());
-//                refundService.updateById(pushUpdate);
-//            }
-//        }
-
-        return success();
-    }
-
-
     @PostMapping("/processing")
     public AjaxResult refundProcessing(@RequestBody RefundProcessingBo bo ) {
         if (bo.getRefundId() == null) return AjaxResult.error(500, "缺少参数refundId");

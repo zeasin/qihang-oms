@@ -1,14 +1,12 @@
 package cn.qihangerp.api.pdd.controller;
 
 
-import cn.qihangerp.common.AjaxResult;
-import cn.qihangerp.common.PageQuery;
-import cn.qihangerp.common.PageResult;
-import cn.qihangerp.common.TableDataInfo;
+import cn.qihangerp.common.*;
 import cn.qihangerp.common.enums.EnumShopType;
 import cn.qihangerp.common.mq.MqMessage;
 import cn.qihangerp.common.mq.MqType;
 import cn.qihangerp.common.mq.MqUtils;
+import cn.qihangerp.model.bo.RefundProcessingBo;
 import cn.qihangerp.model.entity.PddRefund;
 import cn.qihangerp.model.bo.PddOrderPushBo;
 import cn.qihangerp.model.bo.PddRefundBo;
@@ -29,5 +27,16 @@ public class PddRefundController extends BaseController {
 
         return getDataTable(result);
     }
-
+    /**
+     *
+     * @param bo
+     * @return
+     */
+    @PostMapping("/handle")
+    public AjaxResult handle(@RequestBody RefundProcessingBo bo ) {
+        if (bo.getRefundId() == null) return AjaxResult.error(500, "缺少参数refundId");
+        ResultVo<Long> resultVo = refundService.refundHandle(bo,getUsername());
+        if(resultVo.getCode() == 0) return success();
+        else return AjaxResult.error(resultVo.getMsg());
+    }
 }

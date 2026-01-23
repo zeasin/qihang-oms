@@ -112,6 +112,13 @@
           <span>{{ parseTime(scope.row.updatedTime) }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="处理状态" align="center" prop="afterSalesStatus" width="120">
+        <template slot-scope="scope">
+          <el-tag size="small" v-if="scope.row.auditStatus===1"> 已处理</el-tag>
+          <el-tag size="small" v-if="scope.row.auditStatus===0"> 待处理</el-tag>
+          <el-tag size="small" v-if="scope.row.auditStatus===10"> 无需处理</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="100">
         <template slot-scope="scope">
           <el-button
@@ -120,7 +127,6 @@
             type="text"
             icon="el-icon-edit"
             @click="handleConfirm(scope.row)"
-            v-hasPermi="['tao:taoRefund:edit']"
           >售后处理</el-button>
         </template>
       </el-table-column>
@@ -133,16 +139,73 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="148px">
+        <el-form-item label="售后单号" prop="refundNum">
+          <el-input v-model="form.refundNum" placeholder="请输入售后单号" />
+        </el-form-item>
+        <el-form-item label="订单号" prop="orderNum">
+          <el-input v-model="form.orderNum" placeholder="请输入订单号" />
+        </el-form-item>
+        <el-form-item label="订单是否发货" prop="hasGoodsSend">
+          <el-select v-model="form.hasGoodsSend" placeholder="是否已发货" clearable>
+            <el-option label="未发货" value="0"></el-option>
+            <el-option label="已发货" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="处理方式" prop="type">
+          <el-select v-model="form.type" placeholder="售后处理方式" clearable @change="handleTypeChange">
+            <el-option label="无需处理" value="0"></el-option>
+            <el-option label="退货" value="10"></el-option>
+            <el-option label="换货" value="20"></el-option>
+            <el-option label="维修" value="30"></el-option>
+            <el-option label="补发" value="80"></el-option>
+            <el-option label="订单拦截" value="99"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="货物是否需要退回" prop="hasGoodsReturn">
+          <el-select v-model="form.hasGoodsReturn" placeholder="买家是否需要退货" clearable>
+            <el-option label="无需退回" value="0"></el-option>
+            <el-option label="需要退回" value="1"></el-option>
+          </el-select>
+        </el-form-item>
 
+<!--        <el-form-item label="发货单号" prop="sendLogisticsCode">-->
+<!--          <el-input v-model="form.sendLogisticsCode" placeholder="发货单号" />-->
+<!--        </el-form-item>-->
+        <el-form-item label="退回物流单号" prop="returnLogisticsCode" v-if="form.hasGoodsReturn==1">
+          <el-input v-model="form.returnLogisticsCode" placeholder="退回物流单号" />
+        </el-form-item>
+
+        <el-form-item label="联系人" prop="receiverName" v-if="form.type==20||form.type==80||form.type==30">
+          <el-input v-model="form.receiverName" placeholder="收件人/联系人" />
+        </el-form-item>
+        <el-form-item label="联系电话" prop="receiverTel" v-if="form.type==20||form.type==80||form.type==30">
+          <el-input v-model="form.receiverTel" placeholder="收件手机号/联系电话" />
+        </el-form-item>
+        <el-form-item label="地址" prop="receiverAddress" v-if="form.type==20||form.type==80||form.type==30">
+          <el-input v-model="form.receiverAddress" placeholder="详细地址" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input type="textarea" v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listRefund,pullRefund,pushOms } from "@/api/pdd/refund";
+import { listRefund, pullRefund, refundHandle } from '@/api/pdd/refund'
 import { listShop } from "@/api/shop/shop";
 import {MessageBox} from "element-ui";
 import {isRelogin} from "@/utils/request";
 import { amountFormatter } from '@/utils/zhijian'
+
 export default {
   name: "RefundPdd",
   data() {
@@ -178,21 +241,17 @@ export default {
 
       },
       // 表单参数
-      form: {},
+      form: {
+        type:null,
+        hasGoodsReturn:null,
+      },
       // 表单校验
       rules: {
-        num: [
-          { required: true, message: "退货数量不能为空", trigger: "blur" }
-        ],
-        logisticsCompany: [
-          { required: true, message: "不能为空", trigger: "change" }
-        ],
-        logisticsCode: [
-          { required: true, message: "不能为空", trigger: "blur" }
-        ],
-        sendTime: [
-          { required: true, message: "不能为空", trigger: "blur" }
-        ],
+        refundNum: [{ required: true, message: "售后单号不能为空", trigger: "blur" }],
+        orderNum: [{ required: true, message: "源订单号不能为空", trigger: "blur" }],
+        hasGoodsSend: [{ required: true, message: "请选择是否发货", trigger: "blur" }],
+        type: [{ required: true, message: "请选择处理方式", trigger: "blur" }],
+        hasGoodsReturn: [{ required: true, message: "请选择货物是否需要退回", trigger: "blur" }],
       }
     };
   },
@@ -281,10 +340,26 @@ export default {
           }
           this.pullLoading = false
         })
-
-
-      // this.$modal.msgSuccess("请先配置API");
-    }
+    },
+    /** 售后处理*/
+    handleConfirm(row){
+        this.open = true
+        this.form.refundId = row.id
+        this.form.refundNum = row.id
+        this.form.orderNum = row.orderSn
+    },
+    submitForm(){
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          refundHandle(this.form).then(response => {
+            console.log('======返回====',response)
+            this.$modal.msgSuccess("处理成功！");
+            this.open = false
+            this.getList()
+          });
+        }
+      })
+    },
   }
 };
 </script>

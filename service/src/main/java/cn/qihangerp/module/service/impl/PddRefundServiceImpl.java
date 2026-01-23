@@ -1,22 +1,19 @@
 package cn.qihangerp.module.service.impl;
 
 
-import cn.qihangerp.common.PageQuery;
-import cn.qihangerp.common.PageResult;
-import cn.qihangerp.common.ResultVo;
-import cn.qihangerp.common.ResultVoEnum;
-import cn.qihangerp.model.entity.PddGoodsSku;
-import cn.qihangerp.model.entity.PddOrder;
-import cn.qihangerp.model.entity.PddRefund;
+import cn.qihangerp.common.*;
+import cn.qihangerp.common.enums.EnumShopType;
+import cn.qihangerp.mapper.*;
+import cn.qihangerp.model.bo.RefundProcessingBo;
+import cn.qihangerp.model.entity.*;
 import cn.qihangerp.model.bo.PddRefundBo;
-import cn.qihangerp.mapper.PddGoodsSkuMapper;
-import cn.qihangerp.mapper.PddRefundMapper;
 import cn.qihangerp.module.service.PddRefundService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -35,6 +32,12 @@ public class PddRefundServiceImpl extends ServiceImpl<PddRefundMapper, PddRefund
     implements PddRefundService {
     private final PddRefundMapper mapper;
     private final PddGoodsSkuMapper goodsSkuMapper;
+    private final OOrderMapper oOrderMapper;
+    private final OOrderItemMapper oOrderItemMapper;
+    private final OAfterSaleMapper afterSaleMapper;
+    private final PddOrderMapper orderMapper;
+    private final PddOrderItemMapper orderItemMapper;
+
     private final String DATE_PATTERN =
             "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
     private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
@@ -99,6 +102,79 @@ public class PddRefundServiceImpl extends ServiceImpl<PddRefundMapper, PddRefund
             return ResultVo.success();
         }
 
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public ResultVo<Long> refundHandle(RefundProcessingBo bo, String userName) {
+        if (bo.getRefundId() == null) return ResultVo.error(500, "缺少参数refundId");
+
+        PddRefund refund = mapper.selectById(bo.getRefundId());
+        if (refund == null) return ResultVo.error(500,"没有找到退款单");
+        else if (refund.getAuditStatus() == 1) {
+            return ResultVo.error(500,"已经处理过了");
+        }
+        // 查询相关订单
+        Long oOrderId = 0L;
+        OOrder oOrder = null;
+        Long oOrderItemId = 0L;
+        OOrderItem oOrderItem = null;
+        List<OOrder> oOrders = oOrderMapper.selectList(new LambdaQueryWrapper<OOrder>().eq(OOrder::getOrderNum, refund.getOrderSn()));
+        if (oOrders != null && !oOrders.isEmpty()) {
+            oOrderId = Long.parseLong(oOrders.get(0).getId());
+            oOrder = oOrders.get(0);
+            List<OOrderItem> oOrderItems = oOrderItemMapper.selectList(new LambdaQueryWrapper<OOrderItem>().eq(OOrderItem::getOrderId, oOrderId).eq(OOrderItem::getSkuId, refund.getSkuId()));
+            if (oOrderItems != null && !oOrderItems.isEmpty()) {
+                oOrderItemId = Long.parseLong(oOrderItems.get(0).getId());
+                oOrderItem = oOrderItems.get(0);
+            }
+        }
+
+
+        // 保存售后结果
+        OAfterSale afterSale = new OAfterSale();
+        afterSale.setRefundNum(refund.getId().toString());
+        afterSale.setRefundId(refund.getId().toString());
+        afterSale.setType(bo.getType());
+        afterSale.setShopId(refund.getShopId());
+        afterSale.setShopType(EnumShopType.PDD.getIndex());
+        afterSale.setOrderNum(refund.getOrderSn());
+        afterSale.setSubOrderNum(oOrderItem==null?"":oOrderItem.getSubOrderNum());
+        afterSale.setOOrderId(oOrder==null?"0":oOrder.getId());
+        afterSale.setOOrderItemId(oOrderItemId.toString());
+        afterSale.setSkuId(refund.getSkuId());
+        afterSale.setQuantity(refund.getGoodsNumber());
+        afterSale.setTitle(refund.getGoodsName());
+        afterSale.setImg(refund.getGoodsImage());
+        afterSale.setSkuInfo(oOrderItem==null?"":oOrderItem.getGoodsSpec());
+        afterSale.setSkuCode(oOrderItem==null?"":oOrderItem.getSkuNum());
+        afterSale.setOGoodsId(oOrderItem==null?"0":oOrderItem.getGoodsId().toString());
+        afterSale.setOGoodsSkuId(oOrderItem==null?"0":oOrderItem.getGoodsSkuId().toString());
+        afterSale.setHasGoodsSend(bo.getHasGoodsSend());
+        afterSale.setSendLogisticsCode(oOrder==null?"0":oOrder.getShipCode());
+        afterSale.setReturnLogisticsCode(bo.getReturnLogisticsCode());
+        afterSale.setReceiverName(bo.getReceiverName());
+        afterSale.setReceiverTel(bo.getReceiverTel());
+        afterSale.setReceiverAddress(bo.getReceiverAddress());
+        afterSale.setReissueLogisticsCode(bo.getReissueLogisticsCode());
+        afterSale.setRemark(bo.getRemark());
+        afterSale.setStatus(bo.getType() == 0?10:0);
+        afterSale.setCreateTime(new Date());
+        afterSale.setCreateBy(userName);
+
+        afterSaleMapper.insert(afterSale);
+
+
+        // 更新ORefund
+        PddRefund update = new PddRefund();
+        update.setId(refund.getId());
+        update.setUpdateTime(new Date());
+        update.setAuditStatus(1);
+        update.setAuditTime(new Date());
+        update.setAfterSaleId(afterSale.getId());
+        mapper.updateById(update);
+
+        return ResultVo.success();
     }
 }
 

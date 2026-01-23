@@ -170,6 +170,6 @@ public class PddRefund implements Serializable {
     private String oGoodsSkuId;
     private Integer auditStatus;
     private Date auditTime;
-
+    private String afterSaleId;
     private static final long serialVersionUID = 1L;
 }

@@ -17,3 +17,10 @@ export function pullRefund(data) {
     data: data
   })
 }
+export function refundHandle(data) {
+  return request({
+    url: '/pdd/refund/handle',
+    method: 'post',
+    data:data
+  })
+}

@@ -3,6 +3,7 @@ package cn.qihangerp.module.service;
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.ResultVo;
+import cn.qihangerp.model.bo.RefundProcessingBo;
 import cn.qihangerp.model.entity.PddRefund;
 import cn.qihangerp.model.bo.PddRefundBo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -16,4 +17,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface PddRefundService extends IService<PddRefund> {
     PageResult<PddRefund> queryPageList(PddRefundBo bo, PageQuery pageQuery);
     ResultVo<Integer>  saveRefund(Long shopId, PddRefund refund);
+    ResultVo<Long> refundHandle(RefundProcessingBo bo, String userName);
 }

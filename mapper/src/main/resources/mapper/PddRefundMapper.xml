@@ -39,6 +39,7 @@
         <result property="oGoodsSkuId" column="o_goods_sku_id" jdbcType="BIGINT"/>
         <result property="auditStatus" column="audit_status" jdbcType="INTEGER"/>
         <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
+        <result property="afterSaleId" column="after_sale_id" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -50,7 +51,7 @@
         refund_amount,refund_operator_role,sku_id,
         outer_goods_id,outer_id,goods_spec,user_shipping_status,
         goods_number,shipping_name,speed_refund_flag,
-        speed_refund_status,tracking_number,updated_time,
+        speed_refund_status,tracking_number,updated_time,after_sale_id,
         create_time,update_time,o_goods_id,o_goods_sku_id,audit_status,audit_time
     </sql>
 </mapper>
