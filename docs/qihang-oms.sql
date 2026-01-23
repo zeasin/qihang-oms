@@ -11,7 +11,7 @@
  Target Server Version : 80043 (8.0.43)
  File Encoding         : 65001
 
- Date: 23/01/2026 11:13:20
+ Date: 23/01/2026 11:22:23
 */
 
 SET NAMES utf8mb4;
@@ -32,7 +32,7 @@ CREATE TABLE `o_after_sale` (
   `sub_order_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '子订单号',
   `o_order_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '订单id（o_order表主键id）',
   `o_order_item_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '子订单id（o_order_item表主键id）',
-  `sku_id` varchar(55) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '平台商品skuid',
+  `sku_id` varchar(55) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '平台商品skuid',
   `quantity` int DEFAULT NULL COMMENT '售后数量',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品标题',
   `img` varchar(555) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品图片',
@@ -3157,7 +3157,7 @@ CREATE TABLE `o_shop_pull_logs` (
   `pull_time` datetime DEFAULT NULL COMMENT '拉取时间',
   `duration` bigint DEFAULT NULL COMMENT '耗时（毫秒）',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2013860387866252331 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='店铺更新日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=2013860387866252336 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='店铺更新日志表';
 
 -- ----------------------------
 -- Records of o_shop_pull_logs
@@ -4580,6 +4580,11 @@ INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252328, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:11:00.073730}', 'access_token已过期', '2026-01-23 11:11:00', 67);
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252329, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:12:00.029394}', 'access_token已过期', '2026-01-23 11:12:00', 64);
 INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252330, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:13:00.061205}', 'access_token已过期', '2026-01-23 11:13:00', 256);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252331, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:18:00.022314}', 'access_token已过期', '2026-01-23 11:18:00', 62);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252332, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:19:00.019600}', 'access_token已过期', '2026-01-23 11:19:00', 63);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252333, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:20:00.038567}', 'access_token已过期', '2026-01-23 11:20:00', 63);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252334, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:21:00.016380}', 'access_token已过期', '2026-01-23 11:21:00', 71);
+INSERT INTO `o_shop_pull_logs` (`id`, `shop_id`, `shop_type`, `pull_type`, `pull_way`, `pull_params`, `pull_result`, `pull_time`, `duration`) VALUES (2013860387866252335, 1009, 300, 'ORDER', '自动任务拉取订单', '{startTime:2026-01-23T07:26,endTime:2026-01-23T11:22:00.016005}', 'access_token已过期', '2026-01-23 11:22:00', 67);
 COMMIT;
 
 -- ----------------------------
@@ -6902,7 +6907,7 @@ INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (100, '发货订单库', 2087, 1, 'order_list', 'order/index', '', 1, 0, 'C', '0', '0', '', 'shopping', 'admin', '2023-12-27 15:00:27', 'admin', '2026-01-20 10:09:51', '用户管理菜单');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (101, '订单拉取日志', 1, 32, 'order_pull_logs', 'order/shopOrder/pull_log', '', 1, 0, 'C', '0', '0', '', 'documentation', 'admin', '2023-12-27 15:00:27', 'admin', '2025-05-19 14:11:59', '角色管理菜单');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (102, '店铺订单管理', 1, 3, 'shop_order_list', 'order/shopOrder/index', '', 1, 0, 'C', '0', '0', '', 'monitor', 'admin', '2023-12-27 15:00:27', 'admin', '2024-04-06 11:18:00', '菜单管理菜单');
-INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (104, '售后中心', 2, 1, 'refund_list', 'refund/index', '', 1, 0, 'C', '0', '0', '', 'tree', 'admin', '2023-12-27 15:00:27', 'admin', '2024-09-15 18:58:16', '岗位管理菜单');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (104, '售后中心', 2, 1, 'refund_list', 'refund/index', '', 1, 0, 'C', '1', '1', '', 'tree', 'admin', '2023-12-27 15:00:27', 'admin', '2026-01-23 03:18:11', '岗位管理菜单');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (105, '售后拉取日志', 2, 36, 'refund_pull_logs', 'refund/shopRefund/pull_log', '', 1, 0, 'C', '0', '0', '', 'dict', 'admin', '2023-12-27 15:00:27', 'admin', '2025-05-19 14:12:28', '字典管理菜单');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (106, '店铺售后管理', 2, 2, 'shop_refund_list', 'refund/shopRefund/index', '', 1, 0, 'C', '0', '0', '', 'edit', 'admin', '2023-12-27 15:00:27', 'admin', '2024-07-20 11:56:11', '参数设置菜单');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (108, '店铺管理', 3, 1, 'shop_list', 'shop/index', '', 1, 0, 'C', '0', '0', '', 'tree', 'admin', '2023-12-29 09:14:02', 'admin', '2025-03-24 13:03:00', '');
@@ -6923,7 +6928,7 @@ INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2096, '发货记录', 2087, 40, 'ship_record', 'shipping/stockup/index.vue', NULL, 1, 0, 'C', '0', '0', '', 'list', 'admin', '2024-07-20 11:53:24', 'admin', '2026-01-22 04:40:30', '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2097, '物流跟踪', 2087, 5, 'logistics', 'shipping/stocking/index', NULL, 1, 0, 'C', '0', '1', '', 'list', 'admin', '2024-07-20 11:54:18', 'admin', '2025-05-25 14:32:27', '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2099, '手工订单管理', 1, 10, 'offline_order_list', 'order/private/index', NULL, 1, 0, 'C', '0', '0', '', 'checkbox', 'admin', '2024-07-27 17:33:03', 'admin', '2026-01-20 10:08:14', '');
-INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2100, '私域售后管理', 2, 3, 'offline_aftersale', 'refund/private/index', NULL, 1, 0, 'C', '0', '1', '', 'code', 'admin', '2024-07-27 17:33:33', 'admin', '2025-05-25 14:59:03', '');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2100, '手工售后管理', 2, 3, 'offline_aftersale', 'refund/private/index', NULL, 1, 0, 'C', '0', '0', '', 'code', 'admin', '2024-07-27 17:33:33', 'admin', '2026-01-23 03:18:31', '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2103, '创建手工订单', 1, 49, 'offline_order_create', 'order/private/create', NULL, 1, 0, 'C', '1', '0', '', 'date', 'admin', '2024-07-27 20:30:07', 'admin', '2026-01-21 03:08:34', '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2104, '商品库', 4, 0, 'goods_list', 'goods/index', NULL, 1, 0, 'C', '0', '0', 'goods', 'example', 'admin', '2024-08-25 14:35:54', 'admin', '2025-10-01 02:30:12', '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2105, '库存管理', 0, 40, 'stock', NULL, NULL, 1, 0, 'M', '1', '1', '', 'lock', 'admin', '2024-08-25 15:54:14', 'admin', '2025-10-01 02:34:24', '');
