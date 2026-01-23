@@ -23,17 +23,6 @@ public class AfterSaleController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(OAfterSale bo, PageQuery pageQuery)
     {
-        //private final OAfterSaleMapper mapper;
-        //    @Override
-        //    public PageResult<OAfterSale> queryPageList(OAfterSale bo, PageQuery pageQuery) {
-        //        LambdaQueryWrapper<OAfterSale> queryWrapper = new LambdaQueryWrapper<OAfterSale>().
-        //                eq( OAfterSale::getType, bo.getType())
-        //                .eq(bo.getShopId() != null, OAfterSale::getShopId, bo.getShopId());
-        //
-        //        Page<OAfterSale> pages = mapper.selectPage(pageQuery.build(), queryWrapper);
-        //        return PageResult.build(pages);
-        //    }
-//        bo.setType(80);
         PageResult<OAfterSale> result = afterSaleService.queryPageList(bo, pageQuery);
         return getDataTable(result);
     }
