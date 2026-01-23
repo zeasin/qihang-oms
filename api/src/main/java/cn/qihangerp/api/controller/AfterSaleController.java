@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/afterSale")
-public class AfterSaleProcessingController extends BaseController {
+public class AfterSaleController extends BaseController {
     private final OAfterSaleService afterSaleService;
     /**
      * 查询列表
      */
     @GetMapping("/list")
-    public TableDataInfo ship_again_list(OAfterSale bo, PageQuery pageQuery)
+    public TableDataInfo list(OAfterSale bo, PageQuery pageQuery)
     {
         //private final OAfterSaleMapper mapper;
         //    @Override
