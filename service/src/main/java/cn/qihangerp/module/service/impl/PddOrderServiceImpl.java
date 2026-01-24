@@ -68,6 +68,10 @@ public class PddOrderServiceImpl extends ServiceImpl<PddOrderMapper, PddOrder>
             if(b){
                 bo.setEndTime(bo.getEndTime()+" 23:59:59");
             }
+        }else{
+            if(StringUtils.hasText(bo.getStartTime())) {
+                bo.setEndTime(bo.getStartTime() + " 23:59:59");
+            }
         }
 
         LambdaQueryWrapper<PddOrder> queryWrapper = new LambdaQueryWrapper<PddOrder>()
