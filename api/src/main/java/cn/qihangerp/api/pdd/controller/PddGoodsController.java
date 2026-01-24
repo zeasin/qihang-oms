@@ -2,6 +2,7 @@ package cn.qihangerp.api.pdd.controller;
 
 import cn.qihangerp.common.*;
 import cn.qihangerp.domain.bo.LinkErpGoodsSkuBo;
+import cn.qihangerp.model.bo.PddGoodsSkuBo;
 import cn.qihangerp.model.entity.PddGoods;
 import cn.qihangerp.model.entity.PddGoodsSku;
 import cn.qihangerp.model.bo.PddGoodsBo;
@@ -27,7 +28,7 @@ public class PddGoodsController extends BaseController {
     }
 
     @RequestMapping(value = "/skuList", method = RequestMethod.GET)
-    public TableDataInfo skuList(PddGoodsSku bo, PageQuery pageQuery) {
+    public TableDataInfo skuList(PddGoodsSkuBo bo, PageQuery pageQuery) {
         PageResult<PddGoodsSku> result = skuService.queryPageList(bo, pageQuery);
 
         return getDataTable(result);

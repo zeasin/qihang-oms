@@ -37,7 +37,11 @@ public class PddGoodsServiceImpl extends ServiceImpl<PddGoodsMapper, PddGoods>
     @Override
     public PageResult<PddGoods> queryPageList(PddGoodsBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<PddGoods> queryWrapper = new LambdaQueryWrapper<PddGoods>()
-                .eq(bo.getShopId()!=null,PddGoods::getShopId,bo.getShopId());
+                .eq(bo.getShopId()!=null,PddGoods::getShopId,bo.getShopId())
+                .eq(bo.getGoodsId()!=null,PddGoods::getGoodsId,bo.getGoodsId())
+                .eq(org.springframework.util.StringUtils.hasText(bo.getOuterGoodsId()),PddGoods::getOuterGoodsId,bo.getOuterGoodsId())
+                .eq(bo.getIsOnsale()!=null,PddGoods::getIsOnsale,bo.getIsOnsale())
+                ;
 
         Page<PddGoods> goodsPage = mapper.selectPage(pageQuery.build(), queryWrapper);
         return PageResult.build(goodsPage);
