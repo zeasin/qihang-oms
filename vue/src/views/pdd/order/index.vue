@@ -142,6 +142,15 @@
       </el-table-column>
       <el-table-column label="买家留言" align="center" prop="buyerMemo" />
       <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="收件人" align="left" prop="userName" >
+        <template slot-scope="scope">
+          <span>{{scope.row.receiverNameMask}}</span>
+          <span>{{scope.row.receiverPhoneMask}}</span>
+          <br />
+          <span> {{scope.row.province}} {{scope.row.city}} {{scope.row.town}}</span>
+          {{scope.row.addressMask}}
+        </template>
+      </el-table-column>
       <el-table-column label="订单状态" align="center" prop="orderStatus" >
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.orderStatus === 1"> 待发货</el-tag>

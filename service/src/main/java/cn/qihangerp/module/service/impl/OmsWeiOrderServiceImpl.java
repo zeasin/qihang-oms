@@ -7,6 +7,7 @@ import cn.qihangerp.common.ResultVoEnum;
 import cn.qihangerp.common.enums.EnumShopType;
 import cn.qihangerp.mapper.ErpOrderItemMapper;
 import cn.qihangerp.mapper.ErpOrderMapper;
+import cn.qihangerp.model.bo.WeiOrderBo;
 import cn.qihangerp.model.entity.OOrder;
 import cn.qihangerp.model.entity.OOrderItem;
 import cn.qihangerp.model.entity.OmsWeiGoodsSku;
@@ -27,8 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * @author TW
@@ -45,21 +51,53 @@ public class OmsWeiOrderServiceImpl extends ServiceImpl<OmsWeiOrderMapper, OmsWe
     private final ErpOrderMapper erpOrderMapper;
     private final ErpOrderItemMapper erpOrderItemMapper;
 //    private final MQClientService mqClientService;
-
+    private final String DATE_PATTERN =
+        "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
+    private final Pattern DATE_FORMAT = Pattern.compile(DATE_PATTERN);
     @Override
-    public PageResult<OmsWeiOrder> queryPageList(OmsWeiOrder bo, PageQuery pageQuery) {
+    public PageResult<OmsWeiOrder> queryPageList(WeiOrderBo bo, PageQuery pageQuery) {
+        Long startTimestamp = null;
+        Long endTimestamp = null;
+        if(StringUtils.hasText(bo.getStartTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getStartTime());
+            boolean b = matcher.find();
+            if(!b){
+                bo.setStartTime("");
+            }
+        }
+        if(StringUtils.hasText(bo.getEndTime())){
+            Matcher matcher = DATE_FORMAT.matcher(bo.getEndTime());
+            boolean b = matcher.find();
+            if(!b){
+                bo.setEndTime("");
+            }
+        }else{
+            if(StringUtils.hasText(bo.getStartTime())) {
+                bo.setEndTime(bo.getStartTime());
+            }
+        }
+        if(StringUtils.hasText(bo.getStartTime())) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime startTime = LocalDateTime.parse(bo.getStartTime()+" 00:00:00", formatter);
+            LocalDateTime endTime = LocalDateTime.parse(bo.getEndTime()+" 23:59:59", formatter);
+
+            startTimestamp = startTime.toEpochSecond(ZoneOffset.ofHours(8));
+            endTimestamp = endTime.toEpochSecond(ZoneOffset.ofHours(8));
+        }
         LambdaQueryWrapper<OmsWeiOrder> queryWrapper = new LambdaQueryWrapper<OmsWeiOrder>()
                 .eq(bo.getShopId()!=null,OmsWeiOrder::getShopId,bo.getShopId())
                 .eq(StringUtils.hasText(bo.getOrderId()),OmsWeiOrder::getOrderId,bo.getOrderId())
                 .eq(bo.getStatus()!=null,OmsWeiOrder::getStatus,bo.getStatus())
+                .ge(StringUtils.hasText(bo.getStartTime()), OmsWeiOrder::getCreateTime, startTimestamp)
+                .le(StringUtils.hasText(bo.getEndTime()),OmsWeiOrder::getCreateTime,endTimestamp)
                 ;
-        if(bo.getErpSendStatus()!=null){
-            if(bo.getErpSendStatus()==-1) {
-                queryWrapper.lt(OmsWeiOrder::getErpSendStatus,3);
-            }else {
-                queryWrapper.eq(OmsWeiOrder::getErpSendStatus, bo.getErpSendStatus());
-            }
-        }
+//        if(bo.getErpSendStatus()!=null){
+//            if(bo.getErpSendStatus()==-1) {
+//                queryWrapper.lt(OmsWeiOrder::getErpSendStatus,3);
+//            }else {
+//                queryWrapper.eq(OmsWeiOrder::getErpSendStatus, bo.getErpSendStatus());
+//            }
+//        }
 
         Page<OmsWeiOrder> page = mapper.selectPage(pageQuery.build(), queryWrapper);
         if(page.getRecords()!=null){
@@ -95,14 +133,13 @@ public class OmsWeiOrderServiceImpl extends ServiceImpl<OmsWeiOrderMapper, OmsWe
 
                     if (taoOrderItems != null && taoOrderItems.size() > 0) {
                         // 更新
-                        OmsWeiOrderItem itemUpdate = new OmsWeiOrderItem();
-                        itemUpdate.setId(taoOrderItems.get(0).getId());
+                        item.setId(taoOrderItems.get(0).getId());
                         List<OmsWeiGoodsSku> skus = goodsSkuMapper.selectList(new LambdaQueryWrapper<OmsWeiGoodsSku>().eq(OmsWeiGoodsSku::getSkuId, item.getSkuId()));
                         if (skus != null && !skus.isEmpty()) {
-                            itemUpdate.setOGoodsId(skus.get(0).getErpGoodsId());
-                            itemUpdate.setOGoodsSkuId(skus.get(0).getErpGoodsSkuId());
+                            item.setOGoodsId(skus.get(0).getErpGoodsId());
+                            item.setOGoodsSkuId(skus.get(0).getErpGoodsSkuId());
                         }
-                        itemMapper.updateById(itemUpdate);
+                        itemMapper.updateById(item);
                     } else {
                         // 新增
                         List<OmsWeiGoodsSku> skus = goodsSkuMapper.selectList(new LambdaQueryWrapper<OmsWeiGoodsSku>().eq(OmsWeiGoodsSku::getSkuId, item.getSkuId()));

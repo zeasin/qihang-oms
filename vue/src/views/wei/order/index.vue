@@ -20,9 +20,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="下单日期" prop="orderCreateTime">
+      <el-form-item label="下单日期" prop="startTime">
         <el-date-picker clearable
-          v-model="queryParams.orderCreateTime"
+          v-model="queryParams.startTime"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="请选择订单创建时间">

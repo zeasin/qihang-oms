@@ -104,6 +104,7 @@ public class DouGoodsApiController {
             for (var s : goods.getSkuList()) {
                 DouGoodsSku sku = new DouGoodsSku();
                 BeanUtils.copyProperties(s, sku);
+                sku.setProductId(goods.getProductId());
                 sku.setShopId(params.getShopId());
                 sku.setName(douGoods.getName());
                 sku.setImg(douGoods.getImg());

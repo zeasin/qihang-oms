@@ -8,6 +8,7 @@ import cn.qihangerp.common.enums.EnumShopType;
 import cn.qihangerp.common.mq.MqMessage;
 import cn.qihangerp.common.mq.MqType;
 import cn.qihangerp.common.mq.MqUtils;
+import cn.qihangerp.model.bo.WeiOrderBo;
 import cn.qihangerp.model.entity.OmsWeiOrder;
 import cn.qihangerp.model.bo.WeiOrderConfirmBo;
 import cn.qihangerp.model.bo.WeiOrderPushBo;
@@ -27,7 +28,7 @@ public class WeiOrderController extends BaseController {
     private final OmsWeiOrderService orderService;
     private final MqUtils mqUtils;
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public TableDataInfo orderList(OmsWeiOrder bo, PageQuery pageQuery) {
+    public TableDataInfo orderList(WeiOrderBo bo, PageQuery pageQuery) {
         PageResult<OmsWeiOrder> result = orderService.queryPageList(bo, pageQuery);
 
         return getDataTable(result);
