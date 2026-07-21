@@ -228,7 +228,7 @@ location /prod-api/ {
 #### 7 访问web
 + 访问地址：`http://localhost`
 + 登录名：`admin`
-+ 登录密码：`admin123`
++ 登录密码：`Andy@2025`
 
 ---
 
@@ -238,7 +238,7 @@ location /prod-api/ {
 * **申请不到 AppKey？** 商业版除了支持电商开放平台AppKey之外还集成了第三方API接口（使用第三方API无需自行申请Appkey）
 * **需要更多功能？** 商业版支持多商户、多仓库、AI智能分析
 
-👉 **[启航电商ERP商业版帮助文档](https://gitee.com/qiliping/qihangerp-docs)** |
+👉 **[启航电商ERP商业版](https://qihangerp.cn)** |
 
 ---
 
@@ -246,19 +246,16 @@ location /prod-api/ {
 
 启航电商旗下开源项目矩阵，所有项目共同指向统一商业版：
 
-| 项目                                                         | 定位                            | Gitee | GitHub |
+| 项目                                                       | 定位                            | Gitee | GitHub |
 |:-----------------------------------------------------------|:------------------------------|:-----|:-------|
-| [启航电商ERP](https://gitee.com/qiliping/qihang-ecom-erp-open) | 电商业务AI底座（微服务）                 | [Gitee](https://gitee.com/qiliping/qihang-ecom-erp-open) | [GitHub](https://github.com/zeasin/qihang-ecom-erp-open) |
-| **OMS 订单中台 ⬅**                                             | **轻量级订单管理**                   | [Gitee](https://gitee.com/qiliping/qihang-oms) | [GitHub](https://github.com/zeasin/qihang-ecom-oms) |
-| [跨境云仓WMS](https://gitee.com/qiliping/qihang-cloud-wms)     | 专为跨境云仓服务商打造 > 智能仓配，高效管理，一键无忧。 | [Gitee](https://gitee.com/qiliping/qihang-cloud-wms) | [GitHub](https://github.com/zeasin/qihang-cloud-wms) |
-| [跨境ERP](https://gitee.com/qiliping/qihang-cb-erp)          | 跨境电商                          | [Gitee](https://gitee.com/qiliping/qihang-cb-erp) | [GitHub](https://github.com/zeasin/qihang-cb-erp) |
-| [SCM 供应链](https://gitee.com/qiliping/qihangerp-scm)        | 多商户多供应商系统（已合并到商业版）            | [Gitee](https://gitee.com/qiliping/qihangerp-scm) | [GitHub](https://github.com/zeasin/qihangerp-scm) |
+| [启航电商ERP]                                              | 电商业务AI底座（微服务）                 | [Gitee](https://gitee.com/qiliping/qihang-ecom-erp-open) | [GitHub](https://github.com/zeasin/qihang-ecom-erp-open) |
+| **OMS 订单中台 ⬅**                                        | **轻量级订单管理**                   | [Gitee](https://gitee.com/qiliping/qihang-oms) | [GitHub](https://github.com/zeasin/qihang-ecom-oms) |
+| [跨境云仓WMS] | 专为跨境云仓服务商打造 > 智能仓配，高效管理，一键无忧。 | [Gitee](https://gitee.com/qiliping/qihang-cloud-wms) | [GitHub](https://github.com/zeasin/qihang-cloud-wms) |
 
 ## 💼 商业版
 
-👉 **[启航电商ERP商业版功能预览](https://gitee.com/qiliping/qihangerp-docs)**
+👉 **[启航电商ERP官网](https://qihangerp.cn)**
 
-👉 **了解更多？→** 电话/微信：15818590119
 
 ## 📱 关注我们
 
