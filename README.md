@@ -246,11 +246,12 @@ location /prod-api/ {
 
 启航电商旗下开源项目矩阵，所有项目共同指向统一商业版：
 
-| 项目                                                       | 定位                            | Gitee | GitHub |
-|:-----------------------------------------------------------|:------------------------------|:-----|:-------|
-| [启航电商ERP]                                              | 电商业务AI底座（微服务）                 | [Gitee](https://gitee.com/qiliping/qihang-ecom-erp-open) | [GitHub](https://github.com/zeasin/qihang-ecom-erp-open) |
-| **OMS 订单中台 ⬅**                                        | **轻量级订单管理**                   | [Gitee](https://gitee.com/qiliping/qihang-oms) | [GitHub](https://github.com/zeasin/qihang-ecom-oms) |
-| [跨境云仓WMS] | 专为跨境云仓服务商打造 > 智能仓配，高效管理，一键无忧。 | [Gitee](https://gitee.com/qiliping/qihang-cloud-wms) | [GitHub](https://github.com/zeasin/qihang-cloud-wms) |
+| 项目                | 定位                            | Gitee | GitHub |
+|:--------------------|:------------------------------|:-----|:-------|
+| 启航电商ERP         | 电商业务AI底座（微服务）                 | [Gitee](https://gitee.com/qiliping/qihang-ecom-erp-open) | [GitHub](https://github.com/zeasin/qihang-ecom-erp-open) |
+| **OMS 订单中台 ⬅** | **轻量级订单管理**                   | [Gitee](https://gitee.com/qiliping/qihang-oms) | [GitHub](https://github.com/zeasin/qihang-ecom-oms) |
+| 启航零售ERP         | 线下零售管理平台                         | [Gitee](https://gitee.com/qiliping/qihang-retail) | [GitHub](https://github.com/zeasin/qihang-retail)          |
+| 启航跨境电商ERP     | 跨境电商专用版       | [Gitee](https://gitee.com/qiliping/qihang-cb-erp) | [GitHub](https://github.com/zeasin/qihang-cb-erp)                                          |
 
 ## 💼 商业版
 
