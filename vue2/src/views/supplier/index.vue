@@ -338,7 +338,7 @@ export default {
   },
   created() {
     listAllMerchant({}).then(response => {
-      this.merchantList = response.rows.filter(x => x.id>0);
+      this.merchantList = (response.data || []).filter(x => x.id>0);
       this.getList();
     })
   },
