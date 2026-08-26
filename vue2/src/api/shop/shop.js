@@ -140,7 +140,7 @@ export function addPlatform(data) {
 
 export function listShopPullLogs(query) {
   return request({
-    url: '/api/oms-api/shop/pull_logs_list',
+    url: '/shop/pull_logs_list',
     method: 'get',
     params: query
   })
