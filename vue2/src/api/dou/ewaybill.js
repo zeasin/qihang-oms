@@ -2,7 +2,7 @@ import request from '@/utils/request'
 // 获取电子面单账户list
 export function getWaybillAccountList(query) {
   return request({
-    url: '/api/oms-api/dou/ewaybill/get_waybill_account_list',
+    url: '/shop/ewaybill/get_waybill_account_list',
     method: 'get',
     params: query
   })
