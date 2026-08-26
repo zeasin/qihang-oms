@@ -187,7 +187,7 @@ export default {
         return delLocation(row.id);
       }).then(() => {
         this.getList();
-        this.msgSuccess("删除成功");
+        this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
     warehouseTypeChange() {},
@@ -196,7 +196,7 @@ export default {
         if (!valid) return;
         const api = this.form.id ? updateLocation : addLocation;
         api(this.form).then(() => {
-          this.msgSuccess("保存成功");
+          this.$modal.msgSuccess("保存成功");
           this.open = false;
           this.getList();
         });
