@@ -378,7 +378,7 @@ export default {
       if (this.merchantList.length > 0) {
         this.queryParams.merchantId = this.merchantList[0].id
       }
-      if(resp.rows.length === 1&&resp.rows[0].id>0) {
+      if(resp.data && resp.data.length === 1&&resp.data[0].id>0) {
         this.isMerchant = true;
       }
       listShop({ merchantId: this.queryParams.merchantId,type:this.shopType}).then(response => {
@@ -421,8 +421,10 @@ export default {
     getList() {
       this.loading = true;
       getWaybillAccountList(this.queryParams).then(response => {
-        this.deliverList = response.rows;
-        this.total = response.total
+        this.deliverList = response.rows || [];
+        this.total = response.total || 0;
+        this.loading = false;
+      }).catch(() => {
         this.loading = false;
       });
 
