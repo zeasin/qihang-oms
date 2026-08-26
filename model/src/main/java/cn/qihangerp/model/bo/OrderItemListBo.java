@@ -14,6 +14,8 @@ public class OrderItemListBo implements Serializable {
      * id
      */
     private Integer shopId;
+    private Integer shopType;
+    private Integer merchantId;
     private Integer refundStatus;
     private String subOrderNum;
     private String orderNum;
@@ -46,6 +48,11 @@ public class OrderItemListBo implements Serializable {
     private String skuNum;
 
     private Integer hasLink;//是否关联ERP商品
+    private Integer shipType;
+    private Integer shipStatus;
+    private Integer orderStatus;
+    private Integer hasPushErp;
+    private Long shipSupplier;
     private static final long serialVersionUID = 1L;
 
 
