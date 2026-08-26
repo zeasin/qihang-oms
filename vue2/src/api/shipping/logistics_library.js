@@ -3,14 +3,14 @@ import request from '@/utils/request'
 
 export function listLogistics(query) {
   return request({
-    url: '/api/erp-api/logistics/list',
+    url: '/shop/logistics',
     method: 'get',
     params: query
   })
 }
 export function listLogisticsStatus(query) {
   return request({
-    url: '/api/erp-api/logistics/list_status',
+    url: '/shop/logistics_status',
     method: 'get',
     params: query
   })
@@ -19,7 +19,7 @@ export function listLogisticsStatus(query) {
 // 新增物流公司
 export function addLogistics(data) {
   return request({
-    url: '/api/erp-api/logistics/add',
+    url: '/shop/logistics/add',
     method: 'post',
     data: data
   })
@@ -28,7 +28,7 @@ export function addLogistics(data) {
 // 查询物流公司详细
 export function getLogistics(id) {
   return request({
-    url: '/api/erp-api/logistics/' + id,
+    url: '/shop/logistics/' + id,
     method: 'get'
   })
 }
@@ -37,7 +37,7 @@ export function getLogistics(id) {
 // 修改物流公司
 export function updateLogistics(data) {
   return request({
-    url: '/api/erp-api/logistics/update',
+    url: '/shop/logistics/update',
     method: 'put',
     data: data
   })
@@ -46,7 +46,7 @@ export function updateLogistics(data) {
 // 删除物流公司
 export function delLogistics(id) {
   return request({
-    url: '/api/erp-api/logistics/del/' + id,
+    url: '/shop/logistics/' + id,
     method: 'delete'
   })
 }
@@ -54,7 +54,7 @@ export function delLogistics(id) {
 // 修改物流状态
 export function updateStatus(data) {
   return request({
-    url: '/api/erp-api/logistics/updateStatus',
+    url: '/shop/logistics/updateStatus',
     method: 'put',
     data: data
   })
