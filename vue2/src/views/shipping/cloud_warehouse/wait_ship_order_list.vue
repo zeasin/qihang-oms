@@ -334,7 +334,6 @@ import Clipboard from 'clipboard'
 import { getCloudWarehouseList } from '@/api/cloud_warehouse'
 import { getUserProfile } from '@/api/system/user'
 import {listAllMerchant} from '@/api/shop/merchant'
-import {getShopListData} from "@/utils/shopUtils";
 import {listAllMerchantCloudWarehouse} from "@/api/store/warehouse";
 
 export default {
@@ -370,7 +369,6 @@ export default {
       cloudWarehouseList:[],
       cloudWarehouseShopList:[],
       cloudWarehouseShipperList:[],
-      shopListAll:[],
       // 弹出层标题
       detailTitle:'订单详情',
       detailOpen:false,
@@ -408,7 +406,6 @@ export default {
     };
   },
   async mounted() {
-    // this.shopListAll = await getShopListData(); // 获取并设置 shopList
     getUserProfile().then(res => {
       if (res.data.userType == 0) {
         // 总部

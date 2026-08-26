@@ -108,7 +108,7 @@
           {{ scope.row.refundNum }} <i class="el-icon-copy-document tag-copy" :data-clipboard-text="scope.row.refundNum" @click="copyActiveCode($event,scope.row.refundNum)" />
           <br>
           <el-tag v-if="scope.row.shopId===0" type="info">总部销售订单</el-tag>
-          <el-tag v-else type="info">{{ shopListAll.find(x=>x.id === scope.row.shopId) ? shopListAll.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
+          <el-tag v-else type="info">{{ shopList.find(x=>x.id === scope.row.shopId) ? shopList.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="订单号" align="left" prop="orderNum" width="200px">
@@ -434,7 +434,6 @@
 
 <script>
 import { exchangeConfirm, list, returnedConfirmAndStockIn, shipAgainConfirm } from '@/api/afterSale/after_sale'
-import { getShopListData } from '@/utils/shopUtils'
 import { listWarehouse } from '@/api/wms/warehouse'
 import { amountFormatter } from '../../utils/zhijian'
 import { copyActiveCode, parseTime } from '@/utils/zhijian'
@@ -459,7 +458,6 @@ export default {
       // 表格数据
       dataList: [],
       shopList: [],
-      shopListAll: [],
       warehouseList: [],
       logisticsList: [],
       // 弹出层标题
@@ -557,9 +555,6 @@ export default {
       })
       this.getList()
     })
-  },
-  async mounted() {
-    this.shopListAll = await getShopListData() // 获取并设置 shopList
   },
   methods: {
     parseTime,

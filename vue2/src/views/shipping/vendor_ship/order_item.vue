@@ -177,7 +177,7 @@
           <span v-else>
           <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
             <br/>
-            <el-tag size="small">{{shopListAll.find(x=>x.id == scope.row.shopId)?shopListAll.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
+            <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
         </template>
       </el-table-column>
@@ -373,7 +373,6 @@ import {getUserProfile} from "@/api/system/user";
 import {getCloudWarehouseList} from "@/api/cloud_warehouse";
 import {listAllMerchant, listAllMerchantCloudWarehouse} from "@/api/shop/merchant";
 import {pushOrderItemToSupplier,pushOrderItemToCloudWarehouse} from "@/api/shipping/shipOrder";
-import {getShopListData} from "@/utils/shopUtils";
 export default {
   name: "waitSendOrderItem",
   data() {
@@ -404,7 +403,6 @@ export default {
       supplierList:[],
       cloudWarehouseList:[],
       skuList:[],
-      shopListAll:[],
       // 弹出层标题
       open:false,
       supplierOpen:false,
@@ -451,9 +449,6 @@ export default {
         shipperId: [{ required: true, message: "请选择发货人", trigger: "change" }],
       }
     };
-  },
-  async mounted() {
-    this.shopListAll = await getShopListData(); // 获取并设置 shopList
   },
   created() {
     listAllSupplier({}).then(response => {

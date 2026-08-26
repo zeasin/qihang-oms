@@ -433,7 +433,6 @@ export default {
       // 仓库订单发货表格数据
       shippingList: [],
       typeList:[],
-      shopListAll:[],
       // 弹出层标题
       title: "",
       detailTitle: "",

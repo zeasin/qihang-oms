@@ -214,7 +214,7 @@
           <span v-else>
           <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
             <br/>
-            <el-tag size="small">{{shopListAll.find(x=>x.id == scope.row.shopId)?shopListAll.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
+            <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
         </template>
       </el-table-column>
@@ -498,7 +498,6 @@ export default {
       typeList:[],
       logisticsList:[],
       supplierList:[],
-      shopListAll:[],
       // 弹出层标题
       detailTitle:'订单详情',
       detailOpen:false,
@@ -557,7 +556,6 @@ export default {
     };
   },
   async mounted() {
-    // this.shopListAll = await getShopListData(); // 获取并设置 shopList
     getUserProfile().then(res => {
       if (res.data.userType == 0) {
         // 总部

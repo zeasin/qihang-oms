@@ -268,7 +268,6 @@ import {
   pullLogisticsTemplateListJd
 } from "@/api/jd/ewaybill";
 import {listLogistics, listLogisticsStatus} from "@/api/shipping/logistics_library";
-import {getShopListData} from "@/utils/shopUtils";
 import {pullWaybillAccountTao} from "@/api/tao/ewaybill";
 import {pullWaybillAccountWei} from "@/api/wei/ewaybill";
 import {listWarehouse} from "@/api/wms/warehouse";
@@ -300,7 +299,6 @@ export default {
       logisticsList: [],
       deliverList: [],
       supplierList: [],
-      shopListAll:[],
       merchantList: [],
       templateList: [],
       shareList: [],
@@ -403,9 +401,6 @@ export default {
     listSupplier({pageNum: 1, pageSize: 100}).then(resp=>{
       this.supplierList = resp.rows
     })
-  },
-  async mounted() {
-    this.shopListAll = await getShopListData(); // 获取并设置 shopList
   },
   methods: {
     merchantChange(nv){

@@ -116,7 +116,7 @@
           <i class="el-icon-copy-document tag-copy" :data-clipboard-text="scope.row.orderNum" @click="copyActiveCode($event,scope.row.orderNum)" ></i>
           <br/>
           <el-tag type="info" v-if="scope.row.shopId===0&&scope.row.shopType===0">总部销售订单</el-tag>
-          <el-tag type="info" v-else>{{ shopListAll.find(x=>x.id === scope.row.shopId) ? shopListAll.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
+          <el-tag type="info" v-else>{{ shopList.find(x=>x.id === scope.row.shopId) ? shopList.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
         </template>>
       </el-table-column>
 
@@ -333,7 +333,6 @@ export default {
       // 选中数组
       ids: [],
       shopList: [],
-      shopListAll: [],
       shipWaybillList: [],
       merchantList: [],
       warehouseList: [],

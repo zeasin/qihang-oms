@@ -21,7 +21,7 @@
       <el-form-item label="店铺" prop="shopId">
         <el-select v-model="queryParams.shopId" placeholder="请选择店铺" clearable filterable @change="handleQuery">
           <el-option
-            v-for="item in shopListAll"
+            v-for="item in shopList"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -105,7 +105,7 @@
           <br />
 
           <el-tag type="info" v-if="scope.row.shopId===0">总部销售订单</el-tag>
-          <el-tag type="info" v-else>{{ shopListAll.find(x=>x.id === scope.row.shopId) ? shopListAll.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
+          <el-tag type="info" v-else>{{ shopList.find(x=>x.id === scope.row.shopId) ? shopList.find(x=>x.id === scope.row.shopId).name : '' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="类型" align="center" prop="refundType" >
@@ -401,7 +401,6 @@ import {
   refundProcessing, addSaleOrderAfter
 } from '@/api/refund/refund'
 
-import { getShopListData } from '@/utils/shopUtils'
 import { getDicts } from '@/api/system/dict/data'
 import {copyActiveCode, parseTime} from '@/utils/zhijian'
 
@@ -414,7 +413,6 @@ export default {
       // 选中数组
       ids: [],
       shopList:[],
-      shopListAll:[],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -513,9 +511,6 @@ export default {
       this.reasonTypeList = resp.data
     })
     this.getList();
-  },
-  async mounted() {
-    this.shopListAll = await getShopListData(); // 获取并设置 shopList
   },
   methods: {
     parseTime,

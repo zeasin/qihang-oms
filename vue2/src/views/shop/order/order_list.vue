@@ -346,7 +346,6 @@ import {listShopOrder, pullOrder, orderConfirm, pullOrderDetail} from "@/api/sho
 import Clipboard from "clipboard";
 import {getUserProfile} from "@/api/system/user";
 import { listAllMerchant } from '@/api/shop/merchant'
-import {getShopListData} from "@/utils/shopUtils";
 
 export default {
   name: "ShopOrderList",
