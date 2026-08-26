@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
 * @author TW
-* @description 针对表【sys_logistics_company(平台快递公司表)】的数据库操作Mapper
+* @description 针对表【erp_logistics_company(平台快递公司表)】的数据库操作Mapper
 * @createDate 2024-03-22 11:03:11
 * @Entity cn.qihangerp.domain.SysLogisticsCompany
 */

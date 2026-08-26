@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
 * @author TW
-* @description 针对表【sys_logistics_company(平台快递公司表)】的数据库操作Service
+* @description 针对表【erp_logistics_company(平台快递公司表)】的数据库操作Service
 * @createDate 2024-03-22 11:03:11
 */
 public interface OLogisticsCompanyService extends IService<OLogisticsCompany> {

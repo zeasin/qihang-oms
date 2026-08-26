@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.qihangerp.mapper.ErpShipLogisticsMapper">
+
+    <resultMap id="BaseResultMap" type="cn.qihangerp.model.entity.ErpShipLogistics">
+        <id column="id" property="id" />
+        <result column="entity_type" property="entityType" />
+        <result column="entity_id" property="entityId" />
+        <result column="logistics_id" property="logisticsId" />
+        <result column="shop_type" property="shopType" />
+        <result column="is_default" property="isDefault" />
+        <result column="sort" property="sort" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <select id="selectByEntity" resultType="cn.qihangerp.model.entity.ErpShipLogistics">
+        SELECT
+            e.id,
+            e.entity_type as entityType,
+            e.entity_id as entityId,
+            e.logistics_id as logisticsId,
+            e.shop_type as shopType,
+            e.is_default as isDefault,
+            e.sort,
+            e.create_time as createTime,
+            e.update_time as updateTime,
+            l.name as logisticsName,
+            l.code as logisticsCode,
+            l.platform_id as platformId
+        FROM erp_ship_logistics e
+        LEFT JOIN erp_logistics_company l ON CAST(e.logistics_id AS CHAR) = l.id
+        ORDER BY e.is_default DESC, e.sort ASC, e.create_time DESC
+    </select>
+
+    <update id="cancelDefault">
+        UPDATE erp_ship_logistics
+        SET is_default = 0
+        WHERE entity_type = #{entityType}
+          AND entity_id = #{entityId}
+    </update>
+
+    <select id="checkExists" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM erp_ship_logistics
+        WHERE entity_type = #{entityType}
+          AND entity_id = #{entityId}
+          AND logistics_id = #{logisticsId}
+          AND shop_type = #{shopType}
+    </select>
+
+    <select id="selectDefault" resultType="cn.qihangerp.model.entity.ErpShipLogistics">
+        SELECT *
+        FROM erp_ship_logistics
+        WHERE entity_type = #{entityType}
+          AND entity_id = #{entityId}
+          AND is_default = 1
+        LIMIT 1
+    </select>
+
+</mapper>

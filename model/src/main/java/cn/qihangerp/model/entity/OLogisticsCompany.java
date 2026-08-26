@@ -2,15 +2,16 @@ package cn.qihangerp.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
  * 平台快递公司表
- * @TableName sys_logistics_company
  */
 @Data
+@TableName("erp_logistics_company")
 public class OLogisticsCompany implements Serializable {
     /**
      * 主键ID
