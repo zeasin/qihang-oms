@@ -148,6 +148,7 @@
       <el-table-column label="商品" width="450px">
         <template slot-scope="scope">
           <!--            <el-row v-for="item in scope.row.itemList" :key="item.id" :gutter="20">-->
+          <template v-if="scope.row.itemVoList && scope.row.itemVoList.length">
           <div style="float: left;display: flex;align-items: center;padding-right: 20px" >
             <image-preview :src="scope.row.itemVoList[0].goodsImg" :width="40" :height="40"/>
             <div style="margin-left:10px">
@@ -183,6 +184,7 @@
               @click="handleDetail(scope.row,'orderItems')"
             >更多订单商品（{{scope.row.itemVoList.length}}）</el-button>
           </div>
+          </template>
           <!--            </el-row>-->
         </template>
       </el-table-column>
@@ -568,7 +570,6 @@ import {listOrder, getOrder, delOrder, addOrder, updateOrder, pushErp} from "@/a
 import { listPlatform, listShop } from '@/api/shop/shop'
 import Clipboard from "clipboard";
 import { listAllMerchant } from '@/api/shop/merchant'
-import { getShopListData } from '@/utils/shopUtils'
 import {getUserProfile} from "@/api/system/user";
 
 export default {
@@ -597,7 +598,6 @@ export default {
       sShopOrderItemList: [],
       platformList:[],
       shopList:[],
-      shopListAll:[],
       merchantList: [],
       // 弹出层标题
       detailTitle:'订单详情',
@@ -685,9 +685,6 @@ export default {
 
 
 
-  },
-  async mounted() {
-    this.shopListAll = await getShopListData(); // 获取并设置 shopList
   },
   methods: {
     searchShop(query){
