@@ -381,7 +381,7 @@ export default {
       if (this.merchantList.length > 0) {
         this.queryParams.merchantId = this.merchantList[0].id
       }
-      if (resp.rows.length === 1 && resp.rows[0].id > 0) {
+      if (this.merchantList.length === 1 && this.merchantList[0].id > 0) {
         this.isMerchant = true;
       }
       listShop({merchantId: this.queryParams.merchantId,type:this.queryParams.shopType}).then(response => {
