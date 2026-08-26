@@ -86,8 +86,7 @@
           <el-input v-model="form.changePrice" style="width: 220px;" placeholder="手动优惠金额，单位：元" @input="handleChangePriceInput" />
         </el-form-item>
         <el-form-item label="折扣优惠" prop="discountAmount">
-          <el-input v-model="form.discountAmount" disabled style="width: 220px;" placeholder="折扣金额，单位：元" />
-          <el-button size="mini" style="margin-left: 20px;" @click="selectDiscountDialog">选择优惠折扣</el-button>
+          <el-input v-model="form.discountAmount" style="width: 220px;" placeholder="折扣金额，单位：元" @input="handleChangeDiscountInput" />
         </el-form-item>
       </el-col>
       <el-col :span="24">
@@ -102,15 +101,6 @@
         <el-input type="textarea" v-model="form.addressAll" placeholder="" style="width: 800px" /><br/>
         <el-button size="mini" @click="parseAddress">识别</el-button>
       </el-form-item>
-      </el-col>
-      <el-col :span="24">
-        <el-form-item label="收件人">
-          <el-row :gutter="10" class="mb8" >
-            <el-col :span="1.5">
-              <el-button size="small" @click="selectMemberDialog"> 选择会员</el-button>
-            </el-col>
-          </el-row>
-        </el-form-item>
       </el-col>
       <el-col :span="24">
         <el-form-item label="姓名" prop="receiverName">
@@ -226,15 +216,12 @@
 
     <!-- 添加品对话框 -->
     <PopupShopGoodsSkuList @data-from-select="handleDataFromPopup" :btn="1" :shopId="form.shopId" ref="popup"></PopupShopGoodsSkuList>
-    <!-- 选择优惠 -->
-    <PopupDiscountList @data-from-select="handleDataFromPopupDiscount" ref="popupDiscount"></PopupDiscountList>
   </div>
 </template>
 
 <script>
 
 import PopupShopGoodsSkuList from '@/views/shop/goods/PopupShopGoodsSkuList.vue'
-import PopupDiscountList from '@/views/marketing/discount/PopupDiscountList.vue'
 import { listShop } from "@/api/shop/shop";
 import {
   provinceAndCityData,
@@ -253,7 +240,7 @@ import tab from "@/plugins/tab";
 export default {
   name: "ShopOrderCreate",
   components: {
-    PopupShopGoodsSkuList,PopupDiscountList
+    PopupShopGoodsSkuList
   },
   data() {
     return {
@@ -428,10 +415,6 @@ export default {
       var defaultDate = `${year}-${month}-${date}`;//
       return defaultDate;
     },
-    // 选择会用
-    selectMemberDialog(){
-      this.$refs.popupMember.openDialog();
-    },
     // 添加商品
     addGoodsDialog() {
        if(!this.form.shopId){
@@ -496,56 +479,6 @@ export default {
           this.deductionOpen = false;
         }
       })
-    },
-    // 选择优惠
-    selectDiscountDialog(){
-      if(!this.form.itemList || this.form.itemList.length===0){
-        this.$modal.msgError('请选择商品')
-      }else if(this.form.goodsAmount<=0){
-        this.$modal.msgError('商品金额为0')
-      }else
-        this.$refs.popupDiscount.openDialog();
-    },
-    // 接收优惠折扣
-    handleDataFromPopupDiscount(data){
-      console.log('========选择的折扣：',data);
-      if(data) {
-        console.log('=====开始计算折扣')
-        // 判断订单金额是否满足
-        if(data.minOrderAmount>0){
-          if(this.form.goodsAmount<data.minOrderAmount){
-            this.$modal.msgError('订单金额不满足折扣要求')
-          }
-        }
-        this.form.discountAmount = 0.0
-        this.form.discountId = data.id
-        // 计算折扣后的金额
-        if(data.discountType==1){
-          // 百分比
-          this.form.discountAmount = this.form.goodsAmount * data.discountValue /100;
-        }else{
-          // 固定金额
-          this.form.discountAmount = data.discountValue;
-        }
-      }
-    },
-    //接收会员信息
-    handleDataFromPopupMember(data){
-      console.log('========选择的会员：',data);
-      if(data){
-        console.log('=====接收到会员')
-        this.form.shopMemberId=data.id;
-        this.form.receiverName=data.name;
-        this.form.receiverPhone=data.phone;
-        this.form.address=data.address;
-        this.form.province=data.province;
-        this.form.city=data.city;
-        this.form.town=data.county;
-        this.form.provinces = []
-        this.form.provinces.push(this.form.province);
-        this.form.provinces.push(this.form.city);
-        this.form.provinces.push(this.form.town);
-      }
     },
     // 接收子组件传来的数据
     handleDataFromPopup(data) {
@@ -706,6 +639,9 @@ export default {
     },
     handleSilverPriceInput() {
       this.deductionForm.silverPrice = limitDecimalLength(this.deductionForm.silverPrice);
+    },
+    handleChangeDiscountInput() {
+      this.form.discountAmount = limitDecimalLength(this.form.discountAmount);
     }
   }
 };
