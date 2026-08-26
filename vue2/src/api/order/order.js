@@ -13,7 +13,7 @@ export function listOrder(query) {
 // 查询待分配发货订单列表
 export function waitDistOrderList(query) {
   return request({
-    url: '/api/erp-api/order/wait_dist_order_list',
+    url: '/api/erp-api/order/waitShipmentList',
     method: 'get',
     params: query
   })

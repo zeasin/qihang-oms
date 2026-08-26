@@ -200,7 +200,7 @@
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.shopType===0">销售订单</el-tag>
           <span v-else>
-          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
+          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId)?merchantList.find(x=>x.id == scope.row.merchantId).name:''}}</el-tag>
             <br/>
             <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
@@ -323,7 +323,7 @@
 
         </el-tab-pane>
         <el-tab-pane label="商品列表" name="orderItems" lazy>
-          <el-table :data="form.itemVoList"  style="margin-bottom: 10px;">
+          <el-table :data="form.itemList"  style="margin-bottom: 10px;">
             <!-- <el-table-column type="selection" width="50" align="center" /> -->
             <el-table-column label="序号" align="center" type="index" width="50"/>
 
@@ -420,7 +420,7 @@
 <!--          <el-descriptions-item label="详细地址">{{form.address}}</el-descriptions-item>-->
 <!--        </el-descriptions>-->
         <el-divider content-position="center">商品明细</el-divider>
-        <el-table :data="form.itemVoList"  style="margin-bottom: 30px;">
+        <el-table :data="form.itemList"  style="margin-bottom: 30px;">
           <!-- <el-table-column type="selection" width="50" align="center" /> -->
           <el-table-column label="序号" align="center" type="index" width="50"/>
 
@@ -620,11 +620,11 @@ export default {
       this.typeList = res.rows;
     })
     listAllMerchant({ pageNum: 1, pageSize: 1000 }).then(resp => {
-      this.merchantList = resp.data
+      this.merchantList = resp.data || []
       if (this.merchantList.length > 0) {
         this.queryParams.merchantId = this.merchantList[0].id
       }
-      if(resp.rows.length === 1&&resp.rows[0].id>0) {
+      if(this.merchantList.length === 1&&this.merchantList[0].id>0) {
         this.isMerchant = true;
       }
       listShop({ merchantId: this.queryParams.merchantId }).then(response => {
