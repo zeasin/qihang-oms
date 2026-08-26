@@ -94,8 +94,7 @@
       </el-table-column>
       <el-table-column label="商品" width="450px">
         <template slot-scope="scope">
-          <!--            <el-row v-for="item in scope.row.itemList" :key="item.id" :gutter="20">-->
-          <div style="float: left;display: flex;align-items: center;padding-right: 20px" >
+          <div v-if="scope.row.itemList && scope.row.itemList.length > 0" style="float: left;display: flex;align-items: center;padding-right: 20px" >
             <image-preview :src="scope.row.itemList[0].goodsImg" :width="40" :height="40"/>
             <div style="margin-left:10px">
               <div style="width: 350px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :title="scope.row.itemList[0].goodsTitle">
