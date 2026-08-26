@@ -3,9 +3,9 @@ import request from '@/utils/request'
 // 供应商发货列表查询
 export function listVendorShipOrder(query) {
   return request({
-    url: '/api/erp-api/ship/vendor/assigned_list',
+    url: '/api/erp-api/ship/record/record_list',
     method: 'get',
-    params: query
+    params: { ...query, type: 300 }
   })
 }
 

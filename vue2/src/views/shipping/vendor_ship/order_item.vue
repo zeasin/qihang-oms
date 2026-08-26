@@ -175,7 +175,7 @@
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.shopType===0">销售订单</el-tag>
           <span v-else>
-          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
+          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId)?merchantList.find(x=>x.id == scope.row.merchantId).name:''}}</el-tag>
             <br/>
             <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
@@ -323,17 +323,6 @@
                 <el-option label="供应商发货" value="300"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="仓库" prop="shipper" v-if="form3.shipType==200">
-              <el-select v-model="form3.shipperId" filterable r placeholder="选择发货仓库" style="width:300px" >
-                <el-option v-for="item in cloudWarehouseList" :key="item.id" :label="item.warehouseName" :value="item.id">
-                  <span style="float: left">{{ item.warehouseName }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px" v-if="item.warehouseType=='LOCAL'">本地仓库</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px" v-if="item.warehouseType=='JDYC'">京东云仓</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px" v-else-if="item.warehouseType=='CLOUD'">系统云仓</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px" v-else>未知云仓</span>
-                </el-option>
-              </el-select>
-            </el-form-item>
 <!--            <el-form-item label="云仓店铺" prop="shopId" v-if="shipJdSelect">-->
 <!--              <el-select v-model="form3.shopId" filterable r placeholder="选择云仓店铺" style="width:300px">-->
 <!--                <el-option v-for="item in cloudWarehouseShopList" :key="item.id" :label="item.shopName" :value="item.id">-->
@@ -370,9 +359,8 @@ import {listAllSupplier, listSupplier} from "@/api/goods/supplier";
 import {searchSku} from "@/api/goods/goods";
 import Clipboard from 'clipboard'
 import {getUserProfile} from "@/api/system/user";
-import {getCloudWarehouseList} from "@/api/cloud_warehouse";
-import {listAllMerchant, listAllMerchantCloudWarehouse} from "@/api/shop/merchant";
-import {pushOrderItemToSupplier,pushOrderItemToCloudWarehouse} from "@/api/shipping/shipOrder";
+import {listAllMerchant} from "@/api/shop/merchant";
+import {pushOrderItemToSupplier} from "@/api/shipping/shipOrder";
 export default {
   name: "waitSendOrderItem",
   data() {
@@ -401,7 +389,6 @@ export default {
       typeList:[],
       shopList:[],
       supplierList:[],
-      cloudWarehouseList:[],
       skuList:[],
       // 弹出层标题
       open:false,
@@ -468,7 +455,7 @@ export default {
       if (this.merchantList.length > 0) {
         this.queryParams.merchantId = this.merchantList[0].id
       }
-      if(resp.rows.length === 1&&resp.rows[0].id>0) {
+      if(resp.data && resp.data.length === 1&&resp.data[0].id>0) {
         this.isMerchant = true;
       }
       listShop({ merchantId: this.queryParams.merchantId }).then(response => {
@@ -479,26 +466,6 @@ export default {
     })
     getUserProfile().then(res=> {
       console.log(res)
-      this.userType = res.data.userType;
-      if (this.userType === '00') {
-        console.log("=========admin========")
-        getCloudWarehouseList({}).then(resp => {
-          this.cloudWarehouseList = resp.rows
-        })
-      } else if (this.userType === '20') {
-        console.log("=========商户========")
-        listAllMerchantCloudWarehouse({}).then(response => {
-          if(response.data && response.data.length > 0) {
-            response.data.forEach((item)=>{
-              this.cloudWarehouseList.push({
-                id:item.warehouseId,
-                warehouseName:item.warehouseName,
-                warehouseType:item.warehouseType,
-              })
-            })
-          }
-        })
-      }
     })
     // listPlatform({status:0}).then(res => {
     //   this.typeList = res.rows;

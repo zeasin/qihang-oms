@@ -103,7 +103,7 @@
       <el-table-column label="商品" width="450px">
         <template slot-scope="scope">
           <!--            <el-row v-for="item in scope.row.itemList" :key="item.id" :gutter="20">-->
-          <div style="float: left;display: flex;align-items: center;padding-right: 20px" >
+          <div style="float: left;display: flex;align-items: center;padding-right: 20px" v-if="scope.row.itemList && scope.row.itemList[0]">
             <image-preview :src="scope.row.itemList[0].goodsImg" :width="40" :height="40"/>
             <div style="margin-left:10px">
               <div style="width: 350px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" :title="scope.row.itemList[0].goodsTitle">
@@ -131,7 +131,7 @@
 <!--              </div>-->
             </div>
           </div>
-          <div style="float: left;display: flex;align-items: center;padding-left: 50px" v-if="scope.row.itemList.length>1">
+          <div style="float: left;display: flex;align-items: center;padding-left: 50px" v-if="scope.row.itemList && scope.row.itemList.length>1">
             <el-button
               size="mini"
               type="text"
@@ -212,7 +212,7 @@
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.shopType===0">销售订单</el-tag>
           <span v-else>
-          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
+          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId)?merchantList.find(x=>x.id == scope.row.merchantId).name:''}}</el-tag>
             <br/>
             <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
@@ -461,6 +461,7 @@ import { pushOrderToSupplier } from '@/api/shipping/shipOrder'
 import Clipboard from 'clipboard'
 
 import {listAllSupplier} from '@/api/goods/supplier'
+import {listAllMerchant} from "@/api/shop/merchant";
 
 import {getUserProfile} from "@/api/system/user";
 
@@ -478,8 +479,6 @@ export default {
       ids: [],
       // 子表选中数据
       checkedSShopOrderItem: [],
-      cloudWarehouseShopList: [],
-      cloudWarehouseShipperList: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
