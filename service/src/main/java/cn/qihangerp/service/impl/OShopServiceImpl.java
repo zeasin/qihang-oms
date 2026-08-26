@@ -55,6 +55,14 @@ public class OShopServiceImpl extends ServiceImpl<OShopMapper, OShop>
     }
 
     @Override
+    public OShop selectShopBySellerId(String sellerId) {
+        LambdaQueryWrapper<OShop> qw = new LambdaQueryWrapper<OShop>()
+                .eq(OShop::getSellerId, sellerId)
+                .last("limit 1");
+        return mapper.selectOne(qw);
+    }
+
+    @Override
     public int updateShopById(OShop shop) {
         return mapper.updateById(shop);
     }

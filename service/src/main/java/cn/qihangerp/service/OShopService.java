@@ -17,6 +17,7 @@ public interface OShopService extends IService<OShop> {
     PageResult<OShop> queryPageList(OShop bo, PageQuery pageQuery);
     List<OShop> selectShopList(OShop shop);
     OShop selectShopById(Long id);
+    OShop selectShopBySellerId(String sellerId);
     int updateShopById(OShop shop);
     int insertShop(OShop shop);
 
@@ -26,4 +27,5 @@ public interface OShopService extends IService<OShop> {
 //    int updateShopPlatformById(SysPlatform platform);
     List<OShop> selectShopByShopType(EnumShopType shopType);
     void updateSessionKey(Long shopId,String sessionKey);
+
 }

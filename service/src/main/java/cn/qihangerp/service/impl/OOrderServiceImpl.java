@@ -22,6 +22,7 @@ import cn.qihangerp.enums.EnumShopType;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,7 @@ import java.util.regex.Pattern;
 * @description 针对表【o_order(订单表)】的数据库操作Service实现
 * @createDate 2024-03-09 13:15:57
 */
-@Log
+@Slf4j
 @AllArgsConstructor
 @Service
 public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
@@ -802,6 +803,12 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
 //
 //        return 1;
 //    }
+
+    @Override
+    public ResultVo<Long> shopOrderMessage(Long shopOrderId) {
+        log.info("shopOrderMessage called: shopOrderId={}", shopOrderId);
+        return ResultVo.error("开源版本不支持店铺订单同步功能");
+    }
 }
 
 

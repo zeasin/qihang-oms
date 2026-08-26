@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/afterSale")
+@RequestMapping("/api/oms-api/afterSale")
 public class AfterSaleController extends BaseController {
     private final OAfterSaleService afterSaleService;
     /**

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.qihangerp.mapper.ORefundMapper">
+
+    <resultMap id="BaseResultMap" type="cn.qihangerp.model.entity.ORefund">
+            <id property="id" column="id" />
+            <result property="refundNum" column="refund_num" />
+            <result property="refundType" column="refund_type" />
+            <result property="shopId" column="shop_id" />
+            <result property="shopType" column="shop_type" />
+            <result property="merchantId" column="merchant_id" />
+            <result property="orderNum" column="order_num" />
+            <result property="orderItemNum" column="order_item_num" />
+            <result property="skuId" column="sku_id" />
+            <result property="goodsId" column="goods_id" />
+            <result property="goodsSkuId" column="goods_sku_id" />
+            <result property="skuNum" column="sku_num" />
+            <result property="goodsName" column="goods_name" />
+            <result property="goodsSku" column="goods_sku" />
+            <result property="goodsImage" column="goods_image" />
+            <result property="quantity" column="quantity" />
+            <result property="refundFee" column="refund_fee" />
+            <result property="orderAmount" column="order_amount" />
+            <result property="refundReason" column="refund_reason" />
+            <result property="returnLogisticsCompany" column="return_logistics_company" />
+            <result property="sendLogisticsCompany" column="send_logistics_company" />
+            <result property="returnLogisticsCode" column="return_logistics_code" />
+            <result property="sendLogisticsCode" column="send_logistics_code" />
+            <result property="receiveTime" column="receive_time" />
+            <result property="remark" column="remark" />
+            <result property="status" column="status" />
+            <result property="createTime" column="create_time" />
+            <result property="createBy" column="create_by" />
+            <result property="updateTime" column="update_time" />
+            <result property="updateBy" column="update_by" />
+            <result property="erpPushStatus" column="erp_push_status" />
+            <result property="erpPushResult" column="erp_push_result" />
+            <result property="erpPushTime" column="erp_push_time" />
+            <result property="hasProcessing" column="has_processing" />
+            <result property="processType" column="process_type" />
+            <result property="afterSaleId" column="after_sale_id" />
+            <result property="platformStatus" column="platform_status" />
+            <result property="platformStatusText" column="platform_status_text" />
+            <result property="erpStatus" column="erp_status" />
+            <result property="shippingStatus" column="shipping_status" />
+            <result property="hasGoodReturn" column="has_good_return" />
+            <result property="exchangeSkuId" column="exchange_sku_id" />
+            <result property="exchangeGoodsName" column="exchange_goods_name" />
+            <result property="exchangeGoodsPrice" column="exchange_goods_price" />
+            <result property="exchangeGoodsNum" column="exchange_goods_num" />
+            <result property="exchangeErpGoodsSkuId" column="exchange_erp_goods_sku_id" />
+            <result property="exchangeErpOrderId" column="exchange_erp_order_id" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, refund_num, refund_type, shop_id, shop_type, merchant_id,
+        order_num, order_item_num, sku_id, goods_id, goods_sku_id, sku_num,
+        goods_name, goods_sku, goods_image, quantity, refund_fee, order_amount,
+        refund_reason, return_logistics_company, send_logistics_company,
+        return_logistics_code, send_logistics_code, receive_time, remark,
+        status, create_time, create_by, update_time, update_by,
+        erp_push_status, erp_push_result, erp_push_time,
+        has_processing, process_type, after_sale_id,
+        platform_status, platform_status_text, erp_status, shipping_status,
+        has_good_return, exchange_sku_id, exchange_goods_name,
+        exchange_goods_price, exchange_goods_num,
+        exchange_erp_goods_sku_id, exchange_erp_order_id
+    </sql>
+</mapper>

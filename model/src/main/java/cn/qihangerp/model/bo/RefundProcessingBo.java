@@ -12,6 +12,7 @@ public class RefundProcessingBo {
     private Integer hasGoodsReturn;//货物是否需要退回 0-无需退回 1-需要退回
 
     private String returnLogisticsCode;//退回物流单号
+    private String sendLogisticsCode;//发货物流单号
     private String reissueLogisticsCode;
     private String remark;//备注
     private String receiverName;//
