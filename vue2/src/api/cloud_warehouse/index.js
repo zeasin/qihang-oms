@@ -11,9 +11,9 @@ export function getCloudWarehouseList(query) {
 //获取推送日志
 export function getOrderPushList(query) {
   return request({
-    url: '/api/erp-api/push/logs/order/push_list',
+    url: '/api/erp-api/ship/record/ship_record_list',
     method: 'get',
-    params: query
+    params: { ...query, allCloud: true }
   })
 }
 

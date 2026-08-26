@@ -2,6 +2,7 @@ package cn.qihangerp.service;
 
 import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
+import cn.qihangerp.model.bo.ShipRecordQueryRequest;
 import cn.qihangerp.model.bo.SupplierShipOrderSearchRequest;
 import cn.qihangerp.model.entity.OOrderStocking;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -15,5 +16,10 @@ public interface OOrderStockingService extends IService<OOrderStocking> {
      * 已分配给供应商发货的订单list
      */
     PageResult<OOrderStocking> querySupplierShipPageList(SupplierShipOrderSearchRequest bo, PageQuery pageQuery);
+
+    /**
+     * 统一发货记录查询（根据type区分本地仓/供应商/云仓）
+     */
+    PageResult<OOrderStocking> queryShipRecordPageList(ShipRecordQueryRequest request, PageQuery pageQuery);
 
 }

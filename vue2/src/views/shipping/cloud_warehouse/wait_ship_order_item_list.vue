@@ -166,7 +166,7 @@
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.shopType===0">销售订单</el-tag>
           <span v-else>
-          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
+          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId)?merchantList.find(x=>x.id == scope.row.merchantId).name:''}}</el-tag>
             <br/>
             <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
@@ -465,7 +465,7 @@ export default {
       if (this.merchantList.length > 0) {
         this.queryParams.merchantId = this.merchantList[0].id
       }
-      if(resp.rows.length === 1&&resp.rows[0].id>0) {
+      if(resp.data && resp.data.length === 1&&resp.data[0].id>0) {
         this.isMerchant = true;
       }
       listShop({ merchantId: this.queryParams.merchantId }).then(response => {

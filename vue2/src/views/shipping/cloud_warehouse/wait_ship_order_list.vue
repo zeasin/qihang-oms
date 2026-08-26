@@ -177,7 +177,7 @@
         <template slot-scope="scope">
           <el-tag size="small" v-if="scope.row.shopType===0">销售订单</el-tag>
           <span v-else>
-          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId).name}}</el-tag>
+          <el-tag size="small" style="padding-bottom: 10px;margin-bottom: 10px;" type="success" v-if="!isMerchant">{{merchantList.find(x=>x.id == scope.row.merchantId)?merchantList.find(x=>x.id == scope.row.merchantId).name:''}}</el-tag>
             <br/>
             <el-tag size="small">{{shopList.find(x=>x.id == scope.row.shopId)?shopList.find(x=>x.id == scope.row.shopId).name:''}}</el-tag>
             </span>
