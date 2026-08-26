@@ -134,6 +134,7 @@
 
 <script>
 import {listShop} from "@/api/shop/shop";
+import {listShipRecord} from "@/api/shipping/shipRecord";
 import {MessageBox} from "element-ui";
 import {wuliuguiji} from "@/api/shipping/logistics_tracking";
 
