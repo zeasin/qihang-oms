@@ -150,8 +150,8 @@ public class PddRefundServiceImpl extends ServiceImpl<PddRefundMapper, PddRefund
         afterSale.setSkuCode(oOrderItem==null?"":oOrderItem.getSkuNum());
         afterSale.setOGoodsId(oOrderItem==null?"0":oOrderItem.getGoodsId().toString());
         afterSale.setOGoodsSkuId(oOrderItem==null?"0":oOrderItem.getGoodsSkuId().toString());
-        afterSale.setHasGoodsSend(bo.getHasGoodsSend());
-        afterSale.setHasGoodsReturn(bo.getHasGoodsReturn());
+//        afterSale.setHasGoodsSend(bo.getHasGoodsSend());
+//        afterSale.setHasGoodsReturn(bo.getHasGoodsReturn());
         afterSale.setSendLogisticsCode(oOrder==null?"0":oOrder.getWaybillCode());
         afterSale.setReturnLogisticsCode(bo.getReturnLogisticsCode());
         afterSale.setReceiverName(bo.getReceiverName());

@@ -484,7 +484,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             ORefund insert = new ORefund();
             insert.setRefundNum(refundDetail.getString("id"));
             insert.setRefundType(refundType);
-            insert.setHasGoodReturn(hasReturnGoods);
+//            insert.setHasGoodReturn(hasReturnGoods);
             insert.setShopId(refundDetail.getLong("shopId"));
             insert.setShopType(EnumShopType.JDVC.getIndex());
             insert.setMerchantId(refundDetail.getLong("merchantId"));
@@ -574,7 +574,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             ORefund update = new ORefund();
             update.setId(oRefunds.get(0).getId());
             update.setRefundType(refundType);
-            update.setHasGoodReturn(hasReturnGoods);
+//            update.setHasGoodReturn(hasReturnGoods);
             // 查找skuId绑定的商品库关系
             ShopGoodsSku shopGoodsSkuMapping = shopGoodsSkuService.selectByPlatformSkuId(platformSkuId, shopId);
             if (shopGoodsSkuMapping != null) {
@@ -756,7 +756,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
                 refundType = 0;
             }
             insert.setRefundType(refundType);
-            insert.setHasGoodReturn(refundDetail.getInteger("hasGoodReturn"));
+//            insert.setHasGoodReturn(refundDetail.getInteger("hasGoodReturn"));
             insert.setShopId(refundDetail.getLong("shopId"));
             insert.setShopType(EnumShopType.TAO.getIndex());
             insert.setMerchantId(refundDetail.getLong("merchantId"));
@@ -830,7 +830,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             // 修改
             ORefund update = new ORefund();
             update.setId(oRefunds.get(0).getId());
-            update.setHasGoodReturn(refundDetail.getInteger("hasGoodReturn"));
+//            update.setHasGoodReturn(refundDetail.getInteger("hasGoodReturn"));
 //            Integer status= null;
 //            //退款状态。WAIT_SELLER_AGREE(买家已经申请退款，等待卖家同意) WAIT_BUYER_RETURN_GOODS(卖家已经同意退款，等待买家退货) WAIT_SELLER_CONFIRM_GOODS(买家已经退货，等待卖家确认收货)
 //            // SELLER_REFUSE_BUYER(卖家拒绝退款) CLOSED(退款关闭) SUCCESS(退款成功)
@@ -1119,7 +1119,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             insert.setRefundNum(refundId);
 
             insert.setRefundType(refundType);
-            insert.setHasGoodReturn(hasGoodReturn);
+//            insert.setHasGoodReturn(hasGoodReturn);
             insert.setShopId(refundDetail.getLong("shopId"));
             insert.setShopType(EnumShopType.PDD.getIndex());
             insert.setMerchantId(refundDetail.getLong("merchantId"));
@@ -1225,7 +1225,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
 //            update.setGoodsId(refundDetail.getLong("erpGoodsId"));
 //            update.setGoodsSkuId(refundDetail.getLong("erpGoodsSkuId"));
             update.setRefundType(refundType);
-            update.setHasGoodReturn(hasGoodReturn);
+//            update.setHasGoodReturn(hasGoodReturn);
             update.setPlatformStatus(platformStatus);
             update.setPlatformStatusText(platformStatusText);
             update.setUpdateTime(new Date());
@@ -1418,7 +1418,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             ORefund insert = new ORefund();
             insert.setRefundNum(refundId);
             insert.setRefundType(refundType);
-            insert.setHasGoodReturn(hasGoodReturn);
+//            insert.setHasGoodReturn(hasGoodReturn);
             insert.setShopId(refundDetail.getLong("shopId"));
             insert.setShopType(EnumShopType.DOU.getIndex());
             insert.setMerchantId(refundDetail.getLong("merchantId"));
@@ -1492,7 +1492,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             ORefund update = new ORefund();
             update.setId(oRefunds.get(0).getId());
             update.setRefundType(refundType);
-            update.setHasGoodReturn(hasGoodReturn);
+//            update.setHasGoodReturn(hasGoodReturn);
             // 查找skuId绑定的商品库关系
             var shopGoodsSkuMapping = shopGoodsSkuService.selectByPlatformSkuId(platformSkuId, shopId);
             if (shopGoodsSkuMapping != null) {
@@ -1683,7 +1683,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             ORefund insert = new ORefund();
             insert.setRefundNum(refundId);
             insert.setRefundType(refundType);
-            insert.setHasGoodReturn(hasGoodReturn);
+//            insert.setHasGoodReturn(hasGoodReturn);
             insert.setShopId(refundDetail.getLong("shopId"));
             insert.setShopType(EnumShopType.WEI.getIndex());
             insert.setMerchantId(refundDetail.getLong("merchantId"));
@@ -1758,7 +1758,7 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
             ORefund update = new ORefund();
             update.setId(oRefunds.get(0).getId());
             update.setRefundType(refundType);
-            update.setHasGoodReturn(hasGoodReturn);
+//            update.setHasGoodReturn(hasGoodReturn);
             // 查找skuId绑定的商品库关系
             var shopGoodsSkuMapping = shopGoodsSkuService.selectByPlatformSkuId(platformSkuId, shopId);
             if (shopGoodsSkuMapping != null) {
@@ -1875,11 +1875,11 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
                 insert.setOrderItemNum(shopRefund.getSubOrderId());
                 insert.setRefundType(shopRefund.getType());
                 //售后类型。(1-售前退款(取消订单) 10-退货 20-换货 30-维修 40-上门服务 80-补发商品 90-补款 91-返现 11-仅退款)
-                if (shopRefund.getType().intValue() == 20 || shopRefund.getType().intValue() == 10) {
-                    insert.setHasGoodReturn(1);
-                } else {
-                    insert.setHasGoodReturn(0);
-                }
+//                if (shopRefund.getType().intValue() == 20 || shopRefund.getType().intValue() == 10) {
+//                    insert.setHasGoodReturn(1);
+//                } else {
+//                    insert.setHasGoodReturn(0);
+//                }
                 Double a = shopRefund.getOrderAmount().doubleValue() / 100;
                 insert.setOrderAmount(a);
                 BigDecimal refundAmount = new BigDecimal(shopRefund.getRefundAmount()).divide(new BigDecimal(100));
@@ -1973,11 +1973,11 @@ public class ORefundServiceImpl extends ServiceImpl<ORefundMapper, ORefund>
                 update.setId(oRefunds.get(0).getId());
                 update.setRefundType(shopRefund.getType());
                 //售后类型。(1-售前退款(取消订单) 10-退货 20-换货 30-维修 40-上门服务 80-补发商品 90-补款 91-返现 11-仅退款)
-                if (shopRefund.getType().intValue() == 20 || shopRefund.getType().intValue() == 10) {
-                    update.setHasGoodReturn(1);
-                } else {
-                    update.setHasGoodReturn(0);
-                }
+//                if (shopRefund.getType().intValue() == 20 || shopRefund.getType().intValue() == 10) {
+//                    update.setHasGoodReturn(1);
+//                } else {
+//                    update.setHasGoodReturn(0);
+//                }
                 // 查找skuId绑定的商品库关系
                 var shopGoodsSkuMapping = shopGoodsSkuService.selectByPlatformSkuId(shopRefund.getSkuId(), shopRefund.getShopId());
                 if (shopGoodsSkuMapping != null) {

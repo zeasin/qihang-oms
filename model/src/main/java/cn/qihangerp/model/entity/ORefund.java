@@ -28,7 +28,7 @@ public class ORefund implements Serializable {
     private String skuId;
     private Long goodsId;
     private Long goodsSkuId;
-    private Integer hasGoodReturn;
+
     private String skuNum;
     private String goodsName;
     private String goodsSku;

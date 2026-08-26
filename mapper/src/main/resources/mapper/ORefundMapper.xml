@@ -45,7 +45,6 @@
             <result property="platformStatusText" column="platform_status_text" />
             <result property="erpStatus" column="erp_status" />
             <result property="shippingStatus" column="shipping_status" />
-            <result property="hasGoodReturn" column="has_good_return" />
             <result property="exchangeSkuId" column="exchange_sku_id" />
             <result property="exchangeGoodsName" column="exchange_goods_name" />
             <result property="exchangeGoodsPrice" column="exchange_goods_price" />
@@ -64,7 +63,7 @@
         erp_push_status, erp_push_result, erp_push_time,
         has_processing, process_type, after_sale_id,
         platform_status, platform_status_text, erp_status, shipping_status,
-        has_good_return, exchange_sku_id, exchange_goods_name,
+        exchange_sku_id, exchange_goods_name,
         exchange_goods_price, exchange_goods_num,
         exchange_erp_goods_sku_id, exchange_erp_order_id
     </sql>

@@ -5,13 +5,15 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
  * OMS售后处理表
- * @TableName o_after_sale
+ * @TableName o_refund_after_sale
  */
 @Data
+@TableName("o_refund_after_sale")
 public class OAfterSale implements Serializable {
     /**
      * 
@@ -33,8 +35,6 @@ public class OAfterSale implements Serializable {
      * 店铺类型
      */
     private Integer shopType;
-    private Integer hasGoodsSend;
-    private Integer hasGoodsReturn;
 
     /**
      * 退款id（o_refund表主键）
@@ -190,7 +190,7 @@ public class OAfterSale implements Serializable {
     /**
      * 
      */
-    private Date updateBy;
+    private String updateBy;
 
     private static final long serialVersionUID = 1L;
 }
