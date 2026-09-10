@@ -18,10 +18,6 @@
 | **AI智能分析** | 销售分析、库存优化、客户洞察等AI功能 |
 | **多平台扩展** | 新增快手、小红书平台支持 |
 
-### 📖 详细升级文档
-
-- **升级报告**：[OMS3.0升级报告](OMS3.0_UPGRADE_REPORT.md) - 面向用户的升级亮点介绍
-- **技术文档**：[OMS3.0架构文档](OMS3.0_ARCHITECTURE.md) - 面向开发者的技术实现说明
 
 ---
 
@@ -238,20 +234,17 @@ location /prod-api/ {
 * **申请不到 AppKey？** 企业版除了支持电商开放平台AppKey之外还集成了第三方API接口（使用第三方API无需自行申请Appkey）
 * **需要更多功能？** 企业版支持多商户、多仓库、AI智能分析
 
-👉 **[启航电商ERP企业版](https://qihangerp.cn)** |
+👉 **[启航电商ERP企业版](https://qihangerp.cn?utm_source=oms)** |
 
 ---
 
 ## 🔗 相关链接
 
-| 链接 | 地址 |
-|:-----|:-----|
-| ERP | https://qihangerp.cn/open/erp.html |
-| OMS | https://qihangerp.cn/open/oms.html |
-| 零售ERP | https://qihangerp.cn/open/retail-erp.html |
-| 跨境ERP | https://qihangerp.cn/open/cross-border.html |
-| 企业版 | https://qihangerp.cn/ |
-
+| 链接            | 地址                                                                                |
+|-----------------|-------------------------------------------------------------------------------------|
+| 🌐 官网         | [https://qihangerp.cn/](https://qihangerp.cn/?utm_source=oms)                       |
+| 💬 开源社区交流              | [https://qihangerp.cn/open/](https://qihangerp.cn/open/?utm_source=oms)             |
+| 💼 企业版       | [https://qihangerp.cn/enterprise/](https://qihangerp.cn/enterprise/?utm_source=oms) |
 ---
 
 ## 📦 启航电商开源生态
@@ -260,14 +253,14 @@ location /prod-api/ {
 
 | 项目               | 定位                                     | 官网 | Gitee | GitHub                                                  |
 |:-------------------|:-----------------------------------------|:-----|:-----|:--------------------------------------------------------|
-| 启航电商ERP | 电商业务AI底座（单体应用，v4.1）   | [官网](https://qihangerp.cn/open/erp.html) | [Gitee](https://gitee.com/qiliping/qihang-erp-open) | [GitHub](https://github.com/zeasin/qihang-erp-open)     |
-| **OMS 订单中台 ⬅**       | **轻量级订单管理    **                         | [官网](https://qihangerp.cn/open/oms.html) | [Gitee](https://gitee.com/qiliping/qihang-oms) | [GitHub](https://github.com/zeasin/qihang-oms)          |
-| 启航零售ERP       | 线下零售管理平台                         | [官网](https://qihangerp.cn/open/retail-erp.html) | [Gitee](https://gitee.com/qiliping/qihang-retail) | [GitHub](https://github.com/zeasin/qihang-retail)          |
-| 启航跨境电商ERP    | 跨境电商专用版       | [官网](https://qihangerp.cn/open/cross-border.html) | [Gitee](https://gitee.com/qiliping/qihang-cb-erp) | [GitHub](https://github.com/zeasin/qihang-cb-erp)                                          |
+| 启航电商ERP | 电商业务AI底座（单体应用，v4.1）   | [官网](https://qihangerp.cn/open/erp.html?utm_source=oms) | [Gitee](https://gitee.com/qiliping/qihang-erp-open) | [GitHub](https://github.com/zeasin/qihang-erp-open)     |
+| **OMS 订单中台 ⬅**       | **轻量级订单管理    **                         | [官网](https://qihangerp.cn/open/oms.html?utm_source=oms) | [Gitee](https://gitee.com/qiliping/qihang-oms) | [GitHub](https://github.com/zeasin/qihang-oms)          |
+| 启航零售ERP       | 线下零售管理平台                         | [官网](https://qihangerp.cn/open/retail-erp.html?utm_source=oms) | [Gitee](https://gitee.com/qiliping/qihang-retail) | [GitHub](https://github.com/zeasin/qihang-retail)          |
+| 启航跨境电商ERP    | 跨境电商专用版       | [官网](https://qihangerp.cn/open/cross-border.html?utm_source=oms) | [Gitee](https://gitee.com/qiliping/qihang-cb-erp) | [GitHub](https://github.com/zeasin/qihang-cb-erp)                                          |
 
 ## 💼 企业版
 
-👉 **[启航电商ERP官网](https://qihangerp.cn)**
+👉 **[启航电商ERP官网](https://qihangerp.cn?utm_source=oms)**
 
 
 ## 📱 关注我们
