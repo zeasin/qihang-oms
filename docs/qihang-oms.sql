@@ -4847,6 +4847,9 @@ CREATE TABLE `o_marketing_discount_rule` (
 DROP TABLE IF EXISTS `o_order`;
 CREATE TABLE `o_order` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单id，自增',
+  `parent_order_id` bigint NOT NULL DEFAULT '0' COMMENT '父订单ID：子订单指向主订单；主订单固定为0（非NULL，便于等值检索）',
+  `order_role` int NOT NULL DEFAULT '0' COMMENT '订单角色（EnumOrderRole）：0=主订单MASTER，1=子订单CHILD，2=合并发货子订单MERGE_CHILD',
+  `source_order_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '平台落地表订单主键（oms_tao_order/oms_dou_order/oms_pdd_order/oms_wei_order/oms_shop_order 等 .id），拉单幂等判重键，判重口径 source_order_id + shop_type；拆分子订单继承来源主订单的值',
   `order_mode` int NOT NULL DEFAULT '0' COMMENT '订单模式0店铺订单1手工订单',
   `order_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '订单编号（第三方平台订单号）',
   `shop_type` int NOT NULL COMMENT '店铺类型',
@@ -4857,6 +4860,11 @@ CREATE TABLE `o_order` (
   `seller_memo` varchar(2550) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '卖家留言信息',
   `tag` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '标签',
   `order_status` int NOT NULL COMMENT '订单状态0：新订单，1：待发货，2：已发货，3：已完成，11已取消；12退款中；13已关闭；21待付款；22锁定，29删除，31售后中，101部分发货',
+  `audit_status` int NOT NULL DEFAULT '1' COMMENT '审核状态（EnumAuditStatus）：0=待审核，1=已审核通过，2=已转异常，3=已拆单；库默认1（OMS人工审单开关 order.manual_audit.enabled 默认true，建单/拉单链路落库时显式置0，详见 docs/sql/20261021-order-audit/05 脚本）',
+  `audit_type` int NOT NULL DEFAULT '0' COMMENT '审核类型（EnumAuditType）：0=自动审核，1=人工审核',
+  `audit_time` datetime DEFAULT NULL COMMENT '最近一次审核/放行时间',
+  `audit_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '审核/放行操作人用户名（自动审核记system）',
+  `audit_remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '审核/放行备注（转异常原因、撤回原因）',
   `goods_amount` double DEFAULT NULL COMMENT '订单商品金额',
   `post_fee` double DEFAULT NULL COMMENT '订单运费',
   `amount` double NOT NULL COMMENT '订单实际金额',
@@ -4879,11 +4887,17 @@ CREATE TABLE `o_order` (
   `seller_discount` double DEFAULT '0' COMMENT '商家优惠金额，单位：元',
   `dist_status` int NOT NULL DEFAULT '0' COMMENT '发货分配状态（0未分配1部分分配2全部分配）',
   `ship_status` int NOT NULL DEFAULT '0' COMMENT '发货状态 0 待发货 1部分发货 2全部发货',
+  `shipping_time` datetime DEFAULT NULL COMMENT '实际发货时间（打单发货/手动发货成功时写入）',
   `waybill_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '取号单号',
   `waybill_company` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '取号快递公司',
+  `waybill_order_id` varchar(35) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '平台电子面单订单标识（取号回执，视频号等平台需要）',
+  `shipping_company_code` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '快递公司编码（与o_order_ship_waybill.logistics_code同源，冗余到订单便于队列检索）',
+  `platform_ship_status` int DEFAULT NULL COMMENT '平台回传发货状态（平台侧原始口径，与内部ship_status/audit_status完全分离，勿混用）',
+  `platform_ship_result` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '平台回传结果摘要（成功回执或失败原因）',
   `has_gift` int NOT NULL DEFAULT '0' COMMENT '是否有礼品0没有，大于0表示有，-1表示全是礼品',
   `cancel_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '取消原因',
-  `waybill_status` int DEFAULT '0' COMMENT '取号状态：0未取号 1已取号 2已打印 3已发货 10手动发货',
+  `waybill_status` int DEFAULT '0' COMMENT '取号状态（EnumWaybillStatus）：0未取号 1已取号 2已打印 3已发货 10手动发货',
+  `waybill_account_id` bigint DEFAULT NULL COMMENT '面单账号ID（oms_shop_waybill_account.id）：审单分配发货主体时写入，取号沿用',
   `share_status` int DEFAULT '0' COMMENT '分账状态：0未分账，1已分账',
   `share_time` datetime DEFAULT NULL COMMENT '分账时间',
   `settlement_status` int DEFAULT '0' COMMENT '结算状态：0-未结算，1-已结算',
@@ -4899,9 +4913,18 @@ CREATE TABLE `o_order` (
   `salesman_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '销售员ID',
   `salesman_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '销售员名称',
   PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE KEY `order_sn_index` (`order_num`) USING BTREE,
-  KEY `shopid_index` (`shop_id`) USING BTREE
+  KEY `shopid_index` (`shop_id`) USING BTREE,
+  KEY `idx_order_num` (`order_num`) USING BTREE,
+  KEY `idx_shop_order_num` (`shop_id`,`shop_type`,`order_num`,`parent_order_id`) USING BTREE,
+  KEY `idx_audit_status` (`audit_status`,`order_status`) USING BTREE,
+  KEY `idx_ship_status` (`ship_status`,`audit_status`) USING BTREE,
+  KEY `idx_parent_order_id` (`parent_order_id`) USING BTREE,
+  KEY `idx_waybill_account_id` (`waybill_account_id`) USING BTREE,
+  KEY `idx_source_order_id` (`source_order_id`,`shop_type`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='OMS订单表';
+-- 说明：原 UNIQUE KEY `order_sn_index`(`order_num`) 已在阶段1降级为普通索引 idx_order_num
+--      （父子/拆单模型下同一平台单号会有主单+子单多行），拉单幂等改由应用层按
+--      source_order_id + shop_type 先查后插保证；迁移脚本 docs/sql/20261021-order-audit/07。
 
 -- ----------------------------
 -- Records of o_order
@@ -4914,6 +4937,7 @@ CREATE TABLE `o_order` (
 DROP TABLE IF EXISTS `o_order_item`;
 CREATE TABLE `o_order_item` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id，自增',
+  `item_role` int NOT NULL DEFAULT '0' COMMENT '商品行角色（EnumOrderRole同口径）：0=主订单原始行，1=子订单履约行，2=合并发货子订单行',
   `order_id` bigint NOT NULL COMMENT '订单ID（o_order外键）',
   `order_num` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '订单号（第三方平台）',
   `sub_order_num` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '子订单号（第三方平台）',
@@ -5083,6 +5107,8 @@ CREATE TABLE `o_order_stocking_item` (
   `sku_name` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品规格',
   `sku_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '商品规格编码',
   `quantity` int NOT NULL COMMENT '商品数量',
+  `unit_cost` decimal(10, 2) NULL DEFAULT NULL COMMENT '单位成本快照(o_goods_sku.unit_cost 插行时值)',
+  `total_cost` decimal(10, 2) NULL DEFAULT NULL COMMENT '总成本快照(unit_cost × quantity)',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   `send_status` int NOT NULL DEFAULT '0' COMMENT '发货状态 0：待发货 1：部分发货，2：全部发货，',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
@@ -5151,6 +5177,30 @@ CREATE TABLE `o_order_stocking_item_batch` (
 
 -- ----------------------------
 -- Records of o_order_stocking_item_batch
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for o_order_tag
+-- ----------------------------
+DROP TABLE IF EXISTS `o_order_tag`;
+CREATE TABLE `o_order_tag` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '标签id，自增',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '标签名称（如：发供应商A/顺丰/断货跟进）',
+  `color` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标签颜色（预置10色色板色值，如#6366F1）',
+  `merchant_id` bigint NOT NULL DEFAULT '0' COMMENT '商户ID（0=总部公共标签，商户端可见可用）',
+  `sort` int NOT NULL DEFAULT '0' COMMENT '排序号，越小越靠前',
+  `bind_pool` int NOT NULL DEFAULT '0' COMMENT '关联状态池（对齐o_order.audit_status/EnumAuditStatus：0=通用标签不挂池，2=异常池分类标签）；转异常必选一个bind_pool=2的标签并覆盖写入订单tag，异常池按分类实时计数',
+  `status` int NOT NULL DEFAULT '1' COMMENT '状态（0禁用1启用）；停用标签不再出现在打标选项，已打订单保留数据',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `create_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '创建人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `update_by` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '更新人',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_merchant_status` (`merchant_id`,`status`,`sort`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='订单处理工作台-订单标签字典（用户自建）';
+
+-- ----------------------------
+-- Records of o_order_tag
 -- ----------------------------
 
 -- ----------------------------
@@ -6532,6 +6582,8 @@ CREATE TABLE `oms_shop_waybill_account` (
   `shop_id` bigint NOT NULL COMMENT '店铺id',
   `shop_type` int NOT NULL COMMENT '店铺类型',
   `merchant_id` bigint NOT NULL DEFAULT '0' COMMENT '商户id',
+  `shipper_type` int NOT NULL DEFAULT '0' COMMENT '发货主体类型（对齐EnumShipType）：0店铺自用（本地仓）100京东云仓 110吉客云云仓 200系统云仓 300供应商',
+  `shipper_id` bigint NOT NULL DEFAULT '0' COMMENT '发货主体ID：0=店铺自用（本地仓）；供应商/云仓为对应erp_supplier/erp_warehouse主键',
   `type` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT 'PT' COMMENT '类型：DIANSAN，PT',
   `outer_logistics_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '外部logistics_id（点三使用）',
   `support_offline` int DEFAULT '0' COMMENT '是否支持线下打单',
@@ -6766,7 +6818,7 @@ CREATE TABLE `sys_config` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`config_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='参数配置表';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='参数配置表';
 
 -- ----------------------------
 -- Records of sys_config
@@ -6774,6 +6826,7 @@ CREATE TABLE `sys_config` (
 BEGIN;
 INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, '系统名称', 'sys.name', '启航电商OMS订单中台', 'Y', 'admin', '2023-08-07 19:31:38', '', NULL, '蓝色 skin-blue、绿色 skin-green、紫色 skin-purple、红色 skin-red、黄色 skin-yellow');
 INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (4, '账号自助-验证码开关', 'sys.account.captchaEnabled', 'false', 'Y', 'admin', '2023-08-07 19:31:38', '', NULL, '是否开启验证码功能（true开启，false关闭）');
+INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (5, '订单人工审单开关', 'order.manual_audit.enabled', 'true', 'Y', 'admin', '2026-10-21 10:00:00', '', NULL, 'true=新订单落库即进入待审核池(audit_status=0)，必须人工/规则放行后才能打单发货（OMS 产品要求，默认true）；false=新订单自动放行(audit_status=1)。o_order.audit_status 库默认值仍为1，仅作不写审核字段的老入口兜底，新入口必须显式赋值');
 COMMIT;
 
 -- ----------------------------
@@ -6960,7 +7013,7 @@ CREATE TABLE `sys_menu` (
   `update_time` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='菜单权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=2209 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC COMMENT='菜单权限表';
 
 -- ----------------------------
 -- Records of sys_menu
@@ -7014,6 +7067,15 @@ INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2091, '部门管理', 5, 3, 'dept', 'system/dept/index', NULL, 1, 0, 'C', '0', '0', NULL, 'tree', 'admin', '2024-03-31 12:42:57', '', NULL, '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2171, '云仓发货-手动确认', 8, 15, 'cloud_warehouse/manual_ship', 'shipping/cloud_warehouse/manual_ship.vue', NULL, 1, 0, 'C', '1', '0', NULL, '#', 'admin', '2026-04-24 16:38:40', '', NULL, '');
 INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2173, '发货快递设置', 8, 99, 'ship_logistics', 'shipping/logistics/index', NULL, 1, 0, 'C', '0', '0', NULL, 'logistics', 'admin', '2026-05-04 09:07:37', '', NULL, '');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2200, '订单审核', 1, 5, 'orderWorkbench', 'order/workbench/index', NULL, 1, 0, 'C', '0', '0', 'orderWorkbench:order:list', 'checkbox', 'admin', '2026-10-21 10:00:00', '', NULL, '订单审核工作台（状态池/标签/放行/转异常/撤回/拆单）');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2201, '打单发货', 8, 10, 'waybillWorkbench', 'shipping/waybillWorkbench/index', NULL, 1, 0, 'C', '0', '0', 'orderWorkbench:waybill:list', 'print', 'admin', '2026-10-21 10:00:00', '', NULL, '打单发货统一队列（面单账号分配/退回异常池/取号/取消/打印/发货/手动发货）；与旧菜单894打单发货并存，旧页面待统一取号队列验证后停用');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2202, '面单账号分配', 2201, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:distribute', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '分配/改派发货主体与面单账号');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2203, '整单退回异常池', 2201, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:return', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '清空发货主体与面单账号，回异常池并打分类标签');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2204, '电子面单取号', 2201, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:take', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '按已分配面单账号向平台取号（waybill_status 0→1）');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2205, '取消取号', 2201, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:cancel', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '打印/发货前取消平台取号并回未取号（1→0）');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2206, '面单打印', 2201, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:print', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '已取号订单标记为已打印（1→2）');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2207, '面单发货', 2201, 6, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:ship', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '已打印订单回传平台并发货（2→3），本地仓生成备货单');
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2208, '手动发货', 2201, 7, '#', '', NULL, 1, 0, 'F', '0', '0', 'orderWorkbench:waybill:manualShip', '#', 'admin', '2026-10-21 10:00:00', '', NULL, '无面单账号/线下已寄出订单人工填单号发货，按能力回传平台（waybill_status=10）');
 COMMIT;
 
 -- ----------------------------

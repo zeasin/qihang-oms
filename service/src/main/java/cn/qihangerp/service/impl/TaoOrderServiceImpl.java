@@ -5,7 +5,12 @@ import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.common.ResultVoEnum;
+import cn.qihangerp.enums.EnumAuditStatus;
+import cn.qihangerp.enums.EnumOOrderStatus;
+import cn.qihangerp.enums.EnumShipStatus;
 import cn.qihangerp.enums.EnumShopType;
+import cn.qihangerp.enums.EnumWaybillStatus;
+import cn.qihangerp.enums.TaoOrderStateEnum;
 import cn.qihangerp.mapper.*;
 import cn.qihangerp.model.entity.OOrder;
 import cn.qihangerp.model.entity.OOrderItem;
@@ -15,6 +20,7 @@ import cn.qihangerp.model.entity.TaoOrderItem;
 import cn.qihangerp.model.entity.TaoOrderPromotion;
 import cn.qihangerp.model.bo.TaoOrderBo;
 import cn.qihangerp.model.bo.TaoOrderConfirmBo;
+import cn.qihangerp.service.OrderAuditInitService;
 import cn.qihangerp.service.TaoGoodsSkuService;
 import cn.qihangerp.service.TaoOrderService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -29,6 +35,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -50,6 +57,7 @@ public class TaoOrderServiceImpl extends ServiceImpl<TaoOrderMapper, TaoOrder>
     private final TaoGoodsSkuService goodsSkuService;
     private final ErpOrderMapper erpOrderMapper;
     private final ErpOrderItemMapper erpOrderItemMapper;
+    private final OrderAuditInitService orderAuditInitService;
 
 
     private final String DATE_PATTERN =
@@ -175,10 +183,20 @@ public class TaoOrderServiceImpl extends ServiceImpl<TaoOrderMapper, TaoOrder>
                         itemMapper.insert(item);
                     }
                 }
+                // 补转：阶段2之前拉取的历史单（平台audit_status=0 表示未转入订单库），重拉时同步转入
+                if ((taoOrders.get(0).getAuditStatus() == null
+                        || taoOrders.get(0).getAuditStatus() == EnumAuditStatus.PENDING.getIndex())
+                        && canAutoTransfer(taoOrders.get(0))) {
+                    List<TaoOrderItem> latestItems = itemMapper.selectList(
+                            new LambdaQueryWrapper<TaoOrderItem>().eq(TaoOrderItem::getTid, taoOrders.get(0).getTid()));
+                    transferToOOrder(taoOrders.get(0), latestItems, null, "拉单自动转单");
+                }
                 return ResultVo.error(ResultVoEnum.DataExist.getIndex(), "订单已经存在，更新成功",Long.parseLong(update.getId()));
             } else {
                 // 不存在，新增
                 order.setShopId(shopId);
+                // 平台落地表 audit_status=0：未转入订单库
+                order.setAuditStatus(EnumAuditStatus.PENDING.getIndex());
                 order.setCreateTime(new Date());
                 mapper.insert(order);
                 // 添加item
@@ -191,6 +209,12 @@ public class TaoOrderServiceImpl extends ServiceImpl<TaoOrderMapper, TaoOrder>
                         promotionDetailsMapper.insert(p);
                     }
                 }
+
+                // 拉单落库直接转单：不依赖MQ，同步生成 o_order + o_order_item
+                if (canAutoTransfer(order)) {
+                    transferToOOrder(order, order.getItems(), null, "拉单自动转单");
+                }
+
                 return ResultVo.success(Long.parseLong(order.getId()));
             }
         } catch (Exception e) {
@@ -230,70 +254,128 @@ public class TaoOrderServiceImpl extends ServiceImpl<TaoOrderMapper, TaoOrder>
     @Transactional(rollbackFor = Exception.class)
     @Override
     public ResultVo<Long> confirmOrder(TaoOrderConfirmBo confirmBo) {
-        TaoOrder pddOrder = mapper.selectById(confirmBo.getOrderId());
-        if(pddOrder==null) return ResultVo.error("订单数据不存在");
-        if(pddOrder.getAuditStatus()!=0) return ResultVo.error("已经确认过了！");
+        TaoOrder taoOrder = mapper.selectById(confirmBo.getOrderId());
+        if(taoOrder==null) return ResultVo.error("订单数据不存在");
+        if(taoOrder.getAuditStatus()==null || taoOrder.getAuditStatus()!=EnumAuditStatus.PENDING.getIndex())
+            return ResultVo.error("订单已自动转入订单库");
 
-        List<TaoOrderItem> pddOrderItems = itemMapper.selectList(
+        List<TaoOrderItem> taoOrderItems = itemMapper.selectList(
                 new LambdaQueryWrapper<TaoOrderItem>()
-                        .eq(TaoOrderItem::getTid, pddOrder.getTid()));
-        if(pddOrderItems==null || pddOrderItems.isEmpty()){
+                        .eq(TaoOrderItem::getTid, taoOrder.getTid()));
+        if(taoOrderItems==null || taoOrderItems.isEmpty()){
             return ResultVo.error("找不到订单item");
         }
 
-        OOrder erpOrder = erpOrderMapper.selectOne(new LambdaQueryWrapper<OOrder>().eq(OOrder::getOrderNum,pddOrder.getTid()));
-        if(erpOrder!=null) {
-            // 已经确认过了，更新自己
-            TaoOrder douOrderUpdate = new TaoOrder();
-            douOrderUpdate.setId(pddOrder.getId());
-            douOrderUpdate.setAuditStatus(1);
-            douOrderUpdate.setAuditTime(new Date());
-            mapper.updateById(douOrderUpdate);
-
-            return ResultVo.error("已经确认过了");
+        OOrder legacy = erpOrderMapper.selectOne(new LambdaQueryWrapper<OOrder>()
+                .eq(OOrder::getOrderNum, taoOrder.getTid())
+                .eq(OOrder::getParentOrderId, 0L)// 主订单；order_num 已降级为普通索引，必须限定 parent_order_id=0
+                .last("limit 1"));
+        if(legacy!=null) {
+            // 历史口径确认过的单子（无 source_order_id），补记平台转入状态，不再重复生成
+            markPlatformTransferred(taoOrder.getId());
+            return ResultVo.error("订单已自动转入订单库");
         }
+
+        return transferToOOrder(taoOrder, taoOrderItems, confirmBo, "手动确认订单");
+    }
+
+    /** 交易关闭/退款关闭状态的平台单不转入 o_order */
+    private boolean canAutoTransfer(TaoOrder taoOrder) {
+        String status = taoOrder.getStatus();
+        if (!StringUtils.hasText(status)) return true;
+        return !TaoOrderStateEnum.TRADE_CLOSED.getCode().equals(status)
+                && !TaoOrderStateEnum.TRADE_CLOSED_BY_TAOBAO.getCode().equals(status);
+    }
+
+    /** 平台状态编码 -> 中文描述 */
+    private String taoStateName(String code) {
+        for (TaoOrderStateEnum c : TaoOrderStateEnum.values()) {
+            if (c.getCode().equals(code)) return c.getName();
+        }
+        return null;
+    }
+
+    /**
+     * 幂等转单：组装 OOrder + OOrderItem 并调用共用组件写入。
+     * confirmBo==null 为拉单自动转单，收件人取平台单字段；否则取人工确认入参。
+     */
+    private ResultVo<Long> transferToOOrder(TaoOrder taoOrder, List<TaoOrderItem> taoOrderItems,
+                                            TaoOrderConfirmBo confirmBo, String createBy) {
+        OOrder order = buildOOrder(taoOrder, confirmBo, createBy);
+        List<OOrderItem> oItems = buildOOrderItems(taoOrder, taoOrderItems, createBy);
+        OOrder inserted = orderAuditInitService.syncToOOrder(order, oItems);
+        // 无论本次是否新插入，平台 audit_status 回写为1（含义：已转入订单库）
+        markPlatformTransferred(taoOrder.getId());
+        if (inserted == null) {
+            return ResultVo.error("订单已自动转入订单库");
+        }
+        return ResultVo.success(Long.parseLong(order.getId()));
+    }
+
+    /** 回写平台落地表转入状态（audit_status：0未转入 1已转入订单库） */
+    private void markPlatformTransferred(String id) {
+        TaoOrder orderUpdate = new TaoOrder();
+        orderUpdate.setId(id);
+        orderUpdate.setAuditStatus(EnumAuditStatus.APPROVED.getIndex());
+        orderUpdate.setAuditTime(new Date());
+        mapper.updateById(orderUpdate);
+    }
+
+    private OOrder buildOOrder(TaoOrder taoOrder, TaoOrderConfirmBo confirmBo, String createBy) {
         OOrder order = new OOrder();
-        order.setOrderNum(pddOrder.getTid());
+        order.setSourceOrderId(taoOrder.getId());
+        order.setOrderNum(taoOrder.getTid());
         order.setShopType(EnumShopType.TAO.getIndex());
-        order.setShopId(pddOrder.getShopId());
-//        order.setShipType(confirmBo.getShipType());
-//        order.setShipType(0);
-        order.setBuyerMemo(pddOrder.getBuyerMemo());
-        order.setSellerMemo(pddOrder.getSellerMemo());
-//        order.setRefundStatus(1);
-        order.setOrderStatus(1);
-        order.setGoodsAmount(pddOrder.getTotalFee()!=null?pddOrder.getTotalFee():0.0);
-        order.setPostFee(pddOrder.getPostFee()!=null?pddOrder.getPostFee().doubleValue():0.0);
-        order.setSellerDiscount(pddOrder.getDiscountFee()!=null?pddOrder.getDiscountFee().doubleValue():0.0);
+        order.setShopId(taoOrder.getShopId());
+        order.setBuyerMemo(taoOrder.getBuyerMemo());
+        order.setSellerMemo(taoOrder.getSellerMemo());
+        order.setOrderStatus(EnumOOrderStatus.WAIT_SHIP.getIndex());
+        order.setPlatformStatusCode(taoOrder.getStatus());
+        order.setPlatformStatusDesc(taoStateName(taoOrder.getStatus()));
+        order.setOpenAddressId(taoOrder.getOaid());
+        order.setGoodsAmount(taoOrder.getTotalFee()!=null?taoOrder.getTotalFee():0.0);
+        order.setPostFee(taoOrder.getPostFee()!=null?taoOrder.getPostFee().doubleValue():0.0);
+        order.setSellerDiscount(taoOrder.getDiscountFee()!=null?taoOrder.getDiscountFee().doubleValue():0.0);
         order.setPlatformDiscount(0.0);
-        order.setAmount(pddOrder.getTotalFee()!=null?pddOrder.getTotalFee().doubleValue():0.0);
-        order.setPayment(pddOrder.getPayment()!=null?pddOrder.getPayment().doubleValue():0.0);
-        order.setReceiverName(confirmBo.getReceiver());
-        order.setReceiverMobile(confirmBo.getMobile());
-        order.setAddress(confirmBo.getAddress());
-        order.setProvince(confirmBo.getProvince());
-        order.setCity(confirmBo.getCity());
-        order.setTown(confirmBo.getTown());
+        order.setAmount(taoOrder.getTotalFee()!=null?taoOrder.getTotalFee().doubleValue():0.0);
+        order.setPayment(taoOrder.getPayment()!=null?taoOrder.getPayment().doubleValue():0.0);
+        if (confirmBo != null) {
+            order.setReceiverName(confirmBo.getReceiver());
+            order.setReceiverMobile(confirmBo.getMobile());
+            order.setAddress(confirmBo.getAddress());
+            order.setProvince(confirmBo.getProvince());
+            order.setCity(confirmBo.getCity());
+            order.setTown(confirmBo.getTown());
+        } else {
+            // 自动转单：收件人取平台单字段（密文下单场景可能为空，放行前由人工补全）
+            order.setReceiverName(taoOrder.getReceiverName());
+            order.setReceiverMobile(taoOrder.getReceiverMobile());
+            order.setAddress(taoOrder.getReceiverAddress());
+            order.setProvince(taoOrder.getReceiverState());
+            order.setCity(taoOrder.getReceiverCity());
+            order.setTown(taoOrder.getReceiverDistrict());
+        }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime orderTime = LocalDateTime.parse(pddOrder.getCreated(), formatter);
+            LocalDateTime orderTime = LocalDateTime.parse(taoOrder.getCreated(), formatter);
             order.setOrderTime(orderTime);
         }catch (Exception e){}
-
-//        order.setShipper(-1L);
-        order.setShipStatus(0);
+        order.setShipStatus(EnumShipStatus.NOT.getIndex());
+        order.setWaybillStatus(EnumWaybillStatus.NOT_TAKEN.getIndex());
         order.setCreateTime(new Date());
-        order.setCreateBy("手动确认订单");
-        erpOrderMapper.insert(order);
-        //插入item
-        for (var item : pddOrderItems) {
+        order.setCreateBy(createBy);
+        return order;
+    }
+
+    private List<OOrderItem> buildOOrderItems(TaoOrder taoOrder, List<TaoOrderItem> taoOrderItems, String createBy) {
+        List<OOrderItem> oItems = new ArrayList<>();
+        for (TaoOrderItem item : taoOrderItems) {
             OOrderItem oOrderItem = new OOrderItem();
-            oOrderItem.setOrderId(order.getId());
-            oOrderItem.setOrderNum(order.getOrderNum());
+            oOrderItem.setOrderNum(taoOrder.getTid());
             oOrderItem.setSubOrderNum(item.getOid().toString());
             oOrderItem.setShopType(EnumShopType.TAO.getIndex());
-            oOrderItem.setShopId(pddOrder.getShopId());
-            oOrderItem.setSkuId(item.getSkuId().toString());
+            oOrderItem.setShopId(taoOrder.getShopId());
+            oOrderItem.setSkuId(item.getSkuId()==null?null:item.getSkuId().toString());
             oOrderItem.setGoodsId(StringUtils.hasText(item.getoGoodsId())?Long.parseLong(item.getoGoodsId()):0L);
             oOrderItem.setGoodsSkuId(StringUtils.hasText(item.getoGoodsSkuId())?Long.parseLong(item.getoGoodsSkuId()):0L);
             oOrderItem.setGoodsTitle(item.getTitle());
@@ -306,23 +388,14 @@ public class TaoOrderServiceImpl extends ServiceImpl<TaoOrderMapper, TaoOrder>
             oOrderItem.setItemAmount(oOrderItem.getGoodsPrice()*oOrderItem.getQuantity());
             oOrderItem.setDiscountAmount(0.0);
             oOrderItem.setPayment(0.0);
-
             oOrderItem.setRefundCount(0);
             oOrderItem.setRefundStatus(1);
-//            oOrderItem.setShipper(-1L);
-//            oOrderItem.setShipType(order.getShipType());
-            oOrderItem.setShipStatus(0);
+            oOrderItem.setShipStatus(EnumShipStatus.NOT.getIndex());
             oOrderItem.setCreateTime(new Date());
-            oOrderItem.setCreateBy("手动确认订单");
-            erpOrderItemMapper.insert(oOrderItem);
+            oOrderItem.setCreateBy(createBy);
+            oItems.add(oOrderItem);
         }
-        // 更新自己
-        TaoOrder douOrderUpdate = new TaoOrder();
-        douOrderUpdate.setId(pddOrder.getId());
-        douOrderUpdate.setAuditStatus(1);
-        douOrderUpdate.setAuditTime(new Date());
-        mapper.updateById(douOrderUpdate);
-        return ResultVo.success();
+        return oItems;
     }
     //    @Transactional(rollbackFor = Exception.class)
 //    @Override

@@ -18,6 +18,7 @@ import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.common.ResultVoEnum;
+import cn.qihangerp.enums.EnumAuditStatus;
 import cn.qihangerp.enums.EnumShopType;
 
 import lombok.AllArgsConstructor;
@@ -140,6 +141,9 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
                 .eq(OOrder::getOrderStatus,1)
 //                .eq(OOrder::getRefundStatus,1)
                 .eq(OOrder::getShipStatus,0)//发货状态 0 待发货 1 已分配供应商发货 2全部发货
+                // 2026-10-22 旧发货入口门禁：发货已统一由打单发货工作台队列接管，
+                // 本查询仅放行审核通过（audit_status=1 已放行）订单，未放行/异常池订单不再出现在旧列表
+                .eq(OOrder::getAuditStatus, EnumAuditStatus.APPROVED.getIndex())
 //                .lt(ErpOrder::getShipType,2)//ship_type发货方式 0 自己发货1联合发货2供应商发货
                 .ge(org.springframework.util.StringUtils.hasText(bo.getStartTime()),OOrder::getOrderTime,bo.getStartTime())
                 .le(org.springframework.util.StringUtils.hasText(bo.getEndTime()),OOrder::getOrderTime,bo.getEndTime())
@@ -238,6 +242,12 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
         }
         if(erpOrder.getShipStatus()!=0){
             return ResultVo.error("订单已分配供应商发货，不允许手动发货");
+        }
+        // 2026-10-22 旧发货入口门禁：发货统一走打单发货工作台队列，仅放行已审核放行（audit_status=1）订单，
+        // 未放行/异常池/拆单子单等订单禁止从旧入口直接发货
+        if (erpOrder.getAuditStatus() == null
+                || erpOrder.getAuditStatus().intValue() != EnumAuditStatus.APPROVED.getIndex()) {
+            return ResultVo.error("订单未审核放行，请到打单发货工作台操作发货");
         }
 
         OLogisticsCompany erpLogisticsCompany = oLogisticsCompanyMapper.selectById(shipBo.getShippingCompany());
@@ -400,6 +410,11 @@ public class OOrderServiceImpl extends ServiceImpl<OOrderMapper, OOrder>
         }
         if(erpOrder.getShipStatus()!=0){
             return ResultVo.error("订单发货已处理，不允许分配发货");
+        }
+        // 2026-10-22 旧发货入口门禁：分配/改派统一走打单发货工作台队列，仅放行已审核放行（audit_status=1）订单
+        if (erpOrder.getAuditStatus() == null
+                || erpOrder.getAuditStatus().intValue() != EnumAuditStatus.APPROVED.getIndex()) {
+            return ResultVo.error("订单未审核放行，请到打单发货工作台操作分配");
         }
 
         List<OOrderItem> oOrderItems = orderItemMapper.selectList(new LambdaQueryWrapper<OOrderItem>()

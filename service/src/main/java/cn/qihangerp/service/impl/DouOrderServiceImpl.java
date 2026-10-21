@@ -5,7 +5,12 @@ import cn.qihangerp.common.PageQuery;
 import cn.qihangerp.common.PageResult;
 import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.common.ResultVoEnum;
+import cn.qihangerp.enums.DouOrderStateEnum;
+import cn.qihangerp.enums.EnumAuditStatus;
+import cn.qihangerp.enums.EnumOOrderStatus;
 import cn.qihangerp.enums.EnumShopType;
+import cn.qihangerp.enums.EnumShipStatus;
+import cn.qihangerp.enums.EnumWaybillStatus;
 import cn.qihangerp.mapper.*;
 import cn.qihangerp.model.bo.DouOrderConfirmBo;
 import cn.qihangerp.model.entity.OOrder;
@@ -15,6 +20,7 @@ import cn.qihangerp.model.entity.DouOrder;
 import cn.qihangerp.model.entity.DouOrderItem;
 import cn.qihangerp.model.bo.DouOrderBo;
 import cn.qihangerp.service.DouOrderService;
+import cn.qihangerp.service.OrderAuditInitService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -30,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -50,6 +57,7 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
     private final DouGoodsSkuMapper goodsSkuMapper;
     private final ErpOrderMapper oOrderMapper;
     private final ErpOrderItemMapper oOrderItemMapper;
+    private final OrderAuditInitService orderAuditInitService;
 
     private final String DATE_PATTERN =
             "^(?:(?:(?:\\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|1\\d|2[0-8]))|(?:(?:(?:\\d{2}(?:0[48]|[2468][048]|[13579][26])|(?:(?:0[48]|[2468][048]|[13579][26])00))-0?2-29))$)|(?:(?:(?:\\d{4}-(?:0?[13578]|1[02]))-(?:0?[1-9]|[12]\\d|30))$)|(?:(?:(?:\\d{4}-0?[13-9]|1[0-2])-(?:0?[1-9]|[1-2]\\d|30))$)|(?:(?:(?:\\d{2}(?:0[48]|[13579][26]|[2468][048])|(?:(?:0[48]|[13579][26]|[2468][048])00))-0?2-29))$)$";
@@ -166,11 +174,18 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
                     }
                     itemMapper.insert(item);
                 }
+                // 补转：阶段2之前拉取的历史单（平台audit_status=0 表示未转入订单库），重拉时同步转入
+                if ((taoOrders.get(0).getAuditStatus() == null
+                        || taoOrders.get(0).getAuditStatus() == EnumAuditStatus.PENDING.getIndex())
+                        && canAutoTransfer(order)) {
+                    transferToOOrder(taoOrders.get(0), order.getItems(), null, "拉单自动转单");
+                }
                 return ResultVo.error(ResultVoEnum.DataExist, "订单已经存在，更新成功");
             } else {
                 // 不存在，新增
                 order.setShopId(shopId);
-                order.setAuditStatus(0);
+                // 平台落地表 audit_status=0：未转入订单库
+                order.setAuditStatus(EnumAuditStatus.PENDING.getIndex());
                 order.setPullTime(new Date());
                 mapper.insert(order);
                 // 添加item
@@ -181,6 +196,11 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
                         item.setOGoodsSkuId(goodsSku.getErpGoodsSkuId().toString());
                     }
                     itemMapper.insert(item);
+                }
+
+                // 拉单落库直接转单：不依赖MQ（开源版无消费端实现），同步生成 o_order + o_order_item
+                if (canAutoTransfer(order)) {
+                    transferToOOrder(order, order.getItems(), null, "拉单自动转单");
                 }
 
                 return ResultVo.success();
@@ -199,62 +219,113 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
     public ResultVo<Long> confirmOrder(DouOrderConfirmBo confirmBo) {
         DouOrder douOrder = mapper.selectById(confirmBo.getOrderId());
         if(douOrder==null) return ResultVo.error("订单数据不存在");
-        if(douOrder.getAuditStatus()!=0) return ResultVo.error("已经确认过了！");
+        if(douOrder.getAuditStatus()==null || douOrder.getAuditStatus()!=EnumAuditStatus.PENDING.getIndex())
+            return ResultVo.error("订单已自动转入订单库");
 
         List<DouOrderItem> douOrderItems = itemMapper.selectList(new LambdaQueryWrapper<DouOrderItem>().eq(DouOrderItem::getParentOrderId, douOrder.getOrderId()));
         if(douOrderItems==null || douOrderItems.isEmpty()){
             return ResultVo.error("找不到订单item");
         }
 
-        OOrder erpOrder = oOrderMapper.selectOne(new LambdaQueryWrapper<OOrder>().eq(OOrder::getOrderNum,douOrder.getOrderId()));
-        if(erpOrder!=null) {
-            // 已经确认过了，更新自己
-            DouOrder douOrderUpdate = new DouOrder();
-            douOrderUpdate.setId(douOrder.getId());
-            douOrderUpdate.setAuditStatus(1);
-            douOrderUpdate.setAuditTime(new Date());
-            mapper.updateById(douOrderUpdate);
-
-            return ResultVo.error("已经确认过了");
+        OOrder legacy = oOrderMapper.selectOne(new LambdaQueryWrapper<OOrder>()
+                .eq(OOrder::getOrderNum, douOrder.getOrderId())
+                .eq(OOrder::getParentOrderId, 0L)// 主订单；order_num 已降级为普通索引，必须限定 parent_order_id=0
+                .last("limit 1"));
+        if(legacy!=null) {
+            // 历史口径确认过的单子（无 source_order_id），补记平台转入状态，不再重复生成
+            markPlatformTransferred(douOrder.getId());
+            return ResultVo.error("订单已自动转入订单库");
         }
 
+        return transferToOOrder(douOrder, douOrderItems, confirmBo, "手动确认订单");
+    }
+
+    /** 取消/退款关闭状态的平台单不转入 o_order（4 已取消 / 21 发货前退款完结） */
+    private boolean canAutoTransfer(DouOrder douOrder) {
+        Integer status = douOrder.getOrderStatus();
+        if (status == null) return true;
+        return status != DouOrderStateEnum.CANCELED.getIndex()
+                && status != DouOrderStateEnum.REFUND_BEFORE_SHIP_DONE.getIndex();
+    }
+
+    /**
+     * 幂等转单：组装 OOrder + OOrderItem 并调用共用组件写入。
+     * confirmBo==null 为拉单自动转单，收件人取平台单脱敏字段；否则取人工确认入参。
+     * 已转入（sourceOrderId+shopType 或历史 orderNum 命中）时不重复生成，仅回写平台转入状态。
+     */
+    private ResultVo<Long> transferToOOrder(DouOrder douOrder, List<DouOrderItem> douOrderItems,
+                                            DouOrderConfirmBo confirmBo, String createBy) {
+        OOrder order = buildOOrder(douOrder, confirmBo, createBy);
+        List<OOrderItem> oItems = buildOOrderItems(douOrder, douOrderItems, createBy);
+        OOrder inserted = orderAuditInitService.syncToOOrder(order, oItems);
+        // 无论本次是否新插入，平台 audit_status 回写为1（含义：已转入订单库）
+        markPlatformTransferred(douOrder.getId());
+        if (inserted == null) {
+            return ResultVo.error("订单已自动转入订单库");
+        }
+        return ResultVo.success();
+    }
+
+    /** 回写平台落地表转入状态（audit_status：0未转入 1已转入订单库） */
+    private void markPlatformTransferred(String id) {
+        DouOrder douOrderUpdate = new DouOrder();
+        douOrderUpdate.setId(id);
+        douOrderUpdate.setAuditStatus(EnumAuditStatus.APPROVED.getIndex());
+        douOrderUpdate.setAuditTime(new Date());
+        mapper.updateById(douOrderUpdate);
+    }
+
+    private OOrder buildOOrder(DouOrder douOrder, DouOrderConfirmBo confirmBo, String createBy) {
         OOrder order = new OOrder();
+        order.setSourceOrderId(douOrder.getId());
         order.setOrderNum(douOrder.getOrderId());
         order.setShopType(EnumShopType.DOU.getIndex());
         order.setShopId(douOrder.getSShopId());
-//        order.setShipType(confirmBo.getShipType());
-//        order.setShipType(0);
         order.setBuyerMemo(douOrder.getBuyerWords());
         order.setSellerMemo(douOrder.getSellerWords());
-//        order.setRefundStatus(1);
-        order.setOrderStatus(1);
+        order.setOrderStatus(EnumOOrderStatus.WAIT_SHIP.getIndex());
+        order.setPlatformStatusCode(douOrder.getOrderStatus()==null?null:String.valueOf(douOrder.getOrderStatus()));
+        order.setPlatformStatusDesc(douOrder.getOrderStatusDesc());
         order.setGoodsAmount(douOrder.getOrderAmount()!=null?douOrder.getOrderAmount().doubleValue()/100:0.0);
         order.setPostFee(douOrder.getPostAmount()!=null?douOrder.getPostAmount().doubleValue()/100:0.0);
         order.setSellerDiscount(douOrder.getPromotionShopAmount()!=null?douOrder.getPromotionShopAmount().doubleValue()/100:0.0);
         order.setPlatformDiscount(douOrder.getPromotionPlatformAmount()!=null?douOrder.getPromotionPlatformAmount().doubleValue()/100:0.0);
         order.setAmount(douOrder.getOrderAmount()!=null?douOrder.getOrderAmount().doubleValue()/100:0.0);
         order.setPayment(douOrder.getPayAmount()!=null?douOrder.getPayAmount().doubleValue()/100:0.0);
-        order.setReceiverName(confirmBo.getReceiver());
-        order.setReceiverMobile(confirmBo.getMobile());
-        order.setAddress(confirmBo.getAddress());
-        order.setProvince(confirmBo.getProvince());
-        order.setCity(confirmBo.getCity());
-        order.setTown(confirmBo.getTown());
+        order.setOpenAddressId(douOrder.getOpenAddressId());
+        if (confirmBo != null) {
+            order.setReceiverName(confirmBo.getReceiver());
+            order.setReceiverMobile(confirmBo.getMobile());
+            order.setAddress(confirmBo.getAddress());
+            order.setProvince(confirmBo.getProvince());
+            order.setCity(confirmBo.getCity());
+            order.setTown(confirmBo.getTown());
+        } else {
+            // 自动转单：收件人信息取平台单脱敏字段，放行/发货前由人工补全
+            order.setReceiverName(douOrder.getMaskPostReceiver());
+            order.setReceiverMobile(douOrder.getMaskPostTel());
+            order.setAddress(douOrder.getMaskPostAddress());
+            order.setProvince(douOrder.getProvinceName());
+            order.setCity(douOrder.getCityName());
+            order.setTown(douOrder.getTownName());
+        }
         try {
             LocalDateTime orderTime = Instant.ofEpochMilli(douOrder.getCreateTime() * 1000)
                     .atZone(ZoneId.of("Asia/Shanghai"))
                     .toLocalDateTime();
             order.setOrderTime(orderTime);
         }catch (Exception e){}
-//        order.setShipper(-1L);
-        order.setShipStatus(0);
+        order.setShipStatus(EnumShipStatus.NOT.getIndex());
+        order.setWaybillStatus(EnumWaybillStatus.NOT_TAKEN.getIndex());
         order.setCreateTime(new Date());
-        order.setCreateBy("手动确认订单");
-        oOrderMapper.insert(order);
-        //插入item
-        for (var item : douOrderItems) {
+        order.setCreateBy(createBy);
+        return order;
+    }
+
+    private List<OOrderItem> buildOOrderItems(DouOrder douOrder, List<DouOrderItem> douOrderItems, String createBy) {
+        List<OOrderItem> oItems = new ArrayList<>();
+        for (DouOrderItem item : douOrderItems) {
             OOrderItem oOrderItem = new OOrderItem();
-            oOrderItem.setOrderId(order.getId());
             oOrderItem.setOrderNum(douOrder.getOrderId());
             oOrderItem.setSubOrderNum(item.getOrderId());
             oOrderItem.setShopType(EnumShopType.DOU.getIndex());
@@ -274,19 +345,12 @@ public class DouOrderServiceImpl extends ServiceImpl<DouOrderMapper, DouOrder>
             oOrderItem.setQuantity(item.getItemNum());
             oOrderItem.setRefundCount(0);
             oOrderItem.setRefundStatus(1);
-
-            oOrderItem.setShipStatus(0);
+            oOrderItem.setShipStatus(EnumShipStatus.NOT.getIndex());
             oOrderItem.setCreateTime(new Date());
-            oOrderItem.setCreateBy("手动确认订单");
-            oOrderItemMapper.insert(oOrderItem);
+            oOrderItem.setCreateBy(createBy);
+            oItems.add(oOrderItem);
         }
-        // 已经确认过了，更新自己
-        DouOrder douOrderUpdate = new DouOrder();
-        douOrderUpdate.setId(douOrder.getId());
-        douOrderUpdate.setAuditStatus(1);
-        douOrderUpdate.setAuditTime(new Date());
-        mapper.updateById(douOrderUpdate);
-        return ResultVo.success();
+        return oItems;
     }
 }
 

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -94,6 +95,14 @@ public class OOrderStockingItem implements Serializable {
      * 商品数量
      */
     private Integer quantity;
+    /**
+     * 单位成本快照（备货明细插行时 o_goods_sku.unit_cost 当时值，增量列 docs/sql/20261021-order-audit/10）
+     */
+    private BigDecimal unitCost;
+    /**
+     * 总成本快照（unit_cost × quantity；档案无成本值时两列留空=成本③未维护）
+     */
+    private BigDecimal totalCost;
     /**
      * 未发货数量
      */

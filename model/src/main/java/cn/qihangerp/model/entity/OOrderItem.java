@@ -21,6 +21,11 @@ public class OOrderItem implements Serializable {
     private String id;
 
     /**
+     * 商品行角色：0=主订单原始行，1=子订单履约行，2=合并发货子订单行（EnumOrderRole 同口径）
+     */
+    private Integer itemRole;
+
+    /**
      * 订单ID（o_order外键）
      */
     private String orderId;
@@ -135,13 +140,27 @@ public class OOrderItem implements Serializable {
 
     //发货类型 EnumShipType
     private Integer shipType;
-    // 发货状态 0 待发货 1已分配发货 2全部发货 10已取号
+    /**
+     * 发货状态：0待发货 1已分配发货 2全部发货 10已取号（EnumShipStatus）
+     */
     private Integer shipStatus;
 //    private Long shipSupplier;
-    private Long shipperId;//发货人id
-    private String shipperName;//发货人名称
-    private String shipperNo;//发货人编码
-    private String shipperType;//发货人类型
+    /**
+     * 发货主体ID：本地仓/云仓/供应商主键（打单发货队列分配写入）
+     */
+    private Long shipperId;
+    /**
+     * 发货主体名称
+     */
+    private String shipperName;
+    /**
+     * 发货主体编码
+     */
+    private String shipperNo;
+    /**
+     * 发货主体类型（字符串口径，取值对齐 EnumShipType：0本地仓 100京东云仓 110吉客云云仓 200系统云仓 300供应商）
+     */
+    private String shipperType;
 
     private Integer hasPushErp;//是否推送到ERP（是否推送到供应商发货）0未推送1已推送
 
