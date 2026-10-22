@@ -26,6 +26,7 @@ import cn.qihangerp.mapper.OOrderStockingMapper;
 import cn.qihangerp.mapper.OOrderTagMapper;
 import cn.qihangerp.mapper.OShipWaybillMapper;
 import cn.qihangerp.mapper.OShopMapper;
+import cn.qihangerp.mapper.SysConfigMapper;
 import cn.qihangerp.model.bo.ShipWorkbenchCancelBo;
 import cn.qihangerp.model.bo.ShipWorkbenchDistributeBo;
 import cn.qihangerp.model.bo.ShipWorkbenchManualShipBo;
@@ -49,8 +50,12 @@ import cn.qihangerp.model.entity.OOrderTag;
 import cn.qihangerp.model.entity.OShipWaybill;
 import cn.qihangerp.model.entity.OShop;
 import cn.qihangerp.model.entity.ShopWaybillAccount;
+import cn.qihangerp.model.entity.SysConfig;
 import cn.qihangerp.model.request.ShipWorkbenchQuery;
+import cn.qihangerp.model.vo.DriftVo;
 import cn.qihangerp.model.vo.ShipWorkbenchActionResultVo;
+import cn.qihangerp.model.vo.ShipWorkbenchDriftFixResultVo;
+import cn.qihangerp.model.vo.ShipWorkbenchDriftResultVo;
 import cn.qihangerp.model.vo.ShipWorkbenchItemVo;
 import cn.qihangerp.model.vo.ShipWorkbenchOrderVo;
 import cn.qihangerp.model.vo.ShipWorkbenchPoolCountsVo;
@@ -111,6 +116,32 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
     private static final int KEYWORD_ORDER_LIMIT = 2000;
     /** 行组装批量查账号的 id 上限，防止 IN 过大 */
     private static final int ACCOUNT_QUERY_LIMIT = 200;
+    /** 发货超时预警时效配置键（sys_config，单位小时） */
+    private static final String SHIP_TIMEOUT_CONFIG_KEY = "order.ship.timeout.hours";
+    /** 时效配置缺失/非法时的兜底小时数（与 12_sys_config_ship_timeout_hours.sql 默认值一致） */
+    private static final int DEFAULT_SHIP_TIMEOUT_HOURS = 48;
+    /** 剩余不足12小时计入即将超时 */
+    private static final int ABOUT_TIMEOUT_WARN_HOURS = 12;
+    /** 漂移自检单次扫描订单上限，超限截断并回 truncated 标记 */
+    private static final int DRIFT_SCAN_LIMIT = 5000;
+    /** 漂移自检批量拉打单记录的分片大小，防止 IN 过大 */
+    private static final int DRIFT_RECORD_BATCH_SIZE = 500;
+    /** 漂移类型：已取号/已打印但无活记录 */
+    private static final String DRIFT_NO_WAYBILL_RECORD = "NO_WAYBILL_RECORD";
+    /** 漂移类型：未取号但残留已取号活记录 */
+    private static final String DRIFT_ORPHAN_RECORD = "ORPHAN_RECORD";
+    /** 漂移类型：已发货但记录未推进到已发货 */
+    private static final String DRIFT_RECORD_NOT_SHIPPED = "RECORD_NOT_SHIPPED";
+    /** 漂移类型→漂移说明 */
+    private static final Map<String, String> DRIFT_DESCRIPTIONS = Map.of(
+            DRIFT_NO_WAYBILL_RECORD, "订单已取号/已打印，但打单记录表无对应活记录",
+            DRIFT_ORPHAN_RECORD, "订单未取号且已分配账号，但打单记录残留已取号(status=1)记录",
+            DRIFT_RECORD_NOT_SHIPPED, "订单已发货，但打单记录未推进到已发货(3)");
+    /** 漂移类型→修复动作说明 */
+    private static final Map<String, String> DRIFT_FIX_ACTIONS = Map.of(
+            DRIFT_NO_WAYBILL_RECORD, "订单 waybill_status 回未取号(0)，保留面单账号分配",
+            DRIFT_ORPHAN_RECORD, "删除 status=1 的孤儿打单记录，订单保持未取号",
+            DRIFT_RECORD_NOT_SHIPPED, "打单记录 status 回写已发货(3)");
 
     private final OOrderMapper orderMapper;
     private final OOrderItemMapper orderItemMapper;
@@ -126,6 +157,7 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
     private final ShopWaybillAccountService shopWaybillAccountService;
     private final PlatformWaybillAdapterRegistry waybillAdapterRegistry;
     private final PlatformTransactionManager transactionManager;
+    private final SysConfigMapper sysConfigMapper;
 
     // ==================== 队列查询 ====================
 
@@ -155,6 +187,13 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
                 .eq(OOrder::getWaybillStatus, EnumWaybillStatus.PRINTED.getIndex())));
         vo.setAllocatePending(orderMapper.selectCount(buildQueueWrapper(query)
                 .isNull(OOrder::getWaybillAccountId)));
+        // 超时预警角标恒为全队列口径：不受 timeoutFilter 影响，各自叠加独立时间边界
+        Date now = new Date();
+        int timeoutHours = shipTimeoutHours();
+        vo.setAboutTimeout(orderMapper.selectCount(
+                applyTimeoutBoundary(buildQueueWrapper(query, null), "soon", now, timeoutHours)));
+        vo.setTimeout(orderMapper.selectCount(
+                applyTimeoutBoundary(buildQueueWrapper(query, null), "timeout", now, timeoutHours)));
         return vo;
     }
 
@@ -173,6 +212,10 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
      * 排除合并发货子订单（由合并主单承担履约）与已发货面单状态（3已发货/10手动发货）
      */
     private LambdaQueryWrapper<OOrder> buildQueueWrapper(ShipWorkbenchQuery query) {
+        return buildQueueWrapper(query, query.getTimeoutFilter());
+    }
+
+    private LambdaQueryWrapper<OOrder> buildQueueWrapper(ShipWorkbenchQuery query, String timeoutFilter) {
         LambdaQueryWrapper<OOrder> wrapper = new LambdaQueryWrapper<OOrder>()
                 .eq(OOrder::getAuditStatus, EnumAuditStatus.APPROVED.getIndex())
                 .eq(OOrder::getOrderStatus, EnumOOrderStatus.WAIT_SHIP.getIndex())
@@ -250,7 +293,64 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
                 wrapper.in(OOrder::getId, orderIds);
             }
         }
+        if (StringUtils.hasText(timeoutFilter)) {
+            applyTimeoutBoundary(wrapper, timeoutFilter, new Date(), shipTimeoutHours());
+        }
         return wrapper;
+    }
+
+    /**
+     * 超时预警边界（口径=sys_config order.ship.timeout.hours，单位小时，行龄按 create_time）：
+     * timeout=已超时（create_time &lt; now-N）；soon=即将超时（create_time ∈ [now-N, now-(N-12))）
+     *
+     * @return 原 wrapper，便于链式取 count
+     */
+    private LambdaQueryWrapper<OOrder> applyTimeoutBoundary(LambdaQueryWrapper<OOrder> wrapper, String filter,
+                                                            Date now, int timeoutHours) {
+        if (!StringUtils.hasText(filter)) {
+            return wrapper;
+        }
+        long line = now.getTime() - timeoutHours * 3600_000L;
+        String f = filter.trim().toLowerCase();
+        if ("timeout".equals(f)) {
+            wrapper.lt(OOrder::getCreateTime, new Date(line));
+        } else if ("soon".equals(f)) {
+            wrapper.ge(OOrder::getCreateTime, new Date(line))
+                    .lt(OOrder::getCreateTime, new Date(line + ABOUT_TIMEOUT_WARN_HOURS * 3600_000L));
+        }
+        return wrapper;
+    }
+
+    /** 预警时效小时数：配置缺失/非法兜底 48（过滤与角标必须可算） */
+    private int shipTimeoutHours() {
+        Integer hours = shipTimeoutHoursOrNull();
+        return hours == null ? DEFAULT_SHIP_TIMEOUT_HOURS : hours;
+    }
+
+    /** 预警时效小时数原值：sys_config 缺失/非法返回 null（行剩余时效无配置依据时不展示） */
+    private Integer shipTimeoutHoursOrNull() {
+        try {
+            SysConfig config = sysConfigMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
+                    .eq(SysConfig::getConfigKey, SHIP_TIMEOUT_CONFIG_KEY)
+                    .last("limit 1"));
+            String value = config == null ? null : config.getConfigValue();
+            if (!StringUtils.hasText(value)) {
+                return null;
+            }
+            int hours = Integer.parseInt(value.trim());
+            return hours > 0 ? hours : null;
+        } catch (Exception e) {
+            log.warn("======读取发货超时预警时效配置异常======error={}", e.getMessage());
+            return null;
+        }
+    }
+
+    /** 剩余时效小时数：正=距超时剩余，负=已超时时长；createTime 或时效配置缺失返回 null */
+    private Integer remainHoursOf(Date createTime, Integer timeoutHours) {
+        if (createTime == null || timeoutHours == null) {
+            return null;
+        }
+        return (int) ((timeoutHours * 3600_000L + createTime.getTime() - System.currentTimeMillis()) / 3600_000L);
     }
 
     /**
@@ -292,6 +392,8 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
         Set<Long> accountIds = units.stream().map(OOrder::getWaybillAccountId).filter(Objects::nonNull)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         Map<Long, ShopWaybillAccount> accountMap = loadAccounts(accountIds);
+        // 时效配置每次行组装读一次即可（行级 remainHours 计算用，缺失时该行返回 null 不展示）
+        Integer timeoutHours = shipTimeoutHoursOrNull();
 
         List<ShipWorkbenchOrderVo> rows = new ArrayList<>();
         for (OOrder unit : units) {
@@ -304,7 +406,7 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
             vo.setShopId(unit.getShopId());
             vo.setShopType(unit.getShopType());
             vo.setPlatformName(unit.getShopType() == null ? null : EnumShopType.getName(unit.getShopType()));
-            OShop shop = shopMap.get(unit.getShopId());
+            OShop shop = unit.getShopId() == null ? null : shopMap.get(unit.getShopId());
             vo.setShopName(shop == null ? null : shop.getName());
             vo.setMerchantId(unit.getMerchantId());
             vo.setParentOrderId(unit.getParentOrderId());
@@ -333,6 +435,7 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
             vo.setCreateTime(unit.getCreateTime());
             vo.setStayHours(unit.getCreateTime() == null ? null
                     : Math.max(0L, (System.currentTimeMillis() - unit.getCreateTime().getTime()) / 3600000L));
+            vo.setRemainHours(remainHoursOf(unit.getCreateTime(), timeoutHours));
 
             List<OOrderItem> items = loadUnitItems(unit, itemMap.getOrDefault(unit.getId(), List.of()));
             vo.setGoodsSummary(buildGoodsSummary(items));
@@ -355,7 +458,9 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
                 return iv;
             }).collect(Collectors.toList()));
 
-            fillShipper(vo, items, accountMap.get(unit.getWaybillAccountId()));
+            // JDK 不可变 Map（Map.of()/toUnmodifiableMap）get(null) 会抛 NPE，未分配面单账号的订单需先判空
+            Long waybillAccountId = unit.getWaybillAccountId();
+            fillShipper(vo, items, waybillAccountId == null ? null : accountMap.get(waybillAccountId));
             rows.add(vo);
         }
         return rows;
@@ -1634,6 +1739,220 @@ public class ShipOrderWorkbenchServiceImpl implements ShipOrderWorkbenchService 
                 .set(OShipWaybill::getStatus, EnumWaybillStatus.PRINTED.getIndex())
                 .set(OShipWaybill::getUpdateTime, new Date())
                 .set(OShipWaybill::getUpdateBy, username));
+    }
+
+    // ==================== 状态漂移自检 ====================
+
+    @Override
+    public ShipWorkbenchDriftResultVo detectDrift(List<Long> merchantIds) {
+        ShipWorkbenchDriftResultVo result = new ShipWorkbenchDriftResultVo();
+        // 扫描多取1行判截断，避免二次 count 查询
+        List<OOrder> scanned = scanDriftCandidates(merchantIds);
+        boolean truncated = scanned.size() > DRIFT_SCAN_LIMIT;
+        List<OOrder> units = truncated ? scanned.subList(0, DRIFT_SCAN_LIMIT) : scanned;
+        // 批量拉记录后内存比对（shipOrderId 分片 IN），禁止逐单查询
+        Map<Long, List<OShipWaybill>> recordMap = loadRecordsByUnits(units);
+        List<DriftVo> items = new ArrayList<>();
+        for (OOrder unit : units) {
+            DriftVo drift = classifyDrift(unit, recordMap.getOrDefault(Long.parseLong(unit.getId()), List.of()));
+            if (drift != null) {
+                items.add(drift);
+            }
+        }
+        result.setItems(items);
+        result.setTruncated(truncated);
+        log.info("======状态漂移自检======数据域={}，扫描={}单，漂移={}单，截断={}",
+                merchantIds == null ? "全部" : merchantIds.size(), units.size(), items.size(), truncated);
+        return result;
+    }
+
+    @Override
+    public ResultVo<ShipWorkbenchDriftFixResultVo> fixDrift(List<Long> orderIds, String username,
+                                                            List<Long> merchantIds) {
+        if (orderIds == null || orderIds.isEmpty()) {
+            return ResultVo.error("请先勾选订单");
+        }
+        TransactionTemplate tx = perOrderTransaction();
+        ShipWorkbenchDriftFixResultVo result = new ShipWorkbenchDriftFixResultVo();
+        for (Long id : new LinkedHashSet<>(orderIds)) {
+            ShipWorkbenchDriftFixResultVo.Item item = new ShipWorkbenchDriftFixResultVo.Item();
+            item.setOrderId(id);
+            try {
+                // 修复前重新检测确认该单仍漂移（检测结果与修复之间状态可能已被业务动作改变）
+                OOrder order = orderMapper.selectById(id);
+                if (order == null) {
+                    item.setSuccess(false);
+                    item.setMsg("订单不存在");
+                    result.setFailCount(result.getFailCount() + 1);
+                } else {
+                    item.setOrderNum(order.getOrderNum());
+                    if (!hasScope(merchantIds, order.getMerchantId())) {
+                        item.setSuccess(false);
+                        item.setMsg("无该订单操作权限");
+                        result.setFailCount(result.getFailCount() + 1);
+                    } else {
+                        List<OShipWaybill> records = loadRecordsByUnits(List.of(order))
+                                .getOrDefault(id, List.of());
+                        DriftVo drift = classifyDrift(order, records);
+                        if (drift == null) {
+                            item.setSuccess(false);
+                            item.setMsg("该订单当前无漂移，已跳过");
+                            result.setFailCount(result.getFailCount() + 1);
+                        } else {
+                            item.setType(drift.getDriftType());
+                            item.setAction(DRIFT_FIX_ACTIONS.get(drift.getDriftType()));
+                            String msg = tx.execute(status -> fixDriftOne(drift, username, new Date()));
+                            if (msg == null) {
+                                item.setSuccess(true);
+                                result.setSuccessCount(result.getSuccessCount() + 1);
+                            } else {
+                                item.setSuccess(false);
+                                item.setMsg(msg);
+                                result.setFailCount(result.getFailCount() + 1);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // 单单独立事务：系统异常只回滚当前单，其余单继续
+                log.error("======状态漂移修复异常======orderId={}，error={}", id, e.getMessage(), e);
+                item.setSuccess(false);
+                item.setMsg("系统异常：" + e.getMessage());
+                result.setFailCount(result.getFailCount() + 1);
+            }
+            result.getItems().add(item);
+        }
+        log.info("======状态漂移修复======操作人={}，选中={}单，成功={}单，失败={}单",
+                username, orderIds.size(), result.getSuccessCount(), result.getFailCount());
+        return ResultVo.success(result);
+    }
+
+    /** 漂移候选扫描：数据域内 waybill_status IN(0,1,2,3) 且未取消/删除的单，只取判定所需列 */
+    private List<OOrder> scanDriftCandidates(List<Long> merchantIds) {
+        LambdaQueryWrapper<OOrder> wrapper = new LambdaQueryWrapper<OOrder>()
+                .select(OOrder::getId, OOrder::getOrderNum, OOrder::getShopId, OOrder::getShopType,
+                        OOrder::getMerchantId, OOrder::getWaybillStatus, OOrder::getWaybillAccountId)
+                .in(OOrder::getWaybillStatus, EnumWaybillStatus.NOT_TAKEN.getIndex(),
+                        EnumWaybillStatus.TAKEN.getIndex(), EnumWaybillStatus.PRINTED.getIndex(),
+                        EnumWaybillStatus.SHIPPED.getIndex())
+                .notIn(OOrder::getOrderStatus, EnumOOrderStatus.CANCEL.getIndex(),
+                        EnumOOrderStatus.DELETED.getIndex())
+                .orderByAsc(OOrder::getId)
+                .last("LIMIT " + (DRIFT_SCAN_LIMIT + 1));
+        if (merchantIds != null && !merchantIds.isEmpty()) {
+            wrapper.in(OOrder::getMerchantId, merchantIds);
+        }
+        return orderMapper.selectList(wrapper);
+    }
+
+    /** 按发货单元批量拉打单记录（shipOrderId 分片 IN），返回 shipOrderId→记录列表 */
+    private Map<Long, List<OShipWaybill>> loadRecordsByUnits(List<OOrder> units) {
+        List<Long> unitIds = units.stream().map(u -> Long.parseLong(u.getId())).collect(Collectors.toList());
+        Map<Long, List<OShipWaybill>> map = new HashMap<>();
+        for (int i = 0; i < unitIds.size(); i += DRIFT_RECORD_BATCH_SIZE) {
+            List<Long> chunk = unitIds.subList(i, Math.min(i + DRIFT_RECORD_BATCH_SIZE, unitIds.size()));
+            for (OShipWaybill record : shipWaybillMapper.selectList(new LambdaQueryWrapper<OShipWaybill>()
+                    .select(OShipWaybill::getId, OShipWaybill::getShipOrderId, OShipWaybill::getStatus)
+                    .in(OShipWaybill::getShipOrderId, chunk))) {
+                if (record.getShipOrderId() != null) {
+                    map.computeIfAbsent(record.getShipOrderId(), k -> new ArrayList<>()).add(record);
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 单单漂移判定：订单面单状态与打单记录过程状态的一致性比对；一致返回 null
+     */
+    private DriftVo classifyDrift(OOrder order, List<OShipWaybill> records) {
+        Integer ws = order.getWaybillStatus();
+        if (ws == null) {
+            return null;
+        }
+        String type = null;
+        if (ws == EnumWaybillStatus.TAKEN.getIndex() || ws == EnumWaybillStatus.PRINTED.getIndex()) {
+            boolean hasLive = records.stream().anyMatch(r -> Objects.equals(r.getStatus(), EnumWaybillStatus.TAKEN.getIndex())
+                    || Objects.equals(r.getStatus(), EnumWaybillStatus.PRINTED.getIndex()));
+            if (!hasLive) {
+                type = DRIFT_NO_WAYBILL_RECORD;
+            }
+        } else if (ws == EnumWaybillStatus.NOT_TAKEN.getIndex()) {
+            // 未取号但账号已分配且残留已取号记录：取号动作半途失败/取消未清记录
+            boolean hasOrphan = records.stream().anyMatch(
+                    r -> Objects.equals(r.getStatus(), EnumWaybillStatus.TAKEN.getIndex()));
+            if (order.getWaybillAccountId() != null && hasOrphan) {
+                type = DRIFT_ORPHAN_RECORD;
+            }
+        } else if (ws == EnumWaybillStatus.SHIPPED.getIndex()) {
+            boolean shipped = records.stream().anyMatch(
+                    r -> Objects.equals(r.getStatus(), EnumWaybillStatus.SHIPPED.getIndex()));
+            if (!shipped) {
+                type = DRIFT_RECORD_NOT_SHIPPED;
+            }
+        }
+        if (type == null) {
+            return null;
+        }
+        DriftVo vo = new DriftVo();
+        vo.setOrderId(Long.parseLong(order.getId()));
+        vo.setOrderNum(order.getOrderNum());
+        vo.setShopId(order.getShopId());
+        vo.setShopType(order.getShopType());
+        vo.setWaybillStatus(ws);
+        vo.setWaybillAccountId(order.getWaybillAccountId());
+        vo.setDriftType(type);
+        vo.setRecordStatusText(records.isEmpty() ? "无" : records.stream()
+                .map(r -> r.getStatus() == null ? "null" : String.valueOf(r.getStatus()))
+                .collect(Collectors.joining(",")));
+        vo.setDescription(DRIFT_DESCRIPTIONS.get(type));
+        return vo;
+    }
+
+    /**
+     * 单单修复（已在重新检测事务外确认漂移，条件更新+受影响行数校验兜底竞态）
+     *
+     * @return null=成功，否则为失败原因
+     */
+    private String fixDriftOne(DriftVo drift, String username, Date now) {
+        switch (drift.getDriftType()) {
+            case DRIFT_NO_WAYBILL_RECORD -> {
+                Integer updated = orderMapper.update(null, new LambdaUpdateWrapper<OOrder>()
+                        .eq(OOrder::getId, drift.getOrderId())
+                        .in(OOrder::getWaybillStatus, EnumWaybillStatus.TAKEN.getIndex(),
+                                EnumWaybillStatus.PRINTED.getIndex())
+                        .set(OOrder::getWaybillStatus, EnumWaybillStatus.NOT_TAKEN.getIndex())
+                        .set(OOrder::getUpdateTime, now)
+                        .set(OOrder::getUpdateBy, username));
+                if (updated == null || updated == 0) {
+                    return "订单状态已变化，请刷新后重试";
+                }
+            }
+            case DRIFT_ORPHAN_RECORD -> {
+                Integer deleted = shipWaybillMapper.delete(new LambdaQueryWrapper<OShipWaybill>()
+                        .eq(OShipWaybill::getShipOrderId, drift.getOrderId())
+                        .eq(OShipWaybill::getStatus, EnumWaybillStatus.TAKEN.getIndex()));
+                if (deleted == null || deleted == 0) {
+                    return "孤儿记录已不存在，请刷新后重试";
+                }
+            }
+            case DRIFT_RECORD_NOT_SHIPPED -> {
+                Integer updated = shipWaybillMapper.update(null, new LambdaUpdateWrapper<OShipWaybill>()
+                        .eq(OShipWaybill::getShipOrderId, drift.getOrderId())
+                        .and(w -> w.isNull(OShipWaybill::getStatus)
+                                .or().ne(OShipWaybill::getStatus, EnumWaybillStatus.SHIPPED.getIndex()))
+                        .set(OShipWaybill::getStatus, EnumWaybillStatus.SHIPPED.getIndex())
+                        .set(OShipWaybill::getUpdateTime, now)
+                        .set(OShipWaybill::getUpdateBy, username));
+                if (updated == null || updated == 0) {
+                    return "打单记录状态已变化，请刷新后重试";
+                }
+            }
+            default -> {
+                return "未知漂移类型：" + drift.getDriftType();
+            }
+        }
+        return null;
     }
 
     // ==================== 私有工具 ====================

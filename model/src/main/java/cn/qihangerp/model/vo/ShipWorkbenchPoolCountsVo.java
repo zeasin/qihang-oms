@@ -27,4 +27,8 @@ public class ShipWorkbenchPoolCountsVo implements Serializable {
     private Long allocatePending;
     /** 队列合计（不含已发货终态） */
     private Long total;
+    /** 即将超时（create_time+时效配置 剩余0~12小时；不受 timeoutFilter 影响，恒为全队列口径） */
+    private Long aboutTimeout;
+    /** 已超时（create_time+时效配置 剩余<0；不受 timeoutFilter 影响，恒为全队列口径） */
+    private Long timeout;
 }

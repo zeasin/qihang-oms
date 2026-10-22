@@ -45,8 +45,10 @@ public class ShipWorkbenchQuery implements Serializable {
     private String receiverMobile;
     /** 商品关键词：匹配商品标题/规格编码/条码（模糊） */
     private String goodsKeyword;
-    /** 排序列白名单：stayTime停留时长 / waybillStatus取号状态（空=下单时间倒序） */
+    /** 排序列白名单：stayTime停留时长 / waybillStatus取号状态（空=默认下单时间倒序） */
     private String sortField;
     /** 排序方向：ascending正序 / 其他=倒序 */
     private String sortOrder;
+    /** 超时预警筛选：空=不过滤 / soon即将超时（剩余0~12小时） / timeout已超时（剩余<0），口径=sys_config order.ship.timeout.hours + create_time */
+    private String timeoutFilter;
 }

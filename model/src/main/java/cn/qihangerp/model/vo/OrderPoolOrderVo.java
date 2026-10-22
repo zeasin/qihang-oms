@@ -67,6 +67,8 @@ public class OrderPoolOrderVo implements Serializable {
     /** 下单时间 */
     private LocalDateTime orderTime;
     private Date createTime;
+    /** 距发货超时的剩余小时数（负值=已超时小时数；createTime 或时效配置缺失为 null） */
+    private Integer remainHours;
 
     /** 已拆分标记：主单存在有效拆分子单（主订单行，四池平铺展示用） */
     private Boolean splitFlag;

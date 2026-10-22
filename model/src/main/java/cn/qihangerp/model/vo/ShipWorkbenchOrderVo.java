@@ -80,6 +80,8 @@ public class ShipWorkbenchOrderVo implements Serializable {
     private Date createTime;
     /** 进入当前队列的停留小时数（按订单创建时间计算） */
     private Long stayHours;
+    /** 距发货超时的剩余小时数（负值=已超时小时数；createTime 或时效配置缺失为 null） */
+    private Integer remainHours;
 
     private String goodsSummary;
     private Integer itemCount;

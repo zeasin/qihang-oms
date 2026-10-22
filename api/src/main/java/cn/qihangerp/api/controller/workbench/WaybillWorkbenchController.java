@@ -6,6 +6,7 @@ import cn.qihangerp.common.ResultVo;
 import cn.qihangerp.common.TableDataInfo;
 import cn.qihangerp.enums.EnumUserType;
 import cn.qihangerp.model.bo.ShipWorkbenchCancelBo;
+import cn.qihangerp.model.bo.ShipWorkbenchDriftFixBo;
 import cn.qihangerp.model.bo.ShipWorkbenchDistributeBo;
 import cn.qihangerp.model.bo.ShipWorkbenchManualShipBo;
 import cn.qihangerp.model.bo.ShipWorkbenchPrintBo;
@@ -15,6 +16,7 @@ import cn.qihangerp.model.bo.ShipWorkbenchTakeBo;
 import cn.qihangerp.model.entity.ShopWaybillAccount;
 import cn.qihangerp.model.request.ShipWorkbenchQuery;
 import cn.qihangerp.model.vo.ShipWorkbenchActionResultVo;
+import cn.qihangerp.model.vo.ShipWorkbenchDriftFixResultVo;
 import cn.qihangerp.model.vo.ShipWorkbenchOrderVo;
 import cn.qihangerp.security.common.BaseController;
 import cn.qihangerp.security.common.SecurityUtils;
@@ -336,6 +338,40 @@ public class WaybillWorkbenchController extends BaseController {
         log.info("======打单发货手动发货======身份={}，{}", identity, bo);
         ResultVo<ShipWorkbenchActionResultVo> result = waybillService.manualShip(
                 bo, resolveMerchantIds(identity), resolveShopId(identity), getUsername());
+        if (result.getCode() == 0) {
+            return AjaxResult.success(result.getData());
+        }
+        return AjaxResult.error(result.getMsg());
+    }
+
+    /**
+     * 状态漂移自检：比对 waybill_status 与打单记录一致性（数据域=总部不限 / 商户本商户；店铺端拒绝）
+     */
+    @GetMapping("/drift")
+    @PreAuthorize("@ss.hasPermi('orderWorkbench:waybill:list')")
+    public AjaxResult drift() {
+        Integer identity = identity();
+        if (identity == null || identity != EnumUserType.SUPPER.getIndex()
+                && identity != EnumUserType.MERCHANT.getIndex()) {
+            return AjaxResult.error("仅总部、商户端可执行状态漂移自检");
+        }
+        return AjaxResult.success(waybillService.detectDrift(resolveMerchantIds(identity)));
+    }
+
+    /**
+     * 状态漂移修复：逐单重新检测确认后按类型修复（数据域同 /drift）
+     */
+    @PostMapping("/fixDrift")
+    @PreAuthorize("@ss.hasPermi('orderWorkbench:waybill:list')")
+    public AjaxResult fixDrift(@RequestBody ShipWorkbenchDriftFixBo bo) {
+        Integer identity = identity();
+        if (identity == null || identity != EnumUserType.SUPPER.getIndex()
+                && identity != EnumUserType.MERCHANT.getIndex()) {
+            return AjaxResult.error("仅总部、商户端可执行状态漂移修复");
+        }
+        log.info("======状态漂移修复======身份={}，{}", identity, bo);
+        ResultVo<ShipWorkbenchDriftFixResultVo> result = waybillService.fixDrift(
+                bo == null ? null : bo.getOrderIds(), getUsername(), resolveMerchantIds(identity));
         if (result.getCode() == 0) {
             return AjaxResult.success(result.getData());
         }

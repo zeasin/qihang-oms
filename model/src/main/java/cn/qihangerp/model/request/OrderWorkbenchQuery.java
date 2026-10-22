@@ -75,4 +75,6 @@ public class OrderWorkbenchQuery implements Serializable {
     private String sortField;
     /** 排序方向：ascending正序 / 其他=倒序 */
     private String sortOrder;
+    /** 超时预警筛选：空=不过滤 / soon即将超时（剩余0~12小时） / timeout已超时（剩余<0），口径=sys_config order.ship.timeout.hours + create_time */
+    private String timeoutFilter;
 }

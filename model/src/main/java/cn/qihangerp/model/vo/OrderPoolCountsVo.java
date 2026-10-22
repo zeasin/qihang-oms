@@ -28,8 +28,12 @@ public class OrderPoolCountsVo implements Serializable {
     private Long exception;
     /** 待发货（已放行未发货） */
     private Long released;
-    /** 已发货 */
+    /** 已发货（audit_status 1 AND ship_status>0） */
     private Long shipped;
     /** 已完成（order_status=3） */
     private Long completed;
+    /** 即将超时（create_time+时效配置 剩余0~12小时；基于当前状态池，不受 timeoutFilter 影响） */
+    private Long aboutTimeout;
+    /** 已超时（create_time+时效配置 剩余<0；基于当前状态池，不受 timeoutFilter 影响） */
+    private Long timeout;
 }

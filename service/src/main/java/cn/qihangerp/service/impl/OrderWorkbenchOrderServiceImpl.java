@@ -19,6 +19,7 @@ import cn.qihangerp.mapper.OOrderMapper;
 import cn.qihangerp.mapper.OOrderStockingMapper;
 import cn.qihangerp.mapper.OOrderTagMapper;
 import cn.qihangerp.mapper.ShopWaybillAccountMapper;
+import cn.qihangerp.mapper.SysConfigMapper;
 import cn.qihangerp.model.bo.OrderAddressBo;
 import cn.qihangerp.model.bo.OrderCancelBo;
 import cn.qihangerp.model.bo.OrderExceptionBo;
@@ -32,6 +33,7 @@ import cn.qihangerp.model.entity.OOrderItem;
 import cn.qihangerp.model.entity.OOrderStocking;
 import cn.qihangerp.model.entity.OOrderTag;
 import cn.qihangerp.model.entity.ShopWaybillAccount;
+import cn.qihangerp.model.entity.SysConfig;
 import cn.qihangerp.model.request.OrderWorkbenchQuery;
 import cn.qihangerp.model.vo.ExceptionTagCountVo;
 import cn.qihangerp.model.vo.OrderPoolCountsVo;
@@ -98,6 +100,12 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
     private static final int ORDER_NUM_LIMIT = 50;
     /** 商品关键词命中订单数上限，保护 IN 查询规模 */
     private static final int KEYWORD_ORDER_LIMIT = 2000;
+    /** 发货超时预警时效配置键（sys_config，单位小时，与打单队列同源） */
+    private static final String SHIP_TIMEOUT_CONFIG_KEY = "order.ship.timeout.hours";
+    /** 时效配置缺失/非法时的兜底小时数（与 12_sys_config_ship_timeout_hours.sql 默认值一致） */
+    private static final int DEFAULT_SHIP_TIMEOUT_HOURS = 48;
+    /** 剩余不足12小时计入即将超时 */
+    private static final int ABOUT_TIMEOUT_WARN_HOURS = 12;
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -109,6 +117,7 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
     private final ErpSupplierMapper erpSupplierMapper;
     private final ErpWarehouseMapper erpWarehouseMapper;
     private final PlatformTransactionManager transactionManager;
+    private final SysConfigMapper sysConfigMapper;
 
     // ==================== 状态池查询 ====================
 
@@ -138,6 +147,15 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
         vo.setReleased(orderMapper.selectCount(buildPoolWrapper(query, "released")));
         vo.setShipped(orderMapper.selectCount(buildPoolWrapper(query, "shipped")));
         vo.setCompleted(orderMapper.selectCount(buildPoolWrapper(query, "completed")));
+        // 超时预警角标基于当前状态池、不受 timeoutFilter 影响，各自叠加独立时间边界；
+        // 已发货/已完成池叠加边界后口径自然收敛，不做状态特判
+        String pool = resolvePool(query);
+        Date now = new Date();
+        int timeoutHours = shipTimeoutHours();
+        vo.setAboutTimeout(orderMapper.selectCount(
+                applyTimeoutBoundary(buildPoolWrapper(query, pool, null), "soon", now, timeoutHours)));
+        vo.setTimeout(orderMapper.selectCount(
+                applyTimeoutBoundary(buildPoolWrapper(query, pool, null), "timeout", now, timeoutHours)));
         return vo;
     }
 
@@ -158,6 +176,10 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
      * 构建状态池查询条件：公共过滤 + 池条件（池口径见类注释）
      */
     private LambdaQueryWrapper<OOrder> buildPoolWrapper(OrderWorkbenchQuery query, String pool) {
+        return buildPoolWrapper(query, pool, query.getTimeoutFilter());
+    }
+
+    private LambdaQueryWrapper<OOrder> buildPoolWrapper(OrderWorkbenchQuery query, String pool, String timeoutFilter) {
         LambdaQueryWrapper<OOrder> wrapper = new LambdaQueryWrapper<>();
         // "all"（全部tab）的排除/状态条件在池分支里按筛选参数动态处理；其余四池恒定排除已取消(11)/已删除(29)
         if (!"all".equals(pool)) {
@@ -291,6 +313,9 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
                         .gt(OOrder::getShipStatus, EnumShipStatus.NOT.getIndex());
                 break;
         }
+        if (StringUtils.hasText(timeoutFilter)) {
+            applyTimeoutBoundary(wrapper, timeoutFilter, new Date(), shipTimeoutHours());
+        }
         return wrapper;
     }
 
@@ -350,9 +375,12 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
                         .eq(OOrderItem::getItemRole, EnumOrderRole.CHILD.getIndex()))
                 .stream().collect(Collectors.groupingBy(OOrderItem::getOrderId));
 
+        // 时效配置每次行组装读一次即可（行级 remainHours 计算用，缺失时该行返回 null 不展示）
+        Integer timeoutHours = shipTimeoutHoursOrNull();
         List<OrderPoolOrderVo> rows = new ArrayList<>();
         for (OOrder unit : units) {
             OrderPoolOrderVo vo = toVo(unit);
+            vo.setRemainHours(remainHoursOf(unit.getCreateTime(), timeoutHours));
             boolean master = unit.getOrderRole() != null
                     && unit.getOrderRole() == EnumOrderRole.MASTER.getIndex();
             int itemRole = master ? EnumOrderRole.MASTER.getIndex() : EnumOrderRole.CHILD.getIndex();
@@ -1268,6 +1296,61 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
             return true;
         }
         return orderMerchantId != null && merchantIds.contains(orderMerchantId);
+    }
+
+    /**
+     * 超时预警边界（口径=sys_config order.ship.timeout.hours，单位小时，行龄按 create_time，
+     * 与打单队列 ShipOrderWorkbenchServiceImpl 同式）：
+     * timeout=已超时（create_time &lt; now-N）；soon=即将超时（create_time ∈ [now-N, now-(N-12))）
+     *
+     * @return 原 wrapper，便于链式取 count
+     */
+    private LambdaQueryWrapper<OOrder> applyTimeoutBoundary(LambdaQueryWrapper<OOrder> wrapper, String filter,
+                                                            Date now, int timeoutHours) {
+        if (!StringUtils.hasText(filter)) {
+            return wrapper;
+        }
+        long line = now.getTime() - timeoutHours * 3600_000L;
+        String f = filter.trim().toLowerCase();
+        if ("timeout".equals(f)) {
+            wrapper.lt(OOrder::getCreateTime, new Date(line));
+        } else if ("soon".equals(f)) {
+            wrapper.ge(OOrder::getCreateTime, new Date(line))
+                    .lt(OOrder::getCreateTime, new Date(line + ABOUT_TIMEOUT_WARN_HOURS * 3600_000L));
+        }
+        return wrapper;
+    }
+
+    /** 预警时效小时数：配置缺失/非法兜底 48（过滤与角标必须可算） */
+    private int shipTimeoutHours() {
+        Integer hours = shipTimeoutHoursOrNull();
+        return hours == null ? DEFAULT_SHIP_TIMEOUT_HOURS : hours;
+    }
+
+    /** 预警时效小时数原值：sys_config 缺失/非法返回 null（行剩余时效无配置依据时不展示） */
+    private Integer shipTimeoutHoursOrNull() {
+        try {
+            SysConfig config = sysConfigMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
+                    .eq(SysConfig::getConfigKey, SHIP_TIMEOUT_CONFIG_KEY)
+                    .last("limit 1"));
+            String value = config == null ? null : config.getConfigValue();
+            if (!StringUtils.hasText(value)) {
+                return null;
+            }
+            int hours = Integer.parseInt(value.trim());
+            return hours > 0 ? hours : null;
+        } catch (Exception e) {
+            log.warn("======读取发货超时预警时效配置异常======error={}", e.getMessage());
+            return null;
+        }
+    }
+
+    /** 剩余时效小时数：正=距超时剩余，负=已超时时长；createTime 或时效配置缺失返回 null */
+    private Integer remainHoursOf(Date createTime, Integer timeoutHours) {
+        if (createTime == null || timeoutHours == null) {
+            return null;
+        }
+        return (int) ((timeoutHours * 3600_000L + createTime.getTime() - System.currentTimeMillis()) / 3600_000L);
     }
 
     private int nz(Integer value) {

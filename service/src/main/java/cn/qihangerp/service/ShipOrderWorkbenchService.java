@@ -13,6 +13,8 @@ import cn.qihangerp.model.bo.ShipWorkbenchTakeBo;
 import cn.qihangerp.model.entity.ShopWaybillAccount;
 import cn.qihangerp.model.request.ShipWorkbenchQuery;
 import cn.qihangerp.model.vo.ShipWorkbenchActionResultVo;
+import cn.qihangerp.model.vo.ShipWorkbenchDriftFixResultVo;
+import cn.qihangerp.model.vo.ShipWorkbenchDriftResultVo;
 import cn.qihangerp.model.vo.ShipWorkbenchOrderVo;
 import cn.qihangerp.model.vo.ShipWorkbenchPoolCountsVo;
 import cn.qihangerp.service.waybill.PlatformWaybillCapability;
@@ -83,4 +85,13 @@ public interface ShipOrderWorkbenchService {
     /** 手动发货（兜底通道）：人工录入物流公司与单号 → waybill_status=10，本地仓落备货单 */
     ResultVo<ShipWorkbenchActionResultVo> manualShip(ShipWorkbenchManualShipBo bo, List<Long> merchantIds,
                                                     Long shopId, String username);
+
+    /**
+     * 状态漂移自检：数据域内比对 o_order.waybill_status 与打单记录（o_order_ship_waybill）一致性，
+     * 扫描上限保护（超限 truncated=true）
+     */
+    ShipWorkbenchDriftResultVo detectDrift(List<Long> merchantIds);
+
+    /** 状态漂移修复：逐单重新检测确认后按类型修复（REQUIRES_NEW 单单独立事务） */
+    ResultVo<ShipWorkbenchDriftFixResultVo> fixDrift(List<Long> orderIds, String username, List<Long> merchantIds);
 }

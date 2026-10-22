@@ -122,3 +122,20 @@ export function getWaybillReturnTagOptions(bindPool) {
     params: { bindPool }
   })
 }
+
+// 状态漂移自检（o_order.waybill_status 与打单记录一致性比对，返回 items / truncated）
+export function driftDetect() {
+  return request({
+    url: '/api/erp-api/orderWorkbench/waybill/drift',
+    method: 'get'
+  })
+}
+
+// 状态漂移修复（批量，逐单重新检测确认后按类型修复，返回 successCount / failCount / items）
+export function driftFix(data) {
+  return request({
+    url: '/api/erp-api/orderWorkbench/waybill/fixDrift',
+    method: 'post',
+    data
+  })
+}

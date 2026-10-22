@@ -47,6 +47,13 @@
           <el-option v-for="t in shipperTypeOptions" :key="t.value" :label="t.label" :value="t.value" />
         </el-select>
       </el-form-item>
+      <el-form-item label="超时预警">
+        <el-radio-group v-model="query.timeoutFilter" size="small" @change="handleTimeoutChange">
+          <el-radio-button label="">全部</el-radio-button>
+          <el-radio-button label="soon">即将超时（{{ counts.aboutTimeout }}）</el-radio-button>
+          <el-radio-button label="timeout">已超时（{{ counts.timeout }}）</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="商品">
         <el-input
           v-model="query.goodsKeyword"
@@ -180,10 +187,19 @@
         :disabled="!selection.length"
         @click="openReturn(null)"
       >退回异常池</el-button>
+      <el-button
+        v-hasPermi="['orderWorkbench:waybill:list']"
+        size="small"
+        type="info"
+        plain
+        icon="el-icon-warning-outline"
+        @click="openDriftDialog"
+      >状态自检</el-button>
       <span class="selection-tip">已选 {{ selection.length }} 单（手动发货/退回需先取消取号）</span>
     </div>
 
     <el-table
+      ref="orderTable"
       v-loading="loading"
       :data="rows"
       border
@@ -278,9 +294,9 @@
           <div v-if="row.waybillCode" class="sub-text">{{ row.waybillCompany }} {{ row.waybillCode }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="停留" width="90">
+      <el-table-column label="停留" width="100">
         <template slot-scope="{ row }">
-          <span :class="stayClass(row.stayHours)">{{ stayText(row.stayHours) }}</span>
+          <span :class="stayClass(row)">{{ stayText(row) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="360" fixed="right">
@@ -434,28 +450,135 @@
       </span>
     </el-dialog>
 
-    <!-- 批量结果弹层 -->
-    <el-dialog :title="resultTitle" :visible.sync="resultVisible" width="640px" append-to-body>
+    <!-- 批量结果弹层（逐单明细 + 仅看失败 + 失败重试/复制） -->
+    <el-dialog :title="resultTitle" :visible.sync="resultVisible" width="720px" append-to-body>
       <div class="result-summary">
-        本次{{ resultAction }}：成功
-        <span class="text-success">{{ resultData.successCount }}</span> 单，失败
-        <span class="text-danger">{{ resultData.failCount }}</span> 单
+        <span>
+          本次{{ resultAction }}：成功
+          <span class="text-success">{{ resultStats.success }}</span> 单 · 失败
+          <span class="text-danger">{{ resultStats.fail }}</span> 单 · 跳过
+          <span class="text-skip">{{ resultStats.skip }}</span> 单
+        </span>
+        <el-checkbox v-model="resultOnlyFailed" size="mini" class="only-failed-checkbox">仅看失败</el-checkbox>
       </div>
-      <el-table :data="resultData.items || []" border size="mini" max-height="320">
-        <el-table-column label="订单号" min-width="180">
+      <el-table :data="resultRows" border size="mini" max-height="340">
+        <el-table-column label="订单号" min-width="170">
           <template slot-scope="{ row }">{{ row.orderNum || ('发货单元#' + row.id) }}</template>
+        </el-table-column>
+        <el-table-column label="执行动作" width="90" align="center">
+          <template slot-scope="{ row }">{{ row.action }}</template>
         </el-table-column>
         <el-table-column label="结果" width="70" align="center">
           <template slot-scope="{ row }">
-            <el-tag size="mini" :type="row.success ? 'success' : 'danger'">{{ row.success ? '成功' : '失败' }}</el-tag>
+            <el-tag size="mini" :type="resultTagType(row)">{{ resultStatusText(row) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="说明" min-width="240">
-          <template slot-scope="{ row }">{{ row.msg || '-' }}</template>
+        <el-table-column label="原因" min-width="230">
+          <template slot-scope="{ row }">{{ row.success ? '-' : (row.msg || '-') }}</template>
         </el-table-column>
       </el-table>
       <span slot="footer">
+        <el-button
+          v-if="resultStats.fail > 0 && retryContext"
+          :loading="submitting"
+          type="danger"
+          plain
+          @click="retryFailed"
+        >{{ resultActionKey === 'manualShip' ? '重新提交失败单' : '重试失败单' }}</el-button>
+        <el-button
+          v-if="resultStats.fail > 0"
+          class="tag-copy"
+          :data-clipboard-text="failedOrderNumsText"
+          @click="copyActiveCode($event, failedOrderNumsText)"
+        >复制失败单号</el-button>
         <el-button type="primary" @click="resultVisible = false">知道了</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 状态漂移自检弹窗（waybill_status 与打单记录一致性：检测 → 勾选修复 → 复检） -->
+    <el-dialog title="打单状态自检" :visible.sync="driftVisible" width="900px" append-to-body>
+      <el-alert
+        v-if="driftTruncated"
+        class="drift-alert"
+        type="warning"
+        :closable="false"
+        show-icon
+        title="数据量较大，本次仅检测前 5000 条，未检测部分请缩小筛选范围（店铺/平台）后复检"
+      />
+      <div class="result-summary">
+        <span>
+          检出状态漂移
+          <span class="text-danger">{{ driftItems.length }}</span> 单；
+          修复将逐单重新检测确认后按漂移类型纠正状态
+        </span>
+        <el-button size="mini" icon="el-icon-refresh" :loading="driftLoading" @click="loadDrift">重新检测</el-button>
+      </div>
+      <el-table
+        v-loading="driftLoading"
+        :data="driftItems"
+        border
+        size="mini"
+        max-height="320"
+        @selection-change="handleDriftSelection"
+      >
+        <el-table-column type="selection" width="45" align="center" />
+        <el-table-column label="订单号" min-width="170">
+          <template slot-scope="{ row }">{{ row.orderNum || ('发货单元#' + row.orderId) }}</template>
+        </el-table-column>
+        <el-table-column label="店铺类型" width="110">
+          <template slot-scope="{ row }">{{ platformNameOf(row.shopType) }}</template>
+        </el-table-column>
+        <el-table-column label="本地状态" width="100" align="center">
+          <template slot-scope="{ row }">
+            <el-tag size="mini" :type="waybillTagType(row.waybillStatus)">{{ waybillStatusText(row.waybillStatus) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="漂移类型" width="130" align="center">
+          <template slot-scope="{ row }">
+            <el-tag size="mini" :type="driftTagType(row.driftType)">{{ driftTypeName(row.driftType) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="说明" min-width="260">
+          <template slot-scope="{ row }">
+            <div>{{ row.description || '-' }}</div>
+            <div class="sub-text">打单记录状态：{{ row.recordStatusText || '无' }}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-empty v-if="!driftLoading && !driftItems.length" description="未检出状态漂移，队列数据一致" />
+      <template v-if="driftFixResult">
+        <div class="result-summary drift-fix-summary">
+          <span>
+            本次修复：成功
+            <span class="text-success">{{ driftFixResult.successCount }}</span> 单 · 失败
+            <span class="text-danger">{{ driftFixResult.failCount }}</span> 单
+          </span>
+        </div>
+        <el-table :data="driftFixResult.items" border size="mini" max-height="200">
+          <el-table-column label="订单号" min-width="170">
+            <template slot-scope="{ row }">{{ row.orderNum || ('发货单元#' + row.orderId) }}</template>
+          </el-table-column>
+          <el-table-column label="修复动作" min-width="230">
+            <template slot-scope="{ row }">{{ row.action || '-' }}</template>
+          </el-table-column>
+          <el-table-column label="结果" width="70" align="center">
+            <template slot-scope="{ row }">
+              <el-tag size="mini" :type="row.success ? 'success' : 'danger'">{{ row.success ? '成功' : '失败' }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="原因" min-width="200">
+            <template slot-scope="{ row }">{{ row.success ? '-' : (row.msg || '-') }}</template>
+          </el-table-column>
+        </el-table>
+      </template>
+      <span slot="footer">
+        <el-button @click="driftVisible = false">关闭</el-button>
+        <el-button
+          type="primary"
+          :loading="driftFixing"
+          :disabled="!driftSelection.length"
+          @click="submitDriftFix"
+        >修复选中（{{ driftSelection.length }}）</el-button>
       </span>
     </el-dialog>
 
@@ -478,7 +601,9 @@
           <el-descriptions-item label="收件人">{{ detail.receiverName }} {{ detail.receiverMobile }}</el-descriptions-item>
           <el-descriptions-item label="收货地址">{{ fullAddress(detail) }}</el-descriptions-item>
           <el-descriptions-item label="下单时间">{{ parseTime(detail.orderTime) }}</el-descriptions-item>
-          <el-descriptions-item label="停留时长">{{ stayText(detail.stayHours) }}</el-descriptions-item>
+          <el-descriptions-item label="停留时长">
+            <span :class="stayClass(detail)">{{ stayText(detail) }}</span>
+          </el-descriptions-item>
           <el-descriptions-item label="金额">{{ detail.payment }}</el-descriptions-item>
           <el-descriptions-item label="平台标签">{{ detail.tag || '-' }}</el-descriptions-item>
           <el-descriptions-item label="买家留言" :span="2">{{ detail.buyerMemo || '-' }}</el-descriptions-item>
@@ -520,12 +645,30 @@ import {
   shipWaybill,
   manualShipWaybill,
   getWaybillCapabilities,
-  getWaybillReturnTagOptions
+  getWaybillReturnTagOptions,
+  driftDetect,
+  driftFix
 } from '@/api/shipping/waybillWorkbench'
 import { getFavoriteList, getAvailableList } from '@/api/shipping/ship_logistics'
 import { listShop, listPlatform } from '@/api/shop/shop'
+import { copyActiveCode } from '@/utils/zhijian'
 
 const UNSUPPORTED_TIP = '开源版本不支持该电子面单功能，请用手动发货'
+
+/** 剩余时效不足该小时数按即将超时着色（与后端 ABOUT_TIMEOUT_WARN_HOURS 同口径） */
+const REMAIN_WARN_HOURS = 12
+
+/** 漂移类型文案/标签色（对齐后端 DriftVo.driftType） */
+const DRIFT_TYPE_TEXT = {
+  NO_WAYBILL_RECORD: '无打单记录',
+  ORPHAN_RECORD: '残留打单记录',
+  RECORD_NOT_SHIPPED: '记录未发货'
+}
+const DRIFT_TYPE_TAG = {
+  NO_WAYBILL_RECORD: 'danger',
+  ORPHAN_RECORD: 'warning',
+  RECORD_NOT_SHIPPED: 'info'
+}
 
 const EMPTY_QUERY = {
   orderNums: '',
@@ -540,10 +683,19 @@ const EMPTY_QUERY = {
   goodsKeyword: '',
   sortField: '',
   sortOrder: 'descending',
-  allocatePending: false
+  allocatePending: false,
+  timeoutFilter: ''
 }
 
-const EMPTY_COUNTS = { notTaken: 0, taken: 0, printed: 0, allocatePending: 0, total: 0 }
+const EMPTY_COUNTS = {
+  notTaken: 0,
+  taken: 0,
+  printed: 0,
+  allocatePending: 0,
+  total: 0,
+  aboutTimeout: 0,
+  timeout: 0
+}
 
 export default {
   name: 'WaybillWorkbench',
@@ -592,9 +744,25 @@ export default {
       },
       resultVisible: false,
       resultAction: '',
+      resultActionKey: '',
+      resultTitle: '',
       resultData: {},
+      // 「仅看失败」默认勾选：结果表格只展示失败+跳过，可取消查看全部
+      resultOnlyFailed: true,
+      // 重试上下文：{ api, params(除 orderIds 外的原参数), fixedParams(manualShip 原样重提), actionKey }
+      retryContext: null,
+      // 前端预筛跳过的单（不满足状态条件），随结果弹层展示、不计入重试
+      skippedOrders: [],
       detailVisible: false,
-      detail: null
+      detail: null,
+      // 状态漂移自检
+      driftVisible: false,
+      driftLoading: false,
+      driftFixing: false,
+      driftItems: [],
+      driftSelection: [],
+      driftTruncated: false,
+      driftFixResult: null
     }
   },
   computed: {
@@ -614,6 +782,28 @@ export default {
       })
       if (!names.length) return ''
       return names.join('、') + '：' + UNSUPPORTED_TIP + '（取号/取消取号/发货回传不可用，已取号订单的「标记已打印」仅推进状态）'
+    },
+    /** 结果弹层汇总条：成功/失败/跳过（跳过=前端预筛未提交后端） */
+    resultStats() {
+      const stats = { success: 0, fail: 0, skip: 0 }
+      const items = this.resultData.items || []
+      items.forEach(item => {
+        if (item.skipped) stats.skip += 1
+        else if (item.success) stats.success += 1
+        else stats.fail += 1
+      })
+      return stats
+    },
+    /** 默认只看失败+跳过，取消勾选展示全部逐单结果 */
+    resultRows() {
+      const items = this.resultData.items || []
+      return this.resultOnlyFailed ? items.filter(item => !item.success) : items
+    },
+    failedOrderNumsText() {
+      return (this.resultData.items || [])
+        .filter(item => !item.success && !item.skipped)
+        .map(item => item.orderNum || ('发货单元#' + item.id))
+        .join('\n')
     }
   },
   created() {
@@ -640,7 +830,7 @@ export default {
       const params = this.buildParams(true)
       params.pageNum = this.pageQuery.pageNum
       params.pageSize = this.pageQuery.pageSize
-      pageWaybillOrders(params).then(res => {
+      const listPromise = pageWaybillOrders(params).then(res => {
         this.rows = res.rows || []
         this.total = res.total || 0
         this.loadCapabilities()
@@ -654,6 +844,7 @@ export default {
       getWaybillPoolCounts(this.buildParams(false)).then(res => {
         this.counts = { ...EMPTY_COUNTS, ...(res.data || {}) }
       }).catch(() => {})
+      return listPromise
     },
     handleQuery() {
       this.pageQuery.pageNum = 1
@@ -665,6 +856,11 @@ export default {
       this.handleQuery()
     },
     handleViewChange() {
+      this.pageQuery.pageNum = 1
+      this.getList()
+    },
+    /** 超时预警筛选切换：时效数值由后端 sys_config 决定，前端只传 soon/timeout */
+    handleTimeoutChange() {
       this.pageQuery.pageNum = 1
       this.getList()
     },
@@ -799,9 +995,10 @@ export default {
     canReturn(row) {
       return row.waybillStatus === 0
     },
-    /** 目标单筛选：行内操作取当前行，工具条操作过滤选中单，不满足条件的跳过 */
-    pickOrders(row, predicate, emptyMsg) {
+    /** 目标单筛选：行内操作取当前行，工具条操作过滤选中单，不满足条件的跳过并记入 skippedOrders */
+    pickOrders(row, predicate, emptyMsg, capAction) {
       const source = row ? [row] : this.selection.slice()
+      this.skippedOrders = []
       if (!source.length) {
         this.$message.warning('请先勾选订单')
         return []
@@ -812,39 +1009,51 @@ export default {
         return []
       }
       if (matched.length < source.length) {
+        this.skippedOrders = source
+          .filter(o => matched.indexOf(o) < 0)
+          .map(o => ({ id: o.id, orderNum: o.orderNum, success: false, skipped: true, msg: (capAction && this.capTip(o, capAction)) || '不满足该操作的状态条件，已跳过' }))
         this.$message.info(`已跳过不符合条件的 ${source.length - matched.length} 单，本次操作 ${matched.length} 单`)
       }
       return matched
     },
+    buildSkipped(source, matched, msg) {
+      return source
+        .filter(o => matched.indexOf(o) < 0)
+        .map(o => ({ id: o.id, orderNum: o.orderNum, success: false, skipped: true, msg }))
+    },
     handleTake(row) {
-      const orders = this.pickOrders(row, o => this.canTake(o), `所选订单均不满足取号条件：需平台支持取号、已分配面单账号且未取号。${UNSUPPORTED_TIP}`)
+      const orders = this.pickOrders(row, o => this.canTake(o), `所选订单均不满足取号条件：需平台支持取号、已分配面单账号且未取号。${UNSUPPORTED_TIP}`, 'take')
       if (!orders.length) return
-      this.runAfterConfirm(`将对 ${orders.length} 单按已分配的面单账号发起取号，取号成功回写快递单号（未取号→已取号），是否继续？`, '取号确认', takeWaybill, orders, '取号')
+      this.runAfterConfirm(`将对 ${orders.length} 单按已分配的面单账号发起取号，取号成功回写快递单号（未取号→已取号），是否继续？`, '取号确认', takeWaybill, orders, '取号', 'take')
     },
     handleCancel(row) {
-      const orders = this.pickOrders(row, o => this.canCancel(o), '所选订单均不能取消取号：需平台支持取消且处于已取号未打印')
+      const orders = this.pickOrders(row, o => this.canCancel(o), '所选订单均不能取消取号：需平台支持取消且处于已取号未打印', 'cancel')
       if (!orders.length) return
-      this.runAfterConfirm(`将取消 ${orders.length} 单的平台快递单号并回到未取号（面单账号保留供重取沿用），是否继续？`, '取消取号确认', cancelWaybill, orders, '取消取号')
+      this.runAfterConfirm(`将取消 ${orders.length} 单的平台快递单号并回到未取号（面单账号保留供重取沿用），是否继续？`, '取消取号确认', cancelWaybill, orders, '取消取号', 'cancel')
     },
     handlePrint(row) {
-      const orders = this.pickOrders(row, o => this.canPrint(o), '所选订单均不满足打印条件：仅已取号未打印的订单可标记为已打印')
+      const orders = this.pickOrders(row, o => this.canPrint(o), '所选订单均不满足打印条件：仅已取号未打印的订单可标记为已打印', 'print')
       if (!orders.length) return
-      this.runAfterConfirm(`将把 ${orders.length} 单标记为已打印（已取号→已打印）。本页不连接本地打印组件，物理打印请使用各平台打单页。`, '打印确认', printWaybill, orders, '标记已打印')
+      this.runAfterConfirm(`将把 ${orders.length} 单标记为已打印（已取号→已打印）。本页不连接本地打印组件，物理打印请使用各平台打单页。`, '打印确认', printWaybill, orders, '标记已打印', 'print')
     },
     handleShip(row) {
-      const orders = this.pickOrders(row, o => this.canShip(o), `所选订单均不满足发货条件：需平台支持发货回传、已打印且有快递单号。${UNSUPPORTED_TIP}`)
+      const orders = this.pickOrders(row, o => this.canShip(o), `所选订单均不满足发货条件：需平台支持发货回传、已打印且有快递单号。${UNSUPPORTED_TIP}`, 'ship')
       if (!orders.length) return
-      this.runAfterConfirm(`将对 ${orders.length} 单回传平台并发货（已打印→已发货），发货后不可撤销，是否继续？`, '发货确认', shipWaybill, orders, '发货')
+      this.runAfterConfirm(`将对 ${orders.length} 单回传平台并发货（已打印→已发货），发货后不可撤销，是否继续？`, '发货确认', shipWaybill, orders, '发货', 'ship')
     },
-    runAfterConfirm(message, title, api, orders, action) {
+    runAfterConfirm(message, title, api, orders, action, actionKey) {
       this.$confirm(message, title, { type: 'warning' }).then(() => {
-        this.submitAction(api, orders, action)
+        this.submitAction(api, orders, action, actionKey)
       }).catch(() => {})
     },
-    submitAction(api, orders, action) {
+    submitAction(api, orders, action, actionKey) {
       this.submitting = true
       return api({ orderIds: orders.map(o => o.id) }).then(res => {
-        this.notifyResult(res.data, action)
+        this.notifyResult(res.data, action, {
+          actionKey,
+          skipped: this.skippedOrders,
+          retry: { api, params: null, fixedParams: false, actionKey }
+        })
         this.getList()
       }).catch(() => {}).finally(() => {
         this.submitting = false
@@ -892,7 +1101,10 @@ export default {
         orderIds: this.distributeOrders.map(o => o.id),
         waybillAccountId: this.selectedAccountId
       }).then(res => {
-        this.notifyResult(res.data, '分配')
+        this.notifyResult(res.data, '分配', {
+          actionKey: 'distribute',
+          retry: { api: distributeWaybill, params: { waybillAccountId: this.selectedAccountId }, fixedParams: false, actionKey: 'distribute' }
+        })
         this.distributeVisible = false
         this.getList()
       }).catch(() => {}).finally(() => {
@@ -907,11 +1119,13 @@ export default {
         return
       }
       const matched = orders.filter(o => this.canReturn(o))
+      this.skippedOrders = []
       if (!matched.length) {
         this.$message.warning('所选订单均不可退回：已取号请先取消取号，已打印/已发货不可退回')
         return
       }
       if (matched.length < orders.length) {
+        this.skippedOrders = this.buildSkipped(orders, matched, '已取号请先取消取号，已打印/已发货不可退回')
         this.$message.info(`已跳过不符合条件的 ${orders.length - matched.length} 单，本次退回 ${matched.length} 单`)
       }
       this.returnOrders = matched
@@ -935,7 +1149,11 @@ export default {
         orderIds: this.returnOrders.map(o => o.id),
         tagId: this.returnTagId
       }).then(res => {
-        this.notifyResult(res.data, '退回')
+        this.notifyResult(res.data, '退回', {
+          actionKey: 'return',
+          skipped: this.skippedOrders,
+          retry: { api: returnWaybill, params: { tagId: this.returnTagId }, fixedParams: false, actionKey: 'return' }
+        })
         this.returnVisible = false
         this.getList()
       }).catch(() => {}).finally(() => {
@@ -984,7 +1202,19 @@ export default {
           logisticsCompanyId: this.manualShipForm.logisticsCompanyId,
           trackingNumber: this.manualShipForm.trackingNumber
         }).then(res => {
-          this.notifyResult(res.data, '手动发货')
+          this.notifyResult(res.data, '手动发货', {
+            actionKey: 'manualShip',
+            retry: {
+              api: manualShipWaybill,
+              params: {
+                orderId: this.manualShipOrder.id,
+                logisticsCompanyId: this.manualShipForm.logisticsCompanyId,
+                trackingNumber: this.manualShipForm.trackingNumber
+              },
+              fixedParams: true,
+              actionKey: 'manualShip'
+            }
+          })
           this.manualShipVisible = false
           this.getList()
         }).catch(() => {}).finally(() => {
@@ -998,20 +1228,141 @@ export default {
         this.detailVisible = true
       })
     },
-    /** 逐单成败结果：有失败单弹层展示原因，全部成功仅提示 */
-    notifyResult(data, action) {
+    /** 逐单成败结果：有失败单弹层展示逐单明细（含前端预筛跳过单），全部成功仅提示 */
+    notifyResult(data, action, opts) {
+      const options = opts || {}
       if (!data) {
         this.$message.success(action + '成功')
         return
       }
-      if (data.failCount > 0) {
-        this.resultAction = action
-        this.resultData = data
-        this.resultTitle = `${action}结果：成功 ${data.successCount} 单 / 失败 ${data.failCount} 单`
+      const items = (data.items || []).map(item => ({
+        id: item.id,
+        orderNum: item.orderNum,
+        success: item.success,
+        msg: item.msg,
+        skipped: false,
+        action
+      }))
+      const skipped = (options.skipped || []).map(item => ({ ...item, action }))
+      this.resultData = { items: items.concat(skipped) }
+      this.resultAction = action
+      this.resultActionKey = options.actionKey || ''
+      this.retryContext = options.retry || null
+      const failCount = items.filter(item => !item.success).length
+      const successCount = items.length - failCount
+      this.resultTitle = `${action}结果：成功 ${successCount} 单 / 失败 ${failCount} 单`
+      if (failCount > 0) {
+        this.resultOnlyFailed = true
         this.resultVisible = true
         return
       }
-      this.$message.success(`${action}成功 ${data.successCount} 单`)
+      this.resultVisible = false
+      this.$message.success(`${action}成功 ${successCount} 单`)
+    },
+    /** 重试：仅带本次失败单（跳过单不计入），沿用当次 action 与原参数重新调用，后端逐单幂等 */
+    retryFailed() {
+      const ctx = this.retryContext
+      const items = this.resultData.items || []
+      const failed = items.filter(item => !item.success && !item.skipped)
+      if (!ctx || !failed.length) return
+      const failedIds = failed.map(item => item.id)
+      const skipped = items.filter(item => item.skipped)
+      const payload = ctx.fixedParams
+        ? ctx.params
+        : { ...ctx.params, orderIds: failedIds }
+      this.submitting = true
+      ctx.api(payload).then(res => {
+        this.notifyResult(res.data, this.resultAction, { actionKey: ctx.actionKey, skipped, retry: ctx })
+        this.getList().then(() => this.selectOrdersInTable(failedIds))
+      }).catch(() => {}).finally(() => {
+        this.submitting = false
+      })
+    },
+    /** 重试完成后把当次失败单回显为主表选中项，便于人工继续处理 */
+    selectOrdersInTable(ids) {
+      this.$nextTick(() => {
+        const table = this.$refs.orderTable
+        if (!table) return
+        table.clearSelection()
+        this.rows.forEach(row => {
+          if (ids.indexOf(row.id) >= 0) table.toggleRowSelection(row, true)
+        })
+      })
+    },
+    resultTagType(row) {
+      if (row.skipped) return 'info'
+      return row.success ? 'success' : 'danger'
+    },
+    resultStatusText(row) {
+      if (row.skipped) return '跳过'
+      return row.success ? '成功' : '失败'
+    },
+    copyActiveCode,
+    /** 状态自检：打开即扫描当前数据域内的 waybill_status / 打单记录不一致单 */
+    openDriftDialog() {
+      this.driftVisible = true
+      this.driftFixResult = null
+      this.driftSelection = []
+      this.loadDrift()
+    },
+    loadDrift() {
+      this.driftFixResult = null
+      this.fetchDrift()
+    },
+    fetchDrift() {
+      this.driftLoading = true
+      return driftDetect().then(res => {
+        const data = res.data || {}
+        this.driftItems = data.items || []
+        this.driftTruncated = !!data.truncated
+        this.driftSelection = []
+      }).catch(() => {
+        this.driftItems = []
+        this.driftTruncated = false
+        this.driftSelection = []
+      }).finally(() => {
+        this.driftLoading = false
+      })
+    },
+    handleDriftSelection(rows) {
+      this.driftSelection = rows
+    },
+    /** 修复：逐单提交选中漂移单，结果就地逐单展示 + 汇总提示，完成后刷新主列表并复检 */
+    submitDriftFix() {
+      if (!this.driftSelection.length) {
+        this.$message.warning('请先勾选需修复的订单')
+        return
+      }
+      const orders = this.driftSelection.slice()
+      this.$confirm(`将对选中的 ${orders.length} 单逐单重新检测并按漂移类型修复状态，是否继续？`, '修复确认', { type: 'warning' })
+        .then(() => {
+          this.driftFixing = true
+          return driftFix({ orderIds: orders.map(o => o.orderId) }).then(res => {
+            const data = res.data || {}
+            const successCount = data.successCount || 0
+            const failCount = data.failCount || 0
+            this.driftFixResult = { successCount, failCount, items: data.items || [] }
+            if (failCount > 0) {
+              this.$message.warning(`修复完成：成功 ${successCount} 单，失败 ${failCount} 单`)
+            } else {
+              this.$message.success(`修复完成：成功 ${successCount} 单`)
+            }
+            this.getList()
+            this.fetchDrift()
+          }).catch(() => {}).finally(() => {
+            this.driftFixing = false
+          })
+        }).catch(() => {})
+    },
+    waybillStatusText(status) {
+      const map = { 0: '未取号', 1: '已取号', 2: '已打印', 3: '已发货', 10: '手动发货' }
+      return map[status] || '未取号'
+    },
+    driftTypeName(type) {
+      return DRIFT_TYPE_TEXT[type] || type || '-'
+    },
+    driftTagType(type) {
+      return DRIFT_TYPE_TAG[type] || 'info'
     },
     platformNameOf(shopType) {
       if (shopType == null) return '-'
@@ -1042,12 +1393,26 @@ export default {
     fullAddress(row) {
       return [row.province, row.city, row.town, row.address].filter(item => !!item).join('')
     },
-    stayText(hours) {
+    /** 停留文案：有后端剩余时效小时（remainHours）时按超时口径展示，否则回落到队列停留时长 */
+    stayText(row) {
+      const remain = row.remainHours
+      if (remain != null) {
+        return remain < 0 ? '超时 ' + Math.abs(remain) + 'h' : '剩余 ' + remain + 'h'
+      }
+      const hours = row.stayHours
       if (hours == null) return '-'
       if (hours < 24) return hours + ' 小时'
       return Math.floor(hours / 24) + ' 天 ' + (hours % 24) + ' 小时'
     },
-    stayClass(hours) {
+    /** 停留着色：已超时红 / 即将超时（剩余 0~12h）橙黄 / 其余灰，无时效数据沿用原停留分级 */
+    stayClass(row) {
+      const remain = row.remainHours
+      if (remain != null) {
+        if (remain < 0) return 'remain-over'
+        if (remain <= REMAIN_WARN_HOURS) return 'remain-warn'
+        return 'remain-normal'
+      }
+      const hours = row.stayHours
       if (hours == null) return ''
       if (hours >= 48) return 'stay-over'
       if (hours >= 24) return 'stay-warn'
@@ -1169,6 +1534,9 @@ export default {
   margin-bottom: 8px;
 }
 .result-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 12px;
   font-size: 13px;
 }
@@ -1180,11 +1548,35 @@ export default {
   color: #f56c6c;
   font-weight: 600;
 }
+.text-skip {
+  color: #909399;
+  font-weight: 600;
+}
+.only-failed-checkbox {
+  margin: 0;
+}
 .detail-panel {
   padding: 0 16px 16px;
 }
 .detail-goods-title {
   margin: 16px 0 8px;
   font-weight: 600;
+}
+.remain-over {
+  color: #f56c6c;
+  font-weight: 600;
+}
+.remain-warn {
+  color: #e6a23c;
+  font-weight: 600;
+}
+.remain-normal {
+  color: #909399;
+}
+.drift-alert {
+  margin-bottom: 10px;
+}
+.drift-fix-summary {
+  margin-top: 16px;
 }
 </style>

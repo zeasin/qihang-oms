@@ -12,6 +12,10 @@
         <span class="tab-name">{{ tab.name }}</span>
         <span class="tab-count">{{ poolCountMap[tab.key] || 0 }}</span>
       </div>
+      <span class="timeout-badge">
+        即将超时 <b class="badge-warn">{{ timeoutBadge.aboutTimeout }}</b>
+        · 已超时 <b class="badge-danger">{{ timeoutBadge.timeout }}</b>
+      </span>
       <div class="tab-actions">
         <el-button size="mini" icon="el-icon-price-tag" @click="openTagManage">标签管理</el-button>
       </div>
@@ -90,6 +94,13 @@
           end-placeholder="结束"
           style="width: 220px"
         />
+      </el-form-item>
+      <el-form-item label="超时预警">
+        <el-radio-group v-model="queryParams.timeoutFilter" size="mini" @change="handleTimeoutChange">
+          <el-radio-button label="">全部</el-radio-button>
+          <el-radio-button label="soon">即将超时</el-radio-button>
+          <el-radio-button label="timeout">已超时</el-radio-button>
+        </el-radio-group>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" v-hasPermi="['orderWorkbench:order:list']" @click="handleQuery">搜索</el-button>
@@ -274,8 +285,8 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="停留" width="80" align="center">
-        <template slot-scope="{ row }"><span :class="stayClass(row.orderTime)">{{ stayHours(row.orderTime) }}</span></template>
+      <el-table-column label="停留" width="96" align="center">
+        <template slot-scope="{ row }"><span :class="stayClass(row)">{{ stayHours(row) }}</span></template>
       </el-table-column>
       <el-table-column label="操作" width="230" fixed="right" align="center">
         <template slot-scope="{ row }">
@@ -524,7 +535,9 @@
             <el-descriptions-item label="店铺">{{ shopName(node.shopId) || '-' }}</el-descriptions-item>
             <el-descriptions-item label="平台">{{ platformName(node.shopType) }}</el-descriptions-item>
             <el-descriptions-item label="下单时间">{{ node.orderTime ? parseTime(node.orderTime, '{y}-{m}-{d} {h}:{i}:{s}') : '-' }}</el-descriptions-item>
-            <el-descriptions-item label="停留时长">{{ stayHours(node.orderTime) }}</el-descriptions-item>
+            <el-descriptions-item label="停留时长">
+              <span :class="stayClass(node)">{{ stayHours(node) }}</span>
+            </el-descriptions-item>
             <el-descriptions-item label="收件人">{{ node.receiverName }} {{ node.receiverMobile }}</el-descriptions-item>
             <el-descriptions-item label="实付金额">{{ node.payment }}</el-descriptions-item>
             <el-descriptions-item label="收货地址" :span="2">{{ node.province }}{{ node.city }}{{ node.town }} {{ node.address }}</el-descriptions-item>
@@ -578,6 +591,9 @@ import { listShop, listPlatform } from '@/api/shop/shop'
 import { listAllMerchant } from '@/api/shop/merchant'
 import TagManageDialog from './components/TagManageDialog.vue'
 import SplitDialog from './components/SplitDialog.vue'
+
+/** 剩余时效不足该小时数按即将超时着色（与后端 ABOUT_TIMEOUT_WARN_HOURS 同口径） */
+const REMAIN_WARN_HOURS = 12
 
 export default {
   name: 'OrderWorkbench',
@@ -678,6 +694,13 @@ export default {
     flatPool() {
       return ['shipped', 'released', 'completed', 'all'].includes(this.queryParams.pool)
     },
+    // 超时预警角标：poolCounts 返回的全量口径（不受 timeoutFilter 影响）
+    timeoutBadge() {
+      return {
+        aboutTimeout: this.poolCountMap.aboutTimeout || 0,
+        timeout: this.poolCountMap.timeout || 0
+      }
+    },
     // 非异常池标签筛选行：仅通用标签（bind_pool 空/0）
     tagFilterList() {
       return this.tagOptionsList.filter(t => !t.bindPool)
@@ -718,7 +741,8 @@ export default {
         shopIds: '',
         tagIds: '',
         sortField: '',
-        sortOrder: ''
+        sortOrder: '',
+        timeoutFilter: ''
       }
     },
     // ---------- 数据加载 ----------
@@ -807,6 +831,12 @@ export default {
     },
     handleQuery() {
       this.activeExceptionTagId = null
+      this.pageQuery.pageNum = 1
+      this.getList()
+      this.getCounts()
+    },
+    // 超时预警筛选：时效数值由后端 sys_config 决定，前端只传 ''/soon/timeout
+    handleTimeoutChange() {
       this.pageQuery.pageNum = 1
       this.getList()
       this.getCounts()
@@ -1327,21 +1357,33 @@ export default {
       const map = { 0: '未发货', 1: '部分发货', 2: '全部发货', 3: '无需发货', 10: '已取号' }
       return map[status] != null ? map[status] : '-'
     },
-    // 停留小时数（orderTime 距今）
+    // 停留小时数（orderTime 距今，行无 remainHours 时兜底）
     stayHourNum(orderTime) {
       if (!orderTime) return null
       const t = new Date(String(orderTime).replace(/-/g, '/')).getTime()
       if (isNaN(t)) return null
       return Math.floor((Date.now() - t) / 3600000)
     },
-    stayHours(orderTime) {
-      const hours = this.stayHourNum(orderTime)
+    // 停留文案：优先后端剩余时效小时（负=已超时），无该字段时按下单时间距今
+    stayHours(row) {
+      const remain = row ? row.remainHours : null
+      if (remain != null) {
+        return remain < 0 ? '超时' + Math.abs(remain) + '时' : '剩余' + remain + '时'
+      }
+      const hours = this.stayHourNum(row ? row.orderTime : null)
       if (hours == null) return '-'
       if (hours < 24) return hours + '时'
       return Math.floor(hours / 24) + '天' + (hours % 24) + '时'
     },
-    stayClass(orderTime) {
-      const hours = this.stayHourNum(orderTime)
+    // 停留着色：已超时红 / 剩余 0~12 小时橙黄 / 其余灰，无时效数据沿用原停留分级
+    stayClass(row) {
+      const remain = row ? row.remainHours : null
+      if (remain != null) {
+        if (remain < 0) return 'remain-over'
+        if (remain <= REMAIN_WARN_HOURS) return 'remain-warn'
+        return 'remain-normal'
+      }
+      const hours = this.stayHourNum(row ? row.orderTime : null)
       if (hours == null) return ''
       if (hours >= 48) return 'stay-over'
       if (hours >= 24) return 'stay-warn'
@@ -1404,4 +1446,12 @@ export default {
 .selected-count { color: #409eff; font-size: 12px; font-weight: 600; margin-right: 12px; white-space: nowrap; }
 .pagination-bar { display: flex; align-items: center; }
 .pagination-bar .pagination-container { flex: 1; }
+.timeout-badge { color: #909399; font-size: 12px; margin-left: auto; margin-right: 10px; white-space: nowrap; }
+.timeout-badge b { font-weight: 600; }
+.badge-warn { color: #e6a23c; }
+.badge-danger { color: #f56c6c; }
+.timeout-badge + .tab-actions { margin-left: 0; }
+.remain-warn { color: #e6a23c; font-weight: 600; }
+.remain-over { color: #f56c6c; font-weight: 600; }
+.remain-normal { color: #909399; }
 </style>
