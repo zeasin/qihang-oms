@@ -72,7 +72,10 @@ public class WorkbenchOrderController extends BaseController {
         if (merchantId != null && merchantId == -1L) {
             return rejectTable();
         }
-        query.setMerchantId(merchantId);
+        if (merchantId != null) {
+            // 商户端强制锁定本商户；总部端(null)不覆盖前端传入的商户筛选
+            query.setMerchantId(merchantId);
+        }
         return getDataTable(orderService.poolPage(query, pageQuery));
     }
 
@@ -86,7 +89,10 @@ public class WorkbenchOrderController extends BaseController {
         if (merchantId != null && merchantId == -1L) {
             return AjaxResult.error("仅总部与商户端可操作");
         }
-        query.setMerchantId(merchantId);
+        if (merchantId != null) {
+            // 商户端强制锁定本商户；总部端(null)不覆盖前端传入的商户筛选
+            query.setMerchantId(merchantId);
+        }
         return AjaxResult.success(orderService.poolCounts(query));
     }
 
@@ -117,7 +123,10 @@ public class WorkbenchOrderController extends BaseController {
         if (merchantId != null && merchantId == -1L) {
             return AjaxResult.error("仅总部与商户端可操作");
         }
-        query.setMerchantId(merchantId);
+        if (merchantId != null) {
+            // 商户端强制锁定本商户；总部端(null)不覆盖前端传入的商户筛选
+            query.setMerchantId(merchantId);
+        }
         return AjaxResult.success(orderService.exceptionTagCounts(query));
     }
 

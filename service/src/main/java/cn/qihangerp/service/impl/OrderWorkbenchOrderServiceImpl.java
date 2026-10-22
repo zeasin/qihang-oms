@@ -76,8 +76,11 @@ import java.util.stream.Collectors;
  * 异常池=audit_status 2；
  * 待发货=audit_status 1 AND order_status 1 AND ship_status 0；
  * 已发货=audit_status 1 AND ship_status>0；
+ * 已完成=order_status 3（2026-10-22 新增，交易完成态，由平台状态同步推进，与发货动作解耦）；
  * 已拆单=audit_status 3（主订单拆单后终态，不进入任何状态池）；
- * 全池排除已取消(order_status 11)/已删除(order_status 29)。
+ * 全池排除已取消(order_status 11)/已删除(order_status 29)；
+ * "all"=全部tab（2026-10-22 新增）：不设池条件、不排除任何状态（口径=旧订单库全量列表），
+ * 可按 orderStatus/auditStatus 可选筛选（2026-10-22 由"默认排除取消/删除"改为"全量"）。
  * 主单/子单均按自身字段命中，无 order_role 过滤，四池统一平铺展示；
  * 主单行带 splitFlag（已拆分）与 canRelease（未拆分=数量完整，已拆分=全部子单就绪）计算，子单行只读展示。
  * 与 erp-pro 差异：OMS o_order 无 latest_delivery_time / shipping_time / member_id 列（相应筛选/排序不做）；
@@ -129,10 +132,12 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
     @Override
     public OrderPoolCountsVo poolCounts(OrderWorkbenchQuery query) {
         OrderPoolCountsVo vo = new OrderPoolCountsVo();
+        vo.setAll(orderMapper.selectCount(buildPoolWrapper(query, "all")));
         vo.setPending(orderMapper.selectCount(buildPoolWrapper(query, "pending")));
         vo.setException(orderMapper.selectCount(buildPoolWrapper(query, "exception")));
         vo.setReleased(orderMapper.selectCount(buildPoolWrapper(query, "released")));
         vo.setShipped(orderMapper.selectCount(buildPoolWrapper(query, "shipped")));
+        vo.setCompleted(orderMapper.selectCount(buildPoolWrapper(query, "completed")));
         return vo;
     }
 
@@ -142,7 +147,7 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
     private String resolvePool(OrderWorkbenchQuery query) {
         if (StringUtils.hasText(query.getPool())) {
             String pool = query.getPool().trim().toLowerCase();
-            if (Arrays.asList("pending", "exception", "released", "shipped").contains(pool)) {
+            if (Arrays.asList("all", "pending", "exception", "released", "shipped", "completed").contains(pool)) {
                 return pool;
             }
         }
@@ -153,10 +158,12 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
      * 构建状态池查询条件：公共过滤 + 池条件（池口径见类注释）
      */
     private LambdaQueryWrapper<OOrder> buildPoolWrapper(OrderWorkbenchQuery query, String pool) {
-        LambdaQueryWrapper<OOrder> wrapper = new LambdaQueryWrapper<OOrder>()
-                // 已取消(11)/已删除(29)订单不出现在任何状态池
-                .notIn(OOrder::getOrderStatus, EnumOOrderStatus.CANCEL.getIndex(),
-                        EnumOOrderStatus.DELETED.getIndex());
+        LambdaQueryWrapper<OOrder> wrapper = new LambdaQueryWrapper<>();
+        // "all"（全部tab）的排除/状态条件在池分支里按筛选参数动态处理；其余四池恒定排除已取消(11)/已删除(29)
+        if (!"all".equals(pool)) {
+            wrapper.notIn(OOrder::getOrderStatus, EnumOOrderStatus.CANCEL.getIndex(),
+                    EnumOOrderStatus.DELETED.getIndex());
+        }
         wrapper
                 .eq(query.getShopId() != null, OOrder::getShopId, query.getShopId())
                 .eq(query.getShopType() != null, OOrder::getShopType, query.getShopType())
@@ -248,6 +255,11 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
 
         // 池条件（主单/子单均按自身字段命中，无 order_role 过滤）
         switch (pool) {
+            case "all":
+                // 全部tab：不设池条件、不排除任何状态（口径=旧订单库全量），订单状态/审核状态仅作可选筛选
+                wrapper.eq(query.getOrderStatus() != null, OOrder::getOrderStatus, query.getOrderStatus())
+                        .eq(query.getAuditStatus() != null, OOrder::getAuditStatus, query.getAuditStatus());
+                break;
             case "pending":
                 // 待审核=audit_status 0 AND order_status 1 AND ship_status 0
                 wrapper.eq(OOrder::getAuditStatus, EnumAuditStatus.PENDING.getIndex())
@@ -265,8 +277,16 @@ public class OrderWorkbenchOrderServiceImpl implements OrderWorkbenchOrderServic
                         .eq(OOrder::getShipStatus, EnumShipStatus.NOT.getIndex());
                 break;
             case "shipped":
-            default:
                 // 已发货=audit_status 1 AND ship_status>0
+                wrapper.eq(OOrder::getAuditStatus, EnumAuditStatus.APPROVED.getIndex())
+                        .gt(OOrder::getShipStatus, EnumShipStatus.NOT.getIndex());
+                break;
+            case "completed":
+                // 已完成=order_status 3（交易完成，与发货动作解耦，由平台状态同步推进）
+                wrapper.eq(OOrder::getOrderStatus, EnumOOrderStatus.COMPLETE.getIndex());
+                break;
+            default:
+                // 兜底走已发货口径（resolvePool 已保证白名单）
                 wrapper.eq(OOrder::getAuditStatus, EnumAuditStatus.APPROVED.getIndex())
                         .gt(OOrder::getShipStatus, EnumShipStatus.NOT.getIndex());
                 break;

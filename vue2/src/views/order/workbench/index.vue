@@ -22,9 +22,17 @@
       <el-form-item label="订单号" prop="orderNums">
         <el-input v-model="queryParams.orderNums" placeholder="支持多单号，逗号/换行分隔" clearable style="width: 200px" @keyup.enter.native="handleQuery" />
       </el-form-item>
+      <el-form-item label="商户" prop="merchantId">
+        <el-select v-model="queryParams.merchantId" filterable clearable placeholder="全部商户" style="width: 160px" @change="onMerchantChange">
+          <el-option v-for="m in merchantList" :key="m.id" :label="m.name" :value="m.id" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="店铺" prop="shopIds">
-        <el-select v-model="shopIdArr" multiple collapse-tags filterable placeholder="全部店铺" clearable style="width: 200px">
-          <el-option v-for="s in shopList" :key="s.id" :label="s.name" :value="s.id" />
+        <el-select v-model="shopIdArr" multiple collapse-tags filterable placeholder="全部店铺" clearable style="width: 220px">
+          <el-option v-for="s in filteredShopList" :key="s.id" :label="s.name" :value="s.id">
+            <span>{{ s.name }}</span>
+            <span class="option-merchant">{{ shopMerchantName(s) }}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="平台" prop="shopType">
@@ -45,6 +53,20 @@
         <el-select v-model="queryParams.orderMode" clearable placeholder="全部" style="width: 110px">
           <el-option label="店铺订单" :value="0" />
           <el-option label="手工订单" :value="1" />
+        </el-select>
+      </el-form-item>
+      <!-- 状态筛选仅"全部"tab提供（其他池口径固定由页签决定） -->
+      <el-form-item v-if="currentPool === 'all'" label="订单状态">
+        <el-select v-model="queryParams.orderStatus" clearable placeholder="全部状态" style="width: 150px">
+          <el-option v-for="s in orderStatusOptions" :key="s.value" :label="s.label" :value="s.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="currentPool === 'all'" label="审核状态">
+        <el-select v-model="queryParams.auditStatus" clearable placeholder="全部" style="width: 120px">
+          <el-option label="待审核" :value="0" />
+          <el-option label="已审核通过" :value="1" />
+          <el-option label="已转异常" :value="2" />
+          <el-option label="已拆单" :value="3" />
         </el-select>
       </el-form-item>
       <el-form-item label="买家留言" prop="buyerMemo">
@@ -121,6 +143,8 @@
         <template v-else-if="currentPool === 'exception'">异常池处理区：转正常/放行/拆单/打标/改备注地址/取消订单均可在此完成</template>
         <template v-else-if="currentPool === 'released'">待发货订单（已放行未发完，发货单元平铺），可按行撤回到异常池重新处理</template>
         <template v-else-if="currentPool === 'shipped'">已发货订单（存在已完成发货单元，子单独立发货）；打印跟踪请到打单发货</template>
+        <template v-else-if="currentPool === 'completed'">已完成订单（order_status=3，交易完成，由平台状态同步推进）；只读查询，不可再操作</template>
+        <template v-else-if="currentPool === 'all'">全部订单（含已取消/已删除等所有状态，口径同旧订单库，可用上方"订单状态/审核状态"筛选）；批量处理请切回对应状态页签</template>
       </div>
     </div>
 
@@ -300,7 +324,7 @@
         <span v-if="!exceptionTagList.length" class="sub-text">暂无异常池分类标签，在下方输入名称直接新建</span>
       </div>
       <div class="exception-tag-create">
-        <el-button v-if="!creatingTag" type="text" icon="el-icon-plus" size="small" @click="openCreateTag">新建分类</el-button>
+        <el-button v-if="!creatingTag" type="text" icon="el-icon-plus" size="small" @click="openCreateTag('newTagInput')">新建分类</el-button>
         <template v-else>
           <el-input
             ref="newTagInput"
@@ -337,7 +361,23 @@
             : { color: t.color || '#606266', borderColor: t.color || '#dcdfe6' }"
           @click="withdrawTagId = t.id"
         ><span class="pill-check"><i v-if="withdrawTagId === t.id" class="el-icon-check" /></span>{{ t.name }}</span>
-        <span v-if="!exceptionTagList.length" class="sub-text">暂无异常池分类标签，请先在标签管理中新建</span>
+        <span v-if="!exceptionTagList.length" class="sub-text">暂无异常池分类标签，在下方输入名称直接新建</span>
+      </div>
+      <div class="exception-tag-create">
+        <el-button v-if="!creatingTag" type="text" icon="el-icon-plus" size="small" @click="openCreateTag('newTagInputWithdraw')">新建分类</el-button>
+        <template v-else>
+          <el-input
+            ref="newTagInputWithdraw"
+            v-model="newTagName"
+            size="mini"
+            maxlength="20"
+            placeholder="分类名称（回车确认）"
+            style="width: 180px"
+            @keyup.enter.native="createExceptionTag"
+          />
+          <el-button size="mini" type="primary" :loading="creatingTagLoading" @click="createExceptionTag">确定</el-button>
+          <el-button size="mini" @click="creatingTag = false">取消</el-button>
+        </template>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="withdrawVisible = false">取 消</el-button>
@@ -535,6 +575,7 @@ import {
   tagOptions, applyTags, exceptionTagCounts, poolTagOptions, addTag
 } from '@/api/order/workbench'
 import { listShop, listPlatform } from '@/api/shop/shop'
+import { listAllMerchant } from '@/api/shop/merchant'
 import TagManageDialog from './components/TagManageDialog.vue'
 import SplitDialog from './components/SplitDialog.vue'
 
@@ -549,7 +590,24 @@ export default {
         { key: 'pending', name: '待审核' },
         { key: 'exception', name: '异常池' },
         { key: 'released', name: '待发货' },
-        { key: 'shipped', name: '已发货' }
+        { key: 'shipped', name: '已发货' },
+        { key: 'completed', name: '已完成' },
+        { key: 'all', name: '全部' }
+      ],
+      // 全部tab订单状态筛选项（对齐 EnumOOrderStatus/o_order.order_status 注释）
+      orderStatusOptions: [
+        { value: 0, label: '新订单' },
+        { value: 21, label: '待付款' },
+        { value: 1, label: '待发货' },
+        { value: 101, label: '部分发货' },
+        { value: 2, label: '已发货' },
+        { value: 3, label: '已完成' },
+        { value: 11, label: '已取消' },
+        { value: 12, label: '退款中' },
+        { value: 13, label: '已关闭' },
+        { value: 22, label: '锁定' },
+        { value: 31, label: '售后中' },
+        { value: 29, label: '已删除' }
       ],
       poolCountMap: {},
       // 查询
@@ -560,6 +618,7 @@ export default {
       selectedOrders: [],
       // 下拉数据
       shopList: [],
+      merchantList: [],
       platformList: [],
       tagOptionsList: [],
       tagIdArr: [],
@@ -615,19 +674,25 @@ export default {
     currentPool() {
       return this.queryParams.pool
     },
-    // 发货单元平铺池（待发货/已发货）
+    // 发货单元平铺池（待发货/已发货/已完成/全部）
     flatPool() {
-      return this.queryParams.pool === 'shipped' || this.queryParams.pool === 'released'
+      return ['shipped', 'released', 'completed', 'all'].includes(this.queryParams.pool)
     },
     // 非异常池标签筛选行：仅通用标签（bind_pool 空/0）
     tagFilterList() {
       return this.tagOptionsList.filter(t => !t.bindPool)
+    },
+    // 店铺下拉联动：选中商户后仅显示该商户的店铺
+    filteredShopList() {
+      if (!this.queryParams.merchantId) return this.shopList
+      return this.shopList.filter(s => String(s.merchantId) === String(this.queryParams.merchantId))
     }
   },
   created() {
     this.getList()
     this.getCounts()
     this.loadShops()
+    this.loadMerchants()
     this.loadPlatforms()
     this.loadTagOptions()
   },
@@ -638,6 +703,9 @@ export default {
         orderNums: '',
         shopType: null,
         orderMode: null,
+        merchantId: null,
+        orderStatus: null,
+        auditStatus: null,
         receiverName: '',
         receiverMobile: '',
         goodsKeyword: '',
@@ -696,6 +764,20 @@ export default {
         this.shopList = res.rows || res.data || []
       })
     },
+    loadMerchants() {
+      listAllMerchant({ pageNum: 1, pageSize: 100 }).then(res => {
+        this.merchantList = res.data || res.rows || []
+      })
+    },
+    onMerchantChange() {
+      const allowed = this.filteredShopList.map(s => String(s.id))
+      this.shopIdArr = this.shopIdArr.filter(id => allowed.includes(String(id)))
+    },
+    shopMerchantName(s) {
+      if (s.merchantName) return s.merchantName
+      const m = this.merchantList.find(x => String(x.id) === String(s.merchantId))
+      return m ? m.name : ''
+    },
     loadPlatforms() {
       listPlatform({}).then(res => {
         this.platformList = res.rows || res.data || []
@@ -716,6 +798,11 @@ export default {
       this.pageQuery.pageNum = 1
       this.getList()
       this.getCounts()
+      if (key !== 'all') {
+        // 订单状态/审核状态筛选仅"全部"tab支持，切走时清掉避免误解
+        this.queryParams.orderStatus = null
+        this.queryParams.auditStatus = null
+      }
       if (key === 'exception') this.loadExceptionNav()
     },
     handleQuery() {
@@ -921,6 +1008,7 @@ export default {
       this.withdrawIds = ids
       if (!this.exceptionTagList.length) this.loadExceptionTags()
       this.withdrawTagId = null
+      this.creatingTag = false
       this.withdrawVisible = true
     },
     doWithdraw() {
@@ -1001,12 +1089,12 @@ export default {
         if (cb) cb()
       })
     },
-    // 弹窗内快捷新建异常池分类（bind_pool=2；成功后自动选中）
-    openCreateTag() {
+    // 弹窗内快捷新建异常池分类（bind_pool=2；成功后自动选中当前打开弹窗的标签项）
+    openCreateTag(refName) {
       this.creatingTag = true
       this.newTagName = ''
       this.$nextTick(() => {
-        if (this.$refs.newTagInput) this.$refs.newTagInput.focus()
+        if (refName && this.$refs[refName]) this.$refs[refName].focus()
       })
     },
     createExceptionTag() {
@@ -1022,7 +1110,9 @@ export default {
           this.creatingTag = false
           this.newTagName = ''
           this.loadExceptionTags(() => {
-            if (res.data) this.exceptionTagId = res.data
+            if (!res.data) return
+            if (this.withdrawVisible) this.withdrawTagId = res.data
+            else this.exceptionTagId = res.data
           })
         }
       }).finally(() => { this.creatingTagLoading = false })
@@ -1263,6 +1353,7 @@ export default {
 
 <style scoped>
 .tag-pill { margin: 1px 3px 1px 0; border: none; }
+.option-merchant { float: right; color: #8492a6; font-size: 12px; margin-left: 12px; }
 .stay-warn { color: #e6a23c; font-weight: 600; }
 .stay-over { color: #f56c6c; font-weight: 600; }
 .goods-line { display: flex; align-items: flex-start; padding: 2px 0; cursor: pointer; border-radius: 4px; }

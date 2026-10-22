@@ -19,6 +19,9 @@ public class OrderPoolCountsVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /** 全部（不设池条件、不排除任何状态，含已取消/已删除） */
+    private Long all;
+
     /** 待审核 */
     private Long pending;
     /** 异常池 */
@@ -27,4 +30,6 @@ public class OrderPoolCountsVo implements Serializable {
     private Long released;
     /** 已发货 */
     private Long shipped;
+    /** 已完成（order_status=3） */
+    private Long completed;
 }

@@ -49,6 +49,10 @@ public class OrderWorkbenchQuery implements Serializable {
     private String district;
     /** 订单模式：0店铺订单 1手工订单（OMS 口径） */
     private Integer orderMode;
+    /** 订单状态（EnumOOrderStatus，仅"全部"tab生效；不传=全部状态含已取消/已删除） */
+    private Integer orderStatus;
+    /** 审核状态（EnumAuditStatus，仅"全部"tab生效） */
+    private Integer auditStatus;
     /** 发货主体类型（匹配订单明细 ship_type，EnumShipType） */
     private Integer shipperType;
     /** 发货主体ID（匹配订单明细 shipper_id） */
