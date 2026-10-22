@@ -7025,7 +7025,7 @@ INSERT INTO `sys_menu` VALUES (3, '店铺管理', 0, 80, 'shop', 'Layout', '', 1
 INSERT INTO `sys_menu` VALUES (4, '商品管理', 0, 1, 'goods', 'Layout', '', 1, 0, 'M', '0', '0', '', 'goods', 'admin', '2023-12-29 16:53:03', 'admin', '2025-08-21 11:53:50', '');
 INSERT INTO `sys_menu` VALUES (5, '系统设置', 0, 99, '/system', 'Layout', '', 1, 0, 'M', '0', '0', '', 'system', 'admin', '2023-12-27 15:00:27', 'admin', '2023-12-29 09:07:42.856856', '系统管理目录');
 INSERT INTO `sys_menu` VALUES (8, '发货管理', 0, 20, 'ship', NULL, NULL, 1, 0, 'M', '1', '0', '', 'guide', 'admin', '2024-03-30 17:36:10', 'admin', '2026-10-22 10:29:25', '');
-INSERT INTO `sys_menu` VALUES (11, '系统&接口配置', 0, 81, 'sys_setting', NULL, NULL, 1, 0, 'M', '0', '0', '', 'example', 'admin', '2024-09-15 17:45:04', 'admin', '2026-05-04 09:05:16', '');
+INSERT INTO `sys_menu` VALUES (11, '参数配置', 0, 81, 'sys_setting', NULL, NULL, 1, 0, 'M', '0', '0', '', 'example', 'admin', '2024-09-15 17:45:04', 'admin', '2026-05-04 09:05:16', '');
 INSERT INTO `sys_menu` VALUES (100, '订单库', 1, 10, 'order_list', 'order/index', '', 1, 0, 'C', '1', '0', '', 'list', 'admin', '2023-12-27 15:00:27', 'admin', '2026-10-22 08:52:36', '用户管理菜单');
 INSERT INTO `sys_menu` VALUES (102, '店铺订单', 1, 20, 'shop_order_list', 'order/shopOrder/index', '', 1, 0, 'C', '0', '0', '', 'shop', 'admin', '2023-12-27 15:00:27', 'admin', '2026-04-11 12:13:34', '菜单管理菜单');
 INSERT INTO `sys_menu` VALUES (155, '手动添加店铺订单', 1, 22, 'shop_order_create', 'shop/order/create', NULL, 1, 0, 'C', '1', '0', '', 'button', 'admin', '2025-08-31 01:21:16', 'admin', '2026-04-17 10:01:48', '');

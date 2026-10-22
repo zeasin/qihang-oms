@@ -21,6 +21,8 @@ export default {
     }
 
     if (title) {
+      vnodes.push(<span class='menu-short-name'>{title.slice(0, 2)}</span>)
+
       if (title.length > 5) {
         vnodes.push(<span slot='title' title={(title)}>{(title)}</span>)
       } else {
